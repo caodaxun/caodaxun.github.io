@@ -32,7 +32,7 @@
 <meta property="og:description" content="安装安装node.js 1brew install node 查看版本 1node -v npm是node.js的包管理工具 1npm -v Hexo是一个快速、简洁高效博客框架 1npm install -g hexo-cli 安装完成后桌面建一个blog文件夹 1cd ~&#x2F;Desktop &amp;&amp; mkdir blog &amp;&amp; cd blog 初始化 1he">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-11-17T07:08:55.676Z">
-<meta property="article:modified_time" content="2020-11-17T07:48:31.991Z">
+<meta property="article:modified_time" content="2020-11-17T08:08:57.888Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -231,7 +231,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2020-11-17 15:08:55 / Modified: 15:48:31" itemprop="dateCreated datePublished" datetime="2020-11-17T15:08:55+08:00">2020-11-17</time>
+      <time title="Created: 2020-11-17 15:08:55 / Modified: 16:08:57" itemprop="dateCreated datePublished" datetime="2020-11-17T15:08:55+08:00">2020-11-17</time>
     </span>
 
   
@@ -280,11 +280,14 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var exec &#x3D; require(&#39;child_process&#39;).exec;</span><br><span class="line">hexo.on(&#39;new&#39;, function(data)&#123;</span><br><span class="line">    exec(&#39;open -a &quot;&#x2F;Applications&#x2F;Typora.app&quot; &#39; + data.path);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
 <p>新建文章  <code>hexo new &quot;Test&quot;</code>  会自动打开 Typora 编辑器</p>
+<p>写完后生成静态网页部署到 <code>github</code> 上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
+
 <h4 id="备份博客源文件"><a href="#备份博客源文件" class="headerlink" title="备份博客源文件"></a>备份博客源文件</h4><p>直接放码云了，码云上新建仓库 Hexo</p>
 <p>本地新建同名文件 Hexo</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd Hexo </span><br><span class="line">git init</span><br></pre></td></tr></table></figure>
 <p>本地和远程绑定 &amp;&amp; 拉取远程代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin https:&#x2F;&#x2F;gitee.com&#x2F;other_other&#x2F;hexo.git</span><br><span class="line">git pull origin master</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin https:&#x2F;&#x2F;gitee.com&#x2F;xxxx&#x2F;hexo.git</span><br><span class="line">git pull origin master</span><br></pre></td></tr></table></figure>
 
 <p>新建或修改 <code>.gitignore</code> 文件，加入</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">*.log</span><br><span class="line">public&#x2F;</span><br><span class="line">.deploy*&#x2F;</span><br></pre></td></tr></table></figure>
