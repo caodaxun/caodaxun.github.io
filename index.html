@@ -226,7 +226,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2020-11-17 17:18:34 / Modified: 17:26:08" itemprop="dateCreated datePublished" datetime="2020-11-17T17:18:34+08:00">2020-11-17</time>
+      <time title="Created: 2020-11-17 17:18:34 / Modified: 18:01:04" itemprop="dateCreated datePublished" datetime="2020-11-17T17:18:34+08:00">2020-11-17</time>
     </span>
 
   
@@ -239,7 +239,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><img src="abc/test.png" alt="图片"></p>
+          <p><img src="/2020/11/17/abc/test.png" alt="图片"></p>
+<p><img src="/%5Cabc%5Ctest.png" alt="图片"></p>
 
       
     </div>
@@ -292,7 +293,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2020-11-17 16:10:45 / Modified: 16:11:03" itemprop="dateCreated datePublished" datetime="2020-11-17T16:10:45+08:00">2020-11-17</time>
+      <time title="Created: 2020-11-17 16:10:45 / Modified: 18:00:01" itemprop="dateCreated datePublished" datetime="2020-11-17T16:10:45+08:00">2020-11-17</time>
     </span>
 
   
@@ -344,6 +345,13 @@
 <p>写完后生成静态网页部署到 <code>github</code> 上</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
 
+<h4 id="添加图片"><a href="#添加图片" class="headerlink" title="添加图片"></a>添加图片</h4><p>安装插件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-renderer-marked</span><br></pre></td></tr></table></figure>
+
+<p>修改  <code>config.yml</code>  配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">post_asset_folder: true</span><br><span class="line">marked:</span><br><span class="line">  prependRoot: true</span><br><span class="line">  postAsset: true</span><br></pre></td></tr></table></figure>
+
+<p>之后就可以使用 <code>![](image.jpg)</code> 访问图片了</p>
 <h4 id="备份博客源文件"><a href="#备份博客源文件" class="headerlink" title="备份博客源文件"></a>备份博客源文件</h4><p>直接放码云了，码云上新建仓库 Hexo</p>
 <p>本地新建同名文件 Hexo</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd Hexo </span><br><span class="line">git init</span><br></pre></td></tr></table></figure>
