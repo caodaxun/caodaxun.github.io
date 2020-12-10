@@ -223,7 +223,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -276,6 +276,548 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/07/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/07/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/" class="post-title-link" itemprop="url">dyld加载流程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-12-07 11:48:03 / 修改时间：18:02:05" itemprop="dateCreated datePublished" datetime="2020-12-07T11:48:03+08:00">2020-12-07</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="dyld"><a href="#dyld" class="headerlink" title="dyld"></a>dyld</h4><p><code>dyld</code> ：动态库链接器，负责加载程序和程序依赖的动态库，内核读取 <code>Mach-O</code> 文件后将读取内容交给 <code>dyld</code> 加载，<code>dyld</code> 加载完毕后才会执行 <code>main</code> 函数</p>
+<p>新建项目，在 <code>main</code> 函数中打断点，通过 <code>bt</code> 查看调用栈，看到 <code>App</code> 启动后会执行 <code>libdyld.dylib</code> 的 <code>start</code> 操</p>
+<p>作，这边调用栈的信息比较少</p>
+<p><img src="/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/%E5%90%AF%E5%8A%A8main%E6%96%AD%E7%82%B9.jpg" alt="启动main断点"></p>
+<p>继续在  <code>ViewController</code> 中重写 <code>load</code> 方法 ，<code>load</code> 方法打断点，通过 <code>bt</code> 查看调用栈，发现一个 <code>_dyld_start</code> 的调用</p>
+<p><img src="/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/%E5%90%AF%E5%8A%A8load%E6%96%AD%E7%82%B9.jpg" alt="启动load断点"></p>
+<p><code>dyld</code> 源码中搜索 <code>_dyld_start</code> ，可以在 <code>dyldStartup.s</code> 文件中找到 <code>_dyld_start</code> 的汇编实现，文件中按照 <code>i386</code>、<code>x86_64</code>、<code>arm64</code>、<code>arm</code> 不同架构做了逻辑处理</p>
+<p>查看 <code>arm64</code> 架构下汇编源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> __arm64__</span></span><br><span class="line">	.text</span><br><span class="line">	.align <span class="number">2</span></span><br><span class="line">	.globl __dyld_start</span><br><span class="line">__dyld_start:</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">	<span class="comment">// call dyldbootstrap::start(app_mh, argc, argv, dyld_mh, &amp;startGlue)</span></span><br><span class="line">	bl	__ZN13dyldbootstrap5startEPKN5dyld311MachOLoadedEiPPKcS3_Pm</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">// __arm64__</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>找到关键部分代码，看到 <code>bl</code> 跳转指令，看注释信息，这边会调用 <code>dyldbootstrap::start</code> </p>
+<h4 id="dyldbootstrap-start"><a href="#dyldbootstrap-start" class="headerlink" title="dyldbootstrap::start"></a>dyldbootstrap::start</h4><p>【1】<code>dyldbootstrap::start</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// call dyldbootstrap::start(app_mh, argc, argv, dyld_mh, &amp;startGlue)</span></span><br><span class="line">	bl	__ZN13dyldbootstrap5startEPKN5dyld311MachOLoadedEiPPKcS3_Pm</span><br></pre></td></tr></table></figure>
+
+<p>源码中搜索 <code>dyldbootstrap</code> 命名空间的 <code>start</code> 方法</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">uintptr_t</span> <span class="title">start</span><span class="params">(<span class="keyword">const</span> dyld3::MachOLoaded* appsMachHeader, <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* argv[],</span></span></span><br><span class="line"><span class="function"><span class="params">				<span class="keyword">const</span> dyld3::MachOLoaded* dyldsMachHeader, <span class="keyword">uintptr_t</span>* startGlue)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Emit kdebug tracepoint to indicate dyld bootstrap has started &lt;rdar://46878536&gt;</span></span><br><span class="line">    dyld3::kdebug_trace_dyld_marker(DBG_DYLD_TIMING_BOOTSTRAP_START, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// if kernel had to slide dyld, we need to fix up load sensitive locations</span></span><br><span class="line">	<span class="comment">// we have to do this before using any global variables</span></span><br><span class="line">    rebaseDyld(dyldsMachHeader);</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="comment">// set up random value for stack canary</span></span><br><span class="line">	__guard_setup(apple);</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">	<span class="comment">// now that we are done bootstrapping dyld, call dyld&#x27;s main</span></span><br><span class="line">	<span class="keyword">uintptr_t</span> appsSlide = appsMachHeader-&gt;getSlide();</span><br><span class="line">	<span class="keyword">return</span> dyld::_main((macho_header*)appsMachHeader, appsSlide, argc, argv, envp, apple, startGlue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>dyldbootstrap::start</code> 主要操作：</p>
+<ol>
+<li><p>调用 <code>rebaseDyld()</code> dyld 重定位</p>
+</li>
+<li><p><code>__guard_setup</code> 栈溢出保护</p>
+</li>
+<li><p><code>dyld::_main</code> 进入 <code>dyld</code> 的 <code>_main</code> 函数</p>
+</li>
+</ol>
+<h4 id="dyld-main"><a href="#dyld-main" class="headerlink" title="dyld::_main"></a>dyld::_main</h4><p>【2】<code>dyld::_main</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Entry point for dyld.  The kernel loads dyld and jumps to __dyld_start which</span></span><br><span class="line"><span class="comment">// sets up some registers and call this function.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Returns address of main() in target program which __dyld_start jumps to</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">uintptr_t</span></span><br><span class="line">_main(<span class="keyword">const</span> macho_header* mainExecutableMH, <span class="keyword">uintptr_t</span> mainExecutableSlide, </span><br><span class="line">		<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* argv[], <span class="keyword">const</span> <span class="keyword">char</span>* envp[], <span class="keyword">const</span> <span class="keyword">char</span>* apple[], </span><br><span class="line">		<span class="keyword">uintptr_t</span>* startGlue)</span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">    <span class="comment">//【1】初始化程序运行环境</span></span><br><span class="line">    <span class="comment">// Grab the cdHash of the main executable from the environment</span></span><br><span class="line">	<span class="keyword">uint8_t</span> mainExecutableCDHashBuffer[<span class="number">20</span>];</span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">uint8_t</span>* mainExecutableCDHash = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="keyword">if</span> ( hexToBytes(_simple_getenv(apple, <span class="string">&quot;executable_cdhash&quot;</span>), <span class="number">40</span>, mainExecutableCDHashBuffer) )</span><br><span class="line">		mainExecutableCDHash = mainExecutableCDHashBuffer;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="keyword">uintptr_t</span> result = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">//获取主程序的macho_header结构以及主程序的slide偏移值</span></span><br><span class="line">	sMainExecutableMachHeader = mainExecutableMH;</span><br><span class="line">	sMainExecutableSlide = mainExecutableSlide;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	CRSetCrashLogMessage(<span class="string">&quot;dyld: launch started&quot;</span>);</span><br><span class="line">	<span class="comment">//设置上下文信息</span></span><br><span class="line">	setContext(mainExecutableMH, argc, argv, envp, apple);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Pickup the pointer to the exec path.</span></span><br><span class="line">	<span class="comment">//获取主程序路径</span></span><br><span class="line">	sExecPath = _simple_getenv(apple, <span class="string">&quot;executable_path&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// &lt;rdar://problem/13868260&gt; Remove interim apple[0] transition code from dyld</span></span><br><span class="line">	<span class="keyword">if</span> (!sExecPath) sExecPath = apple[<span class="number">0</span>];</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取进程名称</span></span><br><span class="line">	<span class="comment">// Remember short name of process for later logging</span></span><br><span class="line">	sExecShortName = ::<span class="built_in">strrchr</span>(sExecPath, <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">	<span class="keyword">if</span> ( sExecShortName != <span class="literal">NULL</span> )</span><br><span class="line">		++sExecShortName;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		sExecShortName = sExecPath;</span><br><span class="line">	</span><br><span class="line">	  <span class="comment">//配置进程受限模式</span></span><br><span class="line">    configureProcessRestrictions(mainExecutableMH, envp);</span><br><span class="line">	...</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//检测环境变量</span></span><br><span class="line">		checkEnvironmentVariables(envp);</span><br><span class="line">		defaultUninitializedFallbackPaths(envp);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//如果设置了 DYLD_PRINT_OPTS 环境变量，则打印参数</span></span><br><span class="line">	<span class="keyword">if</span> ( sEnv.DYLD_PRINT_OPTS )</span><br><span class="line">		printOptions(argv);</span><br><span class="line">  <span class="comment">//如果设置了 DYLD_PRINT_ENV 环境变量，则打印环境变量</span></span><br><span class="line">	<span class="keyword">if</span> ( sEnv.DYLD_PRINT_ENV ) </span><br><span class="line">		printEnvironmentVariables(envp);</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取当前程序架构信息</span></span><br><span class="line">	getHostInfo(mainExecutableMH, mainExecutableSlide);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// load shared cache</span></span><br><span class="line">	<span class="comment">//【2】加载共享缓存 shared cache</span></span><br><span class="line">  <span class="comment">//检查共享缓存是否开启</span></span><br><span class="line">	checkSharedRegionDisable((dyld3::MachOLoaded*)mainExecutableMH, mainExecutableSlide);</span><br><span class="line">	<span class="keyword">if</span> ( gLinkContext.sharedRegionMode != ImageLoader::kDontUseSharedRegion ) &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> TARGET_OS_SIMULATOR</span></span><br><span class="line">		<span class="keyword">if</span> ( sSharedCacheOverrideDir)</span><br><span class="line">			mapSharedCache();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">		mapSharedCache();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		<span class="comment">// add dyld itself to UUID list</span></span><br><span class="line">		addDyldImageToUUIDList();</span><br><span class="line">		...</span><br><span class="line">		CRSetCrashLogMessage(sLoadingCrashMessage);</span><br><span class="line">		<span class="comment">// instantiate ImageLoader for main executable</span></span><br><span class="line">		<span class="comment">//【3】实例化主程序，并赋值给ImageLoader::LinkContext</span></span><br><span class="line">		sMainExecutable = instantiateFromLoadedImage(mainExecutableMH, mainExecutableSlide, sExecPath);</span><br><span class="line">		gLinkContext.mainExecutable = sMainExecutable;</span><br><span class="line">		gLinkContext.mainExecutableCodeSigned = hasCodeSignatureLoadCommand(mainExecutableMH);</span><br><span class="line">		...</span><br><span class="line"></span><br><span class="line">		<span class="comment">// load any inserted libraries</span></span><br><span class="line">		<span class="comment">//【4】加载插入的动态库</span></span><br><span class="line">		<span class="keyword">if</span>	( sEnv.DYLD_INSERT_LIBRARIES != <span class="literal">NULL</span> ) &#123;</span><br><span class="line">      <span class="comment">//遍历 DYLD_INSERT_LIBRARIES 环境变量</span></span><br><span class="line">			<span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* lib = sEnv.DYLD_INSERT_LIBRARIES; *lib != <span class="literal">NULL</span>; ++lib) </span><br><span class="line">				loadInsertedDylib(*lib);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// record count of inserted libraries so that a flat search will look at </span></span><br><span class="line">		<span class="comment">// inserted libraries, then main, then others.</span></span><br><span class="line">		sInsertedDylibCount = sAllImages.size()<span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// link main executable</span></span><br><span class="line">		<span class="comment">//【5】链接主程序</span></span><br><span class="line">		gLinkContext.linkingMainExecutable = <span class="literal">true</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SUPPORT_ACCELERATE_TABLES</span></span><br><span class="line">		<span class="keyword">if</span> ( mainExcutableAlreadyRebased ) &#123;</span><br><span class="line">			<span class="comment">// previous link() on main executable has already adjusted its internal pointers for ASLR</span></span><br><span class="line">			<span class="comment">// work around that by rebasing by inverse amount</span></span><br><span class="line">			sMainExecutable-&gt;rebase(gLinkContext, -mainExecutableSlide);</span><br><span class="line">		&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		link(sMainExecutable, sEnv.DYLD_BIND_AT_LAUNCH, <span class="literal">true</span>, ImageLoader::RPathChain(<span class="literal">NULL</span>, <span class="literal">NULL</span>), <span class="number">-1</span>);</span><br><span class="line">		sMainExecutable-&gt;setNeverUnloadRecursive();</span><br><span class="line">		<span class="keyword">if</span> ( sMainExecutable-&gt;forceFlat() ) &#123;</span><br><span class="line">			gLinkContext.bindFlat = <span class="literal">true</span>;</span><br><span class="line">			gLinkContext.prebindUsage = ImageLoader::kUseNoPrebinding;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//【6】链接插入的动态库</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">// link any inserted libraries</span></span><br><span class="line">		<span class="comment">// do this after linking main executable so that any dylibs pulled in by inserted </span></span><br><span class="line">		<span class="comment">// dylibs (e.g. libSystem) will not be in front of dylibs the program uses</span></span><br><span class="line">		<span class="keyword">if</span> ( sInsertedDylibCount &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">unsigned</span> <span class="keyword">int</span> i=<span class="number">0</span>; i &lt; sInsertedDylibCount; ++i) &#123;</span><br><span class="line">				ImageLoader* image = sAllImages[i+<span class="number">1</span>];</span><br><span class="line">				link(image, sEnv.DYLD_BIND_AT_LAUNCH, <span class="literal">true</span>, ImageLoader::RPathChain(<span class="literal">NULL</span>, <span class="literal">NULL</span>), <span class="number">-1</span>);</span><br><span class="line">				image-&gt;setNeverUnloadRecursive();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> ( gLinkContext.allowInterposing ) &#123;</span><br><span class="line">				<span class="comment">// only INSERTED libraries can interpose</span></span><br><span class="line">				<span class="comment">// register interposing info after all inserted libraries are bound so chaining works</span></span><br><span class="line">				<span class="keyword">for</span>(<span class="keyword">unsigned</span> <span class="keyword">int</span> i=<span class="number">0</span>; i &lt; sInsertedDylibCount; ++i) &#123;</span><br><span class="line">					ImageLoader* image = sAllImages[i+<span class="number">1</span>];</span><br><span class="line">					image-&gt;registerInterposing(gLinkContext);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		...</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//【7】链接所有插入的image后，执行弱符号绑定</span></span><br><span class="line">		</span><br><span class="line">		<span class="comment">// &lt;rdar://problem/12186933&gt; do weak binding only after all inserted images linked</span></span><br><span class="line">		sMainExecutable-&gt;weakBind(gLinkContext);</span><br><span class="line">		gLinkContext.linkingMainExecutable = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">		sMainExecutable-&gt;recursiveMakeDataReadOnly(gLinkContext);</span><br><span class="line"></span><br><span class="line">		CRSetCrashLogMessage(<span class="string">&quot;dyld: launch, running initializers&quot;</span>);</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">if</span> SUPPORT_OLD_CRT_INITIALIZATION</span></span><br><span class="line">		<span class="comment">// Old way is to run initializers via a callback from crt1.o</span></span><br><span class="line">		<span class="keyword">if</span> ( ! gRunInitializersOldWay ) </span><br><span class="line">			initializeMainExecutable(); </span><br><span class="line">	<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">		<span class="comment">//【8】执行所有初始化方法</span></span><br><span class="line">		<span class="comment">// run all initializers</span></span><br><span class="line">		initializeMainExecutable(); </span><br><span class="line">	<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		...</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//【9】查找主程序的入口并返回</span></span><br><span class="line">			<span class="comment">// find entry point for main executable</span></span><br><span class="line">			result = (<span class="keyword">uintptr_t</span>)sMainExecutable-&gt;getEntryFromLC_MAIN();</span><br><span class="line">			<span class="keyword">if</span> ( result != <span class="number">0</span> ) &#123;</span><br><span class="line">				<span class="comment">// main executable uses LC_MAIN, we need to use helper in libdyld to call into main()</span></span><br><span class="line">				<span class="keyword">if</span> ( (gLibSystemHelpers != <span class="literal">NULL</span>) &amp;&amp; (gLibSystemHelpers-&gt;version &gt;= <span class="number">9</span>) )</span><br><span class="line">					*startGlue = (<span class="keyword">uintptr_t</span>)gLibSystemHelpers-&gt;startGlueToCallExit;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					halt(<span class="string">&quot;libdyld.dylib support not present for LC_MAIN&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="comment">// main executable uses LC_UNIXTHREAD, dyld needs to let &quot;start&quot; in program set up for main()</span></span><br><span class="line">				result = (<span class="keyword">uintptr_t</span>)sMainExecutable-&gt;getEntryFromLC_UNIXTHREAD();</span><br><span class="line">				*startGlue = <span class="number">0</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>dyld::_main</code>主要操作：</p>
+<ol>
+<li>主程序运行环境初始化，获取当前运行架构</li>
+<li>加载共享缓存</li>
+<li>实例化主程序，赋值给 <code>ImageLoader::LinkContext</code></li>
+<li>加载插入的动态库</li>
+<li>链接主程序</li>
+<li>链接动态库</li>
+<li>弱符号绑定</li>
+<li>执行初始化方法</li>
+<li>寻找程序入口 <code>LC_MAIN</code></li>
+</ol>
+<ul>
+<li>分析第 3 步和第 8 步</li>
+</ul>
+<h4 id="initializeMainExecutable"><a href="#initializeMainExecutable" class="headerlink" title="initializeMainExecutable"></a>initializeMainExecutable</h4><p>执行初始化方法</p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/tarballs/dyld/">dyld750.6下载</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/04/objc-781%E7%BC%96%E8%AF%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/" class="post-title-link" itemprop="url">objc-781编译</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-04 15:09:07" itemprop="dateCreated datePublished" datetime="2020-12-04T15:09:07+08:00">2020-12-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-07 11:46:57" itemprop="dateModified" datetime="2020-12-07T11:46:57+08:00">2020-12-07</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">macOS 10.15.7</span><br><span class="line"></span><br><span class="line">Xcode 11.3.1</span><br><span class="line"></span><br><span class="line">objc4-781</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Runtime源码下载"><a href="#Runtime源码下载" class="headerlink" title="Runtime源码下载"></a>Runtime源码下载</h4><p><a target="_blank" rel="noopener" href="https://opensource.apple.com/">Apple Open Source</a> 选择最新 <code>macOS</code> 系统 <code>10.15.6</code> ，搜索 <code>objc</code> 看到最新 <code>objc4</code>文件为 <code>objc4-787.1</code>，右边可以直接下载压缩包</p>
+<p><img src="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/AppleOpenSource.jpg" alt="AppleOpenSource"></p>
+<p>可以下载历史版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;opensource.apple.com&#x2F;tarballs&#x2F;objc4&#x2F;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="下载依赖文件"><a href="#下载依赖文件" class="headerlink" title="下载依赖文件"></a>下载依赖文件</h4><p><img src="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/%E4%BE%9D%E8%B5%96%E6%96%87%E4%BB%B6.png" alt="依赖文件"></p>
+<h4 id="Runtime源码编译"><a href="#Runtime源码编译" class="headerlink" title="Runtime源码编译"></a>Runtime源码编译</h4><p>【1】<code>unable to find sdk macosx.internal</code></p>
+<p><img src="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/macosx.jpg" alt="macosx"></p>
+<p>修改 <code>Base SDK</code> 选择 <code>macOS</code></p>
+<p><img src="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/baseSDK.png" alt="baseSDK"></p>
+<p>【2】<code>file not foud</code></p>
+<p>【2.1】<code>sys/reason.h file not found objc-os.h</code></p>
+<p>根目录创建 <code>Common</code> 文件夹，创建 <code>sys</code> 文件 ，加入文件 <code>xnu-6153141.1/bsd/sys/reason.h</code></p>
+<p>设置文件检索路径，<code>Header Search Path</code> 添加 <code>$(SRCROOT)/Common</code></p>
+<p><img src="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/searchPath.png" alt="searchPath"></p>
+<p>【2.2】其它 <code>file not found</code></p>
+<ul>
+<li>mach-o/dyld_priv.h file not found`</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dyld-750.6&#x2F;include&#x2F;mach-o&#x2F;dyld_priv.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>os/lock_private.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libplatform-220.100.1&#x2F;private&#x2F;os&#x2F;lock_private.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>os/base_private.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libplatform-220.100.1&#x2F;private&#x2F;os&#x2F;base_private.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>pthread/tsd_private.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libpthread-416.100.3&#x2F;private&#x2F;tsd_private.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>System/machine/cpu_capabilities.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xnu-6153.141.1&#x2F;osfmk&#x2F;machine&#x2F;cpu_capabilities.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>os/tsd.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xnu-6153.141.1&#x2F;libsyscall&#x2F;os&#x2F;tsd.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>pthread/spinlock_private.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libpthread-416.100.3&#x2F;private&#x2F;spinlock_private.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>System/pthread_machdep.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Libc-583&#x2F;pthreads&#x2F;pthread_machdep.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>CrashReporterClient.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Libc-997.90.3&#x2F;include&#x2F;CrashReporterClient.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>objc-shared-cache.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dyld-750.6&#x2F;include&#x2F;objc-shared-cache.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>_simple.h file not found</code> </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libplatform-220.100.1&#x2F;private&#x2F;_simple.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>kern/restartable.h file not found</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xnu-6153.141.1&#x2F;osfmk&#x2F;kern&#x2F;restartable.h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Block_private.h file not found</code> </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libclosure-74&#x2F;Block_private.h</span><br></pre></td></tr></table></figure>
+
+
+
+<p>【3】<code>pthread_machdep.h</code> 3处报错</p>
+<p>将 193 行</p>
+<p> <code>typedef int pthread_lock_t;</code></p>
+<p>到 244 行</p>
+<p><code>#define _pthread_setspecific_direct(key, val) pthread_setspecific(key, val)</code> 注释</p>
+<p>替换为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#if TARGET_IPHONE_SIMULATOR || defined(__ppc__) || defined(__ppc64__) || \</span><br><span class="line">    (defined(__arm__) &amp;&amp; !defined(_ARM_ARCH_7) &amp;&amp; defined(_ARM_ARCH_6) &amp;&amp; defined(__thumb__))</span><br><span class="line">#define _pthread_getspecific_direct(key) pthread_getspecific((key))</span><br><span class="line">#define _pthread_setspecific_direct(key, val) pthread_setspecific((key), (val))</span><br><span class="line">#else</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>【4】<code>dyld_priv.h</code> 报错 <code>Expected&#39;,&#39;</code></p>
+<p> 删掉 <code>, bridgeos(3.0)</code></p>
+<p>【5】<code>lock_private.h</code> 报错 <code>Expected&#39;,&#39;</code></p>
+<p>删掉 <code>, bridgeos(4.0)</code></p>
+<p>【6】<code>Use of undeclared identifier &#39;DYLD_MACOSX_VERSION_10_11&#39;</code></p>
+<p><code>dyld_priv.h</code> 顶部加入宏</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#define DYLD_MACOSX_VERSION_10_11 0x000A0B00</span><br><span class="line">#define DYLD_MACOSX_VERSION_10_12 0x000A0C00</span><br><span class="line">#define DYLD_MACOSX_VERSION_10_13 0x000A0D00</span><br><span class="line">#define DYLD_MACOSX_VERSION_10_14 0x000A0E00</span><br></pre></td></tr></table></figure>
+
+
+
+<p>【7】<code>Use of undeclared identifier &#39;CRGetCrashLogMessage&#39;</code></p>
+<p><code>target -&gt; Build Setting -&gt; Preprocessor Macros</code></p>
+<p> 添加 <code>LIBC_NO_LIBCRASHREPORTERCLIENT</code></p>
+<p><img src="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/macros.png" alt="macros"></p>
+<p>【8】<code>Mismatch in debug-ness macros</code></p>
+<p>注释 <code>#error mismatch in debug-ness macros</code></p>
+<p>【9】</p>
+<p><code>can&#39;t open order file: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/AppleInternal/OrderFiles/libobjc.order</code></p>
+<p><code>target -&gt; Build Settings</code> 搜索 <code>Order File</code> 添加 <code>$(SRCROOT)/libobjc.order</code></p>
+<p>【10】<code>library not found for -lCrashReporterClient</code></p>
+<p><code>target -&gt; Build Settings -&gt; Other Linker Flags</code> 删掉  <code>CrashReporterClient</code></p>
+<p>【11】<code>SDK &quot;macosx.internal&quot; cannot be located</code></p>
+<p><code>target -&gt; objc -&gt; Build Phase -&gt; Run Script(markgc)</code> 将脚本的 <code>macosx.internal</code> 修改为 <code>macosx</code></p>
+<p>Build Success</p>
+<h4 id="编译调试"><a href="#编译调试" class="headerlink" title="编译调试"></a>编译调试</h4><p>新建 <code>Target</code> 来进行调试</p>
+<ul>
+<li><code>File -&gt; New -&gt; Target</code> <code>Test</code></li>
+</ul>
+<p><img src="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/target.png" alt="target"></p>
+<ul>
+<li>绑定二进制依赖关系</li>
+</ul>
+<p><code>TARGETS -&gt; Test -&gt; Build Phases</code></p>
+<p> <img src="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/depend.png" alt="target"></p>
+<p>还需要设置 <code>target -&gt; objc -&gt; Build Settings -&gt; Enable Hardened Runtime -&gt; NO</code></p>
+<p>注意 <code>Compile Sources</code> 中 <code>main.m</code> 位置在前面</p>
+<p><img src="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/compile.png" alt="compile"></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/mac-os-x-1062.html">Libc-583</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/os-x-1095.html"> Libc-997.90.3</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/macos-10156.html">dyld-750.6</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/macos-10156.html">libauto-187</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/macos-10156.html">libclosure-74</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/macos-10156.html">libdispatch-1173.100.2</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/macos-10156.html">xnu-6153.141.1</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/macos-10156.html">libpthread-416.100.3</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/macos-10156.html">libplatform-220.100.1</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/release/os-x-1095.html">launchd-842.92.1</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/28150fa0c085">objc4-750编译</a></p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/other_other/objc-781.git">objc4-781可编译代码</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/01/Runtime%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/01/Runtime%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">Runtime底层原理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-01 22:50:54" itemprop="dateCreated datePublished" datetime="2020-12-01T22:50:54+08:00">2020-12-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-03 18:04:22" itemprop="dateModified" datetime="2020-12-03T18:04:22+08:00">2020-12-03</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="通过SEL找到IMP"><a href="#通过SEL找到IMP" class="headerlink" title="通过SEL找到IMP"></a>通过SEL找到IMP</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BOOL class_respondsToSelector(Class cls, SEL sel)</span><br><span class="line">&#123;</span><br><span class="line">    return class_respondsToSelector_inst(cls, sel, nil);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/tarballs/objc4/">苹果源码下载地址</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">对象和方法底层原理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-01 15:49:02" itemprop="dateCreated datePublished" datetime="2020-12-01T15:49:02+08:00">2020-12-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-04 12:35:24" itemprop="dateModified" datetime="2020-12-04T12:35:24+08:00">2020-12-04</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="isa指针"><a href="#isa指针" class="headerlink" title="isa指针"></a>isa指针</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">LGPerson *p  &#x3D; [LGPerson alloc];</span><br><span class="line">p.name &#x3D; @&quot;aa&quot;;</span><br><span class="line"></span><br><span class="line">Class cls1 &#x3D; [LGPerson class];</span><br><span class="line">Class cls2 &#x3D; p.class;</span><br><span class="line">Class cls3 &#x3D; object_getClass(p);</span><br><span class="line"></span><br><span class="line">NSLog(@&quot;%p %p %p&quot;, cls1, cls2, cls3); &#x2F;&#x2F;打印结果相同 只有一个类对象</span><br><span class="line"></span><br><span class="line">Class cls4 &#x3D; objcet_getClass(cls3);</span><br></pre></td></tr></table></figure>
+
+<p>实例对象   – <code>p</code><br>类对象       – <code>cls1</code><br>元类对象   – <code>cls4</code></p>
+<p>实例对象所属的类  -&gt; 类对象（<code>class</code>）<br>类对象所属的类      -&gt; 元类    （<code>meta-class</code>）<br>元类所属                  -&gt; 根元类（基类的<code>meta-class</code>）<br>根元类所属              -&gt; 自己</p>
+<ul>
+<li><p>根元类的父类是<code>NSObject</code> ，<code>NSObject</code> 的父类是 <code>nil</code></p>
+</li>
+<li><p><code>Class</code> 的 <code>superclass</code> 指向父类的 <code>class</code>，如果没有父类，<code>superclasss</code> 指针为 <code>nil</code></p>
+</li>
+<li><p><code>meta-class</code> 的 <code>superclass</code> 指向父类的 <code>meta-class</code>，基类的 <code>meta-class</code> 的 <code>superclass</code> 指向基类的 <code>class</code></p>
+</li>
+</ul>
+<h4 id="实例对象调用对象方法"><a href="#实例对象调用对象方法" class="headerlink" title="实例对象调用对象方法"></a>实例对象调用对象方法</h4><p><img src="/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1%E8%B0%83%E7%94%A8%E5%AF%B9%E8%B1%A1%E6%96%B9%E6%B3%95.png" alt="实例对象调用对象方法"></p>
+<p>对于 <code>student</code> 来说，并不知道 <code>abc</code> 方法在哪里，唯一知道的就是可以去它的 <code>class对象</code> 里找</p>
+<p>先通过 <code>isa</code> 指针进入 <code>Student</code> 类的 <code>class对象</code>，如果在其中找到了 <code>abc</code> 就直接进行调动，调用过程结束</p>
+<p>没有找到的话，就通过<code> class对象</code>的 <code>superclass</code> 指针进入 <code>Student</code> 类的父类，也就是 <code>Person</code>类的 <code>class对象</code>，重复上一步的查找逻辑</p>
+<p>一层层往上找，最终到基类，也就是 <code>NSObject</code> 类的 <code>class对象</code>，还没找到的话，由于它的 <code>superclass</code> 为 nil，最终就会报错 <code>[ERROR: unrecognized selector sent to instance]</code>，调用结束</p>
+<h4 id="类对象调用类方法"><a href="#类对象调用类方法" class="headerlink" title="类对象调用类方法"></a>类对象调用类方法</h4><p><img src="/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/%E7%B1%BB%E5%AF%B9%E8%B1%A1%E8%B0%83%E7%94%A8%E7%B1%BB%E6%96%B9%E6%B3%95.png" alt="类对象调用类方法"></p>
+<p>对于<code> Student</code>类来说，并不知道 <code>abc</code> 方法在哪里，我们知道类方法放在 <code>meta-class</code>对象里面</p>
+<p>首先通过 <code>Student</code> 的 <code>class对象</code> 的 <code>isa</code> 指针找到其 <code>meta-class</code>对象，然后在方法列表里找是否有<code>abc</code>，如果有的话就调用，调用结束</p>
+<p>如果没有的话，就通过 <code>meta-class</code> 对象的 <code>superclass</code> 指针找到 <code>Student</code> 的父类 <code>Person</code> 的<code>meta-class</code>对象，然后查找<code>abc</code>方法，如果有的话就调用，调用结束</p>
+<p>没有的话，通过<code>meta-class</code>对象的<code>superclass</code>指针一层层往上查找</p>
+<p>如果到了基类<code>（NSObject）</code>的<code>meta-class</code>还没找到<code>abc</code>，接下来 <code>superclass</code> 指针会找到 <code>NSObject</code> 的<code>class对象</code>，此时会继续在 <code>NSObject</code> 的 <code>class对象</code> 里面，寻找 <code>abc</code>，如果找到就会调用</p>
+<p>如果没有找到，由于此时 <code>superclass</code> 是 <code>nil</code> ，最终系统会报错</p>
+<h4 id="验证isa指针指向"><a href="#验证isa指针指向" class="headerlink" title="验证isa指针指向"></a>验证isa指针指向</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LGPerson *person &#x3D; [[LGPerson alloc] init];</span><br><span class="line">Class personClass &#x3D; [LGPerson class];</span><br><span class="line">Class personMetaClass &#x3D; object_getClass(personClass);</span><br><span class="line">NSLog(@&quot;%p %p %p&quot;, person, personClass, personMetaClass);</span><br></pre></td></tr></table></figure>
+
+<p>打断点，LLDB调试打印 <code>person</code> 对象的 <code>isa</code> 指针</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p&#x2F;x person-&gt;isa</span><br><span class="line">(Class) $1 &#x3D; 0x000001a1044bd715 LGPerson</span><br><span class="line">(lldb) p&#x2F;x personClass</span><br><span class="line">(Class) $2 &#x3D; 0x00000001044bd710 LGPerson</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>p/x</code> 命令打印指针，<code>/</code>后面是打印参数，<code>x</code> 表示用 16 进制输出</p>
+<p>可以看到输出结果并不相等</p>
+<p>实例对象 <code>person 的 isa = 0x000001a1044bd715</code></p>
+<p>类对象 <code>personClass = 0x00000001044bd710</code></p>
+<p>从 64bit 开始，<code>isa</code> 需要进行一次位运算，才能计算出 <code>class对象</code> 的地址，系统提供了 <code>ISA_MASK</code>，在 <a target="_blank" rel="noopener" href="https://opensource.apple.com/tarballs/objc4/">objc4</a> 的源码中可以找到</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">objc_object::ISA() </span><br><span class="line">&#123;</span><br><span class="line">    assert(!isTaggedPointer()); </span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SUPPORT_INDEXED_ISA</span></span><br><span class="line">    <span class="keyword">if</span> (isa.nonpointer) &#123;</span><br><span class="line">        <span class="keyword">uintptr_t</span> slot = isa.indexcls;</span><br><span class="line">        <span class="keyword">return</span> classForIndex((<span class="keyword">unsigned</span>)slot);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (Class)isa.bits;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="keyword">return</span> (Class)(isa.bits &amp; ISA_MASK);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="meta-keyword">if</span> __arm64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MASK        0x0000000ffffffff8ULL</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">elif</span> __x86_64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MASK        0x00007ffffffffff8ULL</span></span><br></pre></td></tr></table></figure>
+
+<p>验证结果，通过和 <code>ISA_MASK</code>进行一次 <code>&amp;</code> 运算，得到了类对象 <code>personClass</code> 的地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p&#x2F;x 0x000001a1044bd715 &amp; 0x0000000ffffffff8ULL</span><br><span class="line">(unsigned long long) $4 &#x3D; 0x00000001044bd710</span><br></pre></td></tr></table></figure>
+
+<h4 id="objc-class"><a href="#objc-class" class="headerlink" title="objc_class"></a>objc_class</h4><p>查看源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">objc_class</span> :</span> objc_object &#123;</span><br><span class="line">    <span class="comment">// Class ISA;			//isa占8字节</span></span><br><span class="line">    Class superclass; <span class="comment">//8字节</span></span><br><span class="line">    <span class="keyword">cache_t</span> cache;    <span class="comment">//16字节         // formerly cache pointer and vtable</span></span><br><span class="line">    <span class="keyword">class_data_bits_t</span> bits;    <span class="comment">// class_rw_t * plus custom rr/alloc flags</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">class_rw_t</span> *<span class="title">data</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> bits.data();</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看到 <code>class_rw_t</code> 看字面意思是可读可写的表，进入查看</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">class_rw_t</span> &#123;</span></span><br><span class="line">    <span class="comment">// Be warned that Symbolication knows the layout of this structure.</span></span><br><span class="line">    <span class="keyword">uint32_t</span> flags;</span><br><span class="line">    <span class="keyword">uint32_t</span> version;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">class_ro_t</span> *ro;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">method_array_t</span> methods;				<span class="comment">//方法列表</span></span><br><span class="line">    <span class="keyword">property_array_t</span> properties;  <span class="comment">//属性列表</span></span><br><span class="line">    <span class="keyword">protocol_array_t</span> protocols;   <span class="comment">//协议列表</span></span><br></pre></td></tr></table></figure>
+
+<p>方法、属性、协议信息都放在这里，还有一个 <code>class_ro_t</code> 只读表，进入查看哪些是只读的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">class_ro_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> flags;</span><br><span class="line">    <span class="keyword">uint32_t</span> instanceStart;</span><br><span class="line">    <span class="keyword">uint32_t</span> instanceSize;	<span class="comment">//实例对象size</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __LP64__</span></span><br><span class="line">    <span class="keyword">uint32_t</span> reserved;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> * ivarLayout;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * name;			<span class="comment">//类名</span></span><br><span class="line">    <span class="keyword">method_list_t</span> * baseMethodList;</span><br><span class="line">    <span class="keyword">protocol_list_t</span> * baseProtocols; <span class="comment">//成员变量描述信息，如名称，类型等</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">ivar_list_t</span> * ivars;</span><br></pre></td></tr></table></figure>
+
+<h4 id="通过MachO文件查找类和方法列表"><a href="#通过MachO文件查找类和方法列表" class="headerlink" title="通过MachO文件查找类和方法列表"></a>通过MachO文件查找类和方法列表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">   Person *p &#x3D; [[Person alloc] init];</span><br><span class="line">   p.name &#x3D; @&quot;pname&quot;;</span><br><span class="line">   p.age  &#x3D; 20;</span><br><span class="line">   NSLog(@&quot;%p&quot;, [p class]); &#x2F;&#x2F;0x100cc9718</span><br><span class="line">-&gt; NSLog(@&quot;end&quot;);</span><br><span class="line">   </span><br></pre></td></tr></table></figure>
+
+<p><code>image list</code> 查看偏移量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) image list</span><br><span class="line">[  0] E4FC76C2-878C-31CA-AB74-26EF8D1204D5 0x0000000100cc0000 &#x2F;</span><br><span class="line">xxx&#x2F;Build&#x2F;Products&#x2F;Debug-iphoneos&#x2F;Test.app&#x2F;Test </span><br></pre></td></tr></table></figure>
+
+<p>计算内存地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p&#x2F;x 0x100cc9718-0x0000000100cc0000</span><br><span class="line">(long) $0 &#x3D; 0x0000000000009718</span><br></pre></td></tr></table></figure>
+
+<p>将<code>Products/Debug-iphoneos/Test.app/Test</code> 目录下的可执行文件拖入到 <code>MachOView</code></p>
+<p><img src="/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/MachOView.jpg" alt="MachOView"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013480070/article/details/100154183">对象的本质（下）详解isa&amp;superclass指针</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/19/OC%E5%AF%B9%E8%B1%A1%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -300,10 +842,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2020-11-19 11:40:39 / 修改时间：14:41:51" itemprop="dateCreated datePublished" datetime="2020-11-19T11:40:39+08:00">2020-11-19</time>
+      <time title="创建时间：2020-11-19 11:40:39" itemprop="dateCreated datePublished" datetime="2020-11-19T11:40:39+08:00">2020-11-19</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-04 09:22:32" itemprop="dateModified" datetime="2020-12-04T09:22:32+08:00">2020-12-04</time>
+      </span>
 
   
 </div>
@@ -330,7 +878,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NSObject *obj &#x3D; [[NSObject alloc] init];</span><br><span class="line">size_t size2 &#x3D; malloc_size((__bridge const void *)(obj));</span><br><span class="line">NSLog(@&quot;对象obj所指向的的内存空间大小：%zd&quot;,size2); &#x2F;&#x2F;16</span><br></pre></td></tr></table></figure>
 
 <p>系统为实例对象分配的内存空间，最小为16个字节</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">size_t instanceSize(size_t extraBytes) &#123;</span><br><span class="line">    &#x2F;&#x2F;实例对象内部成员变量所占空间大小 extraBytes通常为0</span><br><span class="line">    size_t size &#x3D; alignedInstanceSize() + extraBytes;</span><br><span class="line">    &#x2F;&#x2F; CF requires all objects be at least 16 bytes.</span><br><span class="line">    if (size &lt; 16) size &#x3D; 16; &#x2F;&#x2F;系统为该实例对象分配的内存空间大小</span><br><span class="line">    return size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">instanceSize</span><span class="params">(<span class="keyword">size_t</span> extraBytes)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//实例对象内部成员变量所占空间大小 extraBytes通常为0</span></span><br><span class="line">    <span class="keyword">size_t</span> size = alignedInstanceSize() + extraBytes;</span><br><span class="line">    <span class="comment">// CF requires all objects be at least 16 bytes.</span></span><br><span class="line">    <span class="keyword">if</span> (size &lt; <span class="number">16</span>) size = <span class="number">16</span>; <span class="comment">//系统为该实例对象分配的内存空间大小</span></span><br><span class="line">    <span class="keyword">return</span> size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h4><p><code>class_getInstanceSize</code> 获取一个objc类的实例的实际大小，这个大小可以理解为创建这个实例对象至少需要多少空间</p>
 <p><code>malloc_size</code> 得到一个指针所指向的内存空间的大小，利用这个可以得到对象所占用的内存大小</p>
@@ -341,7 +889,7 @@
 <h4 id="LLDB查看内存"><a href="#LLDB查看内存" class="headerlink" title="LLDB查看内存"></a>LLDB查看内存</h4><p><img src="/2020/11/19/OC%E5%AF%B9%E8%B1%A1%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/alloc.png" alt="alloc"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x283d32220-0x283d32220-0x283d32220</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(lldb) po p</span><br><span class="line">&lt;LGPerson: 0x283d32220&gt;</span><br><span class="line">(lldb) x p</span><br><span class="line">0x283d32220: 69 17 77 02 01 00 00 03 0a 00 00 00 64 00 00 00  i.w.........d...</span><br><span class="line">0x283d32230: 80 00 77 02 01 00 00 00 00 00 00 00 00 00 00 00  ..w.............</span><br><span class="line">(lldb) po 0x12</span><br><span class="line">18</span><br><span class="line">(lldb) po 0x64</span><br><span class="line">100</span><br><span class="line">(lldb) po 0x0102770080</span><br><span class="line">a</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(lldb) po p</span><br><span class="line">&lt;LGPerson: <span class="number">0x283d32220</span>&gt;</span><br><span class="line">(lldb) x p</span><br><span class="line"><span class="number">0x283d32220</span>: <span class="number">69</span> <span class="number">17</span> <span class="number">77</span> <span class="number">02</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">03</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">64</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  i.w.........d...</span><br><span class="line"><span class="number">0x283d32230</span>: <span class="number">80</span> <span class="number">00</span> <span class="number">77</span> <span class="number">02</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ..w.............</span><br><span class="line">(lldb) po <span class="number">0x12</span></span><br><span class="line"><span class="number">18</span></span><br><span class="line">(lldb) po <span class="number">0x64</span></span><br><span class="line"><span class="number">100</span></span><br><span class="line">(lldb) po <span class="number">0x0102770080</span></span><br><span class="line">a</span><br></pre></td></tr></table></figure>
 
 <p>前8位<code>69 17 77 02 01 00 00 03</code> 是<code>isa</code>的内存8个字节</p>
 <p><code>0a 00 00 00</code> 是 <code>age</code> 占4个字节</p>
@@ -478,7 +1026,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-11-18 18:17:01" itemprop="dateModified" datetime="2020-11-18T18:17:01+08:00">2020-11-18</time>
+        <time title="修改时间：2020-12-01 15:35:36" itemprop="dateModified" datetime="2020-12-01T15:35:36+08:00">2020-12-01</time>
       </span>
 
   
@@ -531,7 +1079,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g -d				#直接生成页面发布</span><br></pre></td></tr></table></figure>
 
 <h5 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h5><p>调试的时候可以边修改，边刷新查看</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean			#清除缓存</span><br><span class="line">hexo g					#生成静态页面</span><br><span class="line">hexo s --debug  #调试模式 http:&#x2F;&#x2F;localhost:4000&#x2F;进行访问</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean			#清除缓存</span><br><span class="line">hexo g				#生成静态页面</span><br><span class="line">hexo s --debug  #调试模式 http:&#x2F;&#x2F;localhost:4000&#x2F;进行访问</span><br></pre></td></tr></table></figure>
 
 <p>调试模式有时会出现端口占用情况</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo lsof -i :4000</span><br><span class="line">sudo kill -9 进程PID</span><br></pre></td></tr></table></figure>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="dylddyld ：动态库链接器，负责加载程序和程序依赖的动态库，内核读取 Mach-O 文件后将读取内容交给 dyld 加载，dyld 加载完毕后才会执行 main 函数 新建项目，在 main 函数中打断点，通过 bt 查看调用栈，看到 App 启动后会执行 libdyld.dylib 的 start 操 作，这边调用栈的信息比较少  继续在  ViewController 中重写 load">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dyld加载流程">
+<meta property="og:url" content="http://example.com/2020/12/07/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="dylddyld ：动态库链接器，负责加载程序和程序依赖的动态库，内核读取 Mach-O 文件后将读取内容交给 dyld 加载，dyld 加载完毕后才会执行 main 函数 新建项目，在 main 函数中打断点，通过 bt 查看调用栈，看到 App 启动后会执行 libdyld.dylib 的 start 操 作，这边调用栈的信息比较少  继续在  ViewController 中重写 load">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/%E5%90%AF%E5%8A%A8main%E6%96%AD%E7%82%B9.jpg">
+<meta property="og:image" content="http://example.com/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/%E5%90%AF%E5%8A%A8load%E6%96%AD%E7%82%B9.jpg">
+<meta property="article:published_time" content="2020-12-07T03:48:03.000Z">
+<meta property="article:modified_time" content="2020-12-07T10:02:05.467Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/%E5%90%AF%E5%8A%A8main%E6%96%AD%E7%82%B9.jpg">
+
+
+<link rel="canonical" href="http://example.com/2020/12/07/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>dyld加载流程 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#dyld"><span class="nav-number">1.</span> <span class="nav-text">dyld</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dyldbootstrap-start"><span class="nav-number">2.</span> <span class="nav-text">dyldbootstrap::start</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dyld-main"><span class="nav-number">3.</span> <span class="nav-text">dyld::_main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#initializeMainExecutable"><span class="nav-number">4.</span> <span class="nav-text">initializeMainExecutable</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/07/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          dyld加载流程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-12-07 11:48:03 / 修改时间：18:02:05" itemprop="dateCreated datePublished" datetime="2020-12-07T11:48:03+08:00">2020-12-07</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="dyld"><a href="#dyld" class="headerlink" title="dyld"></a>dyld</h4><p><code>dyld</code> ：动态库链接器，负责加载程序和程序依赖的动态库，内核读取 <code>Mach-O</code> 文件后将读取内容交给 <code>dyld</code> 加载，<code>dyld</code> 加载完毕后才会执行 <code>main</code> 函数</p>
+<p>新建项目，在 <code>main</code> 函数中打断点，通过 <code>bt</code> 查看调用栈，看到 <code>App</code> 启动后会执行 <code>libdyld.dylib</code> 的 <code>start</code> 操</p>
+<p>作，这边调用栈的信息比较少</p>
+<p><img src="/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/%E5%90%AF%E5%8A%A8main%E6%96%AD%E7%82%B9.jpg" alt="启动main断点"></p>
+<p>继续在  <code>ViewController</code> 中重写 <code>load</code> 方法 ，<code>load</code> 方法打断点，通过 <code>bt</code> 查看调用栈，发现一个 <code>_dyld_start</code> 的调用</p>
+<p><img src="/dyld%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B/%E5%90%AF%E5%8A%A8load%E6%96%AD%E7%82%B9.jpg" alt="启动load断点"></p>
+<p><code>dyld</code> 源码中搜索 <code>_dyld_start</code> ，可以在 <code>dyldStartup.s</code> 文件中找到 <code>_dyld_start</code> 的汇编实现，文件中按照 <code>i386</code>、<code>x86_64</code>、<code>arm64</code>、<code>arm</code> 不同架构做了逻辑处理</p>
+<p>查看 <code>arm64</code> 架构下汇编源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> __arm64__</span></span><br><span class="line">	.text</span><br><span class="line">	.align <span class="number">2</span></span><br><span class="line">	.globl __dyld_start</span><br><span class="line">__dyld_start:</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">	<span class="comment">// call dyldbootstrap::start(app_mh, argc, argv, dyld_mh, &amp;startGlue)</span></span><br><span class="line">	bl	__ZN13dyldbootstrap5startEPKN5dyld311MachOLoadedEiPPKcS3_Pm</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">// __arm64__</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>找到关键部分代码，看到 <code>bl</code> 跳转指令，看注释信息，这边会调用 <code>dyldbootstrap::start</code> </p>
+<h4 id="dyldbootstrap-start"><a href="#dyldbootstrap-start" class="headerlink" title="dyldbootstrap::start"></a>dyldbootstrap::start</h4><p>【1】<code>dyldbootstrap::start</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// call dyldbootstrap::start(app_mh, argc, argv, dyld_mh, &amp;startGlue)</span></span><br><span class="line">	bl	__ZN13dyldbootstrap5startEPKN5dyld311MachOLoadedEiPPKcS3_Pm</span><br></pre></td></tr></table></figure>
+
+<p>源码中搜索 <code>dyldbootstrap</code> 命名空间的 <code>start</code> 方法</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">uintptr_t</span> <span class="title">start</span><span class="params">(<span class="keyword">const</span> dyld3::MachOLoaded* appsMachHeader, <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* argv[],</span></span></span><br><span class="line"><span class="function"><span class="params">				<span class="keyword">const</span> dyld3::MachOLoaded* dyldsMachHeader, <span class="keyword">uintptr_t</span>* startGlue)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Emit kdebug tracepoint to indicate dyld bootstrap has started &lt;rdar://46878536&gt;</span></span><br><span class="line">    dyld3::kdebug_trace_dyld_marker(DBG_DYLD_TIMING_BOOTSTRAP_START, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// if kernel had to slide dyld, we need to fix up load sensitive locations</span></span><br><span class="line">	<span class="comment">// we have to do this before using any global variables</span></span><br><span class="line">    rebaseDyld(dyldsMachHeader);</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="comment">// set up random value for stack canary</span></span><br><span class="line">	__guard_setup(apple);</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">	<span class="comment">// now that we are done bootstrapping dyld, call dyld&#x27;s main</span></span><br><span class="line">	<span class="keyword">uintptr_t</span> appsSlide = appsMachHeader-&gt;getSlide();</span><br><span class="line">	<span class="keyword">return</span> dyld::_main((macho_header*)appsMachHeader, appsSlide, argc, argv, envp, apple, startGlue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>dyldbootstrap::start</code> 主要操作：</p>
+<ol>
+<li><p>调用 <code>rebaseDyld()</code> dyld 重定位</p>
+</li>
+<li><p><code>__guard_setup</code> 栈溢出保护</p>
+</li>
+<li><p><code>dyld::_main</code> 进入 <code>dyld</code> 的 <code>_main</code> 函数</p>
+</li>
+</ol>
+<h4 id="dyld-main"><a href="#dyld-main" class="headerlink" title="dyld::_main"></a>dyld::_main</h4><p>【2】<code>dyld::_main</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Entry point for dyld.  The kernel loads dyld and jumps to __dyld_start which</span></span><br><span class="line"><span class="comment">// sets up some registers and call this function.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Returns address of main() in target program which __dyld_start jumps to</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">uintptr_t</span></span><br><span class="line">_main(<span class="keyword">const</span> macho_header* mainExecutableMH, <span class="keyword">uintptr_t</span> mainExecutableSlide, </span><br><span class="line">		<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* argv[], <span class="keyword">const</span> <span class="keyword">char</span>* envp[], <span class="keyword">const</span> <span class="keyword">char</span>* apple[], </span><br><span class="line">		<span class="keyword">uintptr_t</span>* startGlue)</span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">    <span class="comment">//【1】初始化程序运行环境</span></span><br><span class="line">    <span class="comment">// Grab the cdHash of the main executable from the environment</span></span><br><span class="line">	<span class="keyword">uint8_t</span> mainExecutableCDHashBuffer[<span class="number">20</span>];</span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">uint8_t</span>* mainExecutableCDHash = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="keyword">if</span> ( hexToBytes(_simple_getenv(apple, <span class="string">&quot;executable_cdhash&quot;</span>), <span class="number">40</span>, mainExecutableCDHashBuffer) )</span><br><span class="line">		mainExecutableCDHash = mainExecutableCDHashBuffer;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="keyword">uintptr_t</span> result = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">//获取主程序的macho_header结构以及主程序的slide偏移值</span></span><br><span class="line">	sMainExecutableMachHeader = mainExecutableMH;</span><br><span class="line">	sMainExecutableSlide = mainExecutableSlide;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	CRSetCrashLogMessage(<span class="string">&quot;dyld: launch started&quot;</span>);</span><br><span class="line">	<span class="comment">//设置上下文信息</span></span><br><span class="line">	setContext(mainExecutableMH, argc, argv, envp, apple);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Pickup the pointer to the exec path.</span></span><br><span class="line">	<span class="comment">//获取主程序路径</span></span><br><span class="line">	sExecPath = _simple_getenv(apple, <span class="string">&quot;executable_path&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// &lt;rdar://problem/13868260&gt; Remove interim apple[0] transition code from dyld</span></span><br><span class="line">	<span class="keyword">if</span> (!sExecPath) sExecPath = apple[<span class="number">0</span>];</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取进程名称</span></span><br><span class="line">	<span class="comment">// Remember short name of process for later logging</span></span><br><span class="line">	sExecShortName = ::<span class="built_in">strrchr</span>(sExecPath, <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">	<span class="keyword">if</span> ( sExecShortName != <span class="literal">NULL</span> )</span><br><span class="line">		++sExecShortName;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		sExecShortName = sExecPath;</span><br><span class="line">	</span><br><span class="line">	  <span class="comment">//配置进程受限模式</span></span><br><span class="line">    configureProcessRestrictions(mainExecutableMH, envp);</span><br><span class="line">	...</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//检测环境变量</span></span><br><span class="line">		checkEnvironmentVariables(envp);</span><br><span class="line">		defaultUninitializedFallbackPaths(envp);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//如果设置了 DYLD_PRINT_OPTS 环境变量，则打印参数</span></span><br><span class="line">	<span class="keyword">if</span> ( sEnv.DYLD_PRINT_OPTS )</span><br><span class="line">		printOptions(argv);</span><br><span class="line">  <span class="comment">//如果设置了 DYLD_PRINT_ENV 环境变量，则打印环境变量</span></span><br><span class="line">	<span class="keyword">if</span> ( sEnv.DYLD_PRINT_ENV ) </span><br><span class="line">		printEnvironmentVariables(envp);</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取当前程序架构信息</span></span><br><span class="line">	getHostInfo(mainExecutableMH, mainExecutableSlide);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// load shared cache</span></span><br><span class="line">	<span class="comment">//【2】加载共享缓存 shared cache</span></span><br><span class="line">  <span class="comment">//检查共享缓存是否开启</span></span><br><span class="line">	checkSharedRegionDisable((dyld3::MachOLoaded*)mainExecutableMH, mainExecutableSlide);</span><br><span class="line">	<span class="keyword">if</span> ( gLinkContext.sharedRegionMode != ImageLoader::kDontUseSharedRegion ) &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> TARGET_OS_SIMULATOR</span></span><br><span class="line">		<span class="keyword">if</span> ( sSharedCacheOverrideDir)</span><br><span class="line">			mapSharedCache();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">		mapSharedCache();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		<span class="comment">// add dyld itself to UUID list</span></span><br><span class="line">		addDyldImageToUUIDList();</span><br><span class="line">		...</span><br><span class="line">		CRSetCrashLogMessage(sLoadingCrashMessage);</span><br><span class="line">		<span class="comment">// instantiate ImageLoader for main executable</span></span><br><span class="line">		<span class="comment">//【3】实例化主程序，并赋值给ImageLoader::LinkContext</span></span><br><span class="line">		sMainExecutable = instantiateFromLoadedImage(mainExecutableMH, mainExecutableSlide, sExecPath);</span><br><span class="line">		gLinkContext.mainExecutable = sMainExecutable;</span><br><span class="line">		gLinkContext.mainExecutableCodeSigned = hasCodeSignatureLoadCommand(mainExecutableMH);</span><br><span class="line">		...</span><br><span class="line"></span><br><span class="line">		<span class="comment">// load any inserted libraries</span></span><br><span class="line">		<span class="comment">//【4】加载插入的动态库</span></span><br><span class="line">		<span class="keyword">if</span>	( sEnv.DYLD_INSERT_LIBRARIES != <span class="literal">NULL</span> ) &#123;</span><br><span class="line">      <span class="comment">//遍历 DYLD_INSERT_LIBRARIES 环境变量</span></span><br><span class="line">			<span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* lib = sEnv.DYLD_INSERT_LIBRARIES; *lib != <span class="literal">NULL</span>; ++lib) </span><br><span class="line">				loadInsertedDylib(*lib);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// record count of inserted libraries so that a flat search will look at </span></span><br><span class="line">		<span class="comment">// inserted libraries, then main, then others.</span></span><br><span class="line">		sInsertedDylibCount = sAllImages.size()<span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// link main executable</span></span><br><span class="line">		<span class="comment">//【5】链接主程序</span></span><br><span class="line">		gLinkContext.linkingMainExecutable = <span class="literal">true</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SUPPORT_ACCELERATE_TABLES</span></span><br><span class="line">		<span class="keyword">if</span> ( mainExcutableAlreadyRebased ) &#123;</span><br><span class="line">			<span class="comment">// previous link() on main executable has already adjusted its internal pointers for ASLR</span></span><br><span class="line">			<span class="comment">// work around that by rebasing by inverse amount</span></span><br><span class="line">			sMainExecutable-&gt;rebase(gLinkContext, -mainExecutableSlide);</span><br><span class="line">		&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		link(sMainExecutable, sEnv.DYLD_BIND_AT_LAUNCH, <span class="literal">true</span>, ImageLoader::RPathChain(<span class="literal">NULL</span>, <span class="literal">NULL</span>), <span class="number">-1</span>);</span><br><span class="line">		sMainExecutable-&gt;setNeverUnloadRecursive();</span><br><span class="line">		<span class="keyword">if</span> ( sMainExecutable-&gt;forceFlat() ) &#123;</span><br><span class="line">			gLinkContext.bindFlat = <span class="literal">true</span>;</span><br><span class="line">			gLinkContext.prebindUsage = ImageLoader::kUseNoPrebinding;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//【6】链接插入的动态库</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">// link any inserted libraries</span></span><br><span class="line">		<span class="comment">// do this after linking main executable so that any dylibs pulled in by inserted </span></span><br><span class="line">		<span class="comment">// dylibs (e.g. libSystem) will not be in front of dylibs the program uses</span></span><br><span class="line">		<span class="keyword">if</span> ( sInsertedDylibCount &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="keyword">unsigned</span> <span class="keyword">int</span> i=<span class="number">0</span>; i &lt; sInsertedDylibCount; ++i) &#123;</span><br><span class="line">				ImageLoader* image = sAllImages[i+<span class="number">1</span>];</span><br><span class="line">				link(image, sEnv.DYLD_BIND_AT_LAUNCH, <span class="literal">true</span>, ImageLoader::RPathChain(<span class="literal">NULL</span>, <span class="literal">NULL</span>), <span class="number">-1</span>);</span><br><span class="line">				image-&gt;setNeverUnloadRecursive();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> ( gLinkContext.allowInterposing ) &#123;</span><br><span class="line">				<span class="comment">// only INSERTED libraries can interpose</span></span><br><span class="line">				<span class="comment">// register interposing info after all inserted libraries are bound so chaining works</span></span><br><span class="line">				<span class="keyword">for</span>(<span class="keyword">unsigned</span> <span class="keyword">int</span> i=<span class="number">0</span>; i &lt; sInsertedDylibCount; ++i) &#123;</span><br><span class="line">					ImageLoader* image = sAllImages[i+<span class="number">1</span>];</span><br><span class="line">					image-&gt;registerInterposing(gLinkContext);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		...</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//【7】链接所有插入的image后，执行弱符号绑定</span></span><br><span class="line">		</span><br><span class="line">		<span class="comment">// &lt;rdar://problem/12186933&gt; do weak binding only after all inserted images linked</span></span><br><span class="line">		sMainExecutable-&gt;weakBind(gLinkContext);</span><br><span class="line">		gLinkContext.linkingMainExecutable = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">		sMainExecutable-&gt;recursiveMakeDataReadOnly(gLinkContext);</span><br><span class="line"></span><br><span class="line">		CRSetCrashLogMessage(<span class="string">&quot;dyld: launch, running initializers&quot;</span>);</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">if</span> SUPPORT_OLD_CRT_INITIALIZATION</span></span><br><span class="line">		<span class="comment">// Old way is to run initializers via a callback from crt1.o</span></span><br><span class="line">		<span class="keyword">if</span> ( ! gRunInitializersOldWay ) </span><br><span class="line">			initializeMainExecutable(); </span><br><span class="line">	<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">		<span class="comment">//【8】执行所有初始化方法</span></span><br><span class="line">		<span class="comment">// run all initializers</span></span><br><span class="line">		initializeMainExecutable(); </span><br><span class="line">	<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		...</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//【9】查找主程序的入口并返回</span></span><br><span class="line">			<span class="comment">// find entry point for main executable</span></span><br><span class="line">			result = (<span class="keyword">uintptr_t</span>)sMainExecutable-&gt;getEntryFromLC_MAIN();</span><br><span class="line">			<span class="keyword">if</span> ( result != <span class="number">0</span> ) &#123;</span><br><span class="line">				<span class="comment">// main executable uses LC_MAIN, we need to use helper in libdyld to call into main()</span></span><br><span class="line">				<span class="keyword">if</span> ( (gLibSystemHelpers != <span class="literal">NULL</span>) &amp;&amp; (gLibSystemHelpers-&gt;version &gt;= <span class="number">9</span>) )</span><br><span class="line">					*startGlue = (<span class="keyword">uintptr_t</span>)gLibSystemHelpers-&gt;startGlueToCallExit;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					halt(<span class="string">&quot;libdyld.dylib support not present for LC_MAIN&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="comment">// main executable uses LC_UNIXTHREAD, dyld needs to let &quot;start&quot; in program set up for main()</span></span><br><span class="line">				result = (<span class="keyword">uintptr_t</span>)sMainExecutable-&gt;getEntryFromLC_UNIXTHREAD();</span><br><span class="line">				*startGlue = <span class="number">0</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>dyld::_main</code>主要操作：</p>
+<ol>
+<li>主程序运行环境初始化，获取当前运行架构</li>
+<li>加载共享缓存</li>
+<li>实例化主程序，赋值给 <code>ImageLoader::LinkContext</code></li>
+<li>加载插入的动态库</li>
+<li>链接主程序</li>
+<li>链接动态库</li>
+<li>弱符号绑定</li>
+<li>执行初始化方法</li>
+<li>寻找程序入口 <code>LC_MAIN</code></li>
+</ol>
+<ul>
+<li>分析第 3 步和第 8 步</li>
+</ul>
+<h4 id="initializeMainExecutable"><a href="#initializeMainExecutable" class="headerlink" title="initializeMainExecutable"></a>initializeMainExecutable</h4><p>执行初始化方法</p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/tarballs/dyld/">dyld750.6下载</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/12/04/objc-781%E7%BC%96%E8%AF%91/" rel="prev" title="objc-781编译">
+                  <i class="fa fa-chevron-left"></i> objc-781编译
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

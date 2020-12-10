@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="isa指针12345678910LGPerson *p  &#x3D; [LGPerson alloc];p.name &#x3D; @&quot;aa&quot;;Class cls1 &#x3D; [LGPerson class];Class cls2 &#x3D; p.class;Class cls3 &#x3D; object_getClass(p);NSLog(@&quot;%p %p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对象和方法底层原理">
+<meta property="og:url" content="http://example.com/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="isa指针12345678910LGPerson *p  &#x3D; [LGPerson alloc];p.name &#x3D; @&quot;aa&quot;;Class cls1 &#x3D; [LGPerson class];Class cls2 &#x3D; p.class;Class cls3 &#x3D; object_getClass(p);NSLog(@&quot;%p %p">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1%E8%B0%83%E7%94%A8%E5%AF%B9%E8%B1%A1%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="http://example.com/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/%E7%B1%BB%E5%AF%B9%E8%B1%A1%E8%B0%83%E7%94%A8%E7%B1%BB%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="http://example.com/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/MachOView.jpg">
+<meta property="article:published_time" content="2020-12-01T07:49:02.000Z">
+<meta property="article:modified_time" content="2020-12-04T04:35:24.593Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1%E8%B0%83%E7%94%A8%E5%AF%B9%E8%B1%A1%E6%96%B9%E6%B3%95.png">
+
+
+<link rel="canonical" href="http://example.com/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>对象和方法底层原理 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#isa%E6%8C%87%E9%92%88"><span class="nav-number">1.</span> <span class="nav-text">isa指针</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1%E8%B0%83%E7%94%A8%E5%AF%B9%E8%B1%A1%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">实例对象调用对象方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E5%AF%B9%E8%B1%A1%E8%B0%83%E7%94%A8%E7%B1%BB%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">类对象调用类方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81isa%E6%8C%87%E9%92%88%E6%8C%87%E5%90%91"><span class="nav-number">4.</span> <span class="nav-text">验证isa指针指向</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#objc-class"><span class="nav-number">5.</span> <span class="nav-text">objc_class</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87MachO%E6%96%87%E4%BB%B6%E6%9F%A5%E6%89%BE%E7%B1%BB%E5%92%8C%E6%96%B9%E6%B3%95%E5%88%97%E8%A1%A8"><span class="nav-number">6.</span> <span class="nav-text">通过MachO文件查找类和方法列表</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          对象和方法底层原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-01 15:49:02" itemprop="dateCreated datePublished" datetime="2020-12-01T15:49:02+08:00">2020-12-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-04 12:35:24" itemprop="dateModified" datetime="2020-12-04T12:35:24+08:00">2020-12-04</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="isa指针"><a href="#isa指针" class="headerlink" title="isa指针"></a>isa指针</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">LGPerson *p  &#x3D; [LGPerson alloc];</span><br><span class="line">p.name &#x3D; @&quot;aa&quot;;</span><br><span class="line"></span><br><span class="line">Class cls1 &#x3D; [LGPerson class];</span><br><span class="line">Class cls2 &#x3D; p.class;</span><br><span class="line">Class cls3 &#x3D; object_getClass(p);</span><br><span class="line"></span><br><span class="line">NSLog(@&quot;%p %p %p&quot;, cls1, cls2, cls3); &#x2F;&#x2F;打印结果相同 只有一个类对象</span><br><span class="line"></span><br><span class="line">Class cls4 &#x3D; objcet_getClass(cls3);</span><br></pre></td></tr></table></figure>
+
+<p>实例对象   – <code>p</code><br>类对象       – <code>cls1</code><br>元类对象   – <code>cls4</code></p>
+<p>实例对象所属的类  -&gt; 类对象（<code>class</code>）<br>类对象所属的类      -&gt; 元类    （<code>meta-class</code>）<br>元类所属                  -&gt; 根元类（基类的<code>meta-class</code>）<br>根元类所属              -&gt; 自己</p>
+<ul>
+<li><p>根元类的父类是<code>NSObject</code> ，<code>NSObject</code> 的父类是 <code>nil</code></p>
+</li>
+<li><p><code>Class</code> 的 <code>superclass</code> 指向父类的 <code>class</code>，如果没有父类，<code>superclasss</code> 指针为 <code>nil</code></p>
+</li>
+<li><p><code>meta-class</code> 的 <code>superclass</code> 指向父类的 <code>meta-class</code>，基类的 <code>meta-class</code> 的 <code>superclass</code> 指向基类的 <code>class</code></p>
+</li>
+</ul>
+<h4 id="实例对象调用对象方法"><a href="#实例对象调用对象方法" class="headerlink" title="实例对象调用对象方法"></a>实例对象调用对象方法</h4><p><img src="/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1%E8%B0%83%E7%94%A8%E5%AF%B9%E8%B1%A1%E6%96%B9%E6%B3%95.png" alt="实例对象调用对象方法"></p>
+<p>对于 <code>student</code> 来说，并不知道 <code>abc</code> 方法在哪里，唯一知道的就是可以去它的 <code>class对象</code> 里找</p>
+<p>先通过 <code>isa</code> 指针进入 <code>Student</code> 类的 <code>class对象</code>，如果在其中找到了 <code>abc</code> 就直接进行调动，调用过程结束</p>
+<p>没有找到的话，就通过<code> class对象</code>的 <code>superclass</code> 指针进入 <code>Student</code> 类的父类，也就是 <code>Person</code>类的 <code>class对象</code>，重复上一步的查找逻辑</p>
+<p>一层层往上找，最终到基类，也就是 <code>NSObject</code> 类的 <code>class对象</code>，还没找到的话，由于它的 <code>superclass</code> 为 nil，最终就会报错 <code>[ERROR: unrecognized selector sent to instance]</code>，调用结束</p>
+<h4 id="类对象调用类方法"><a href="#类对象调用类方法" class="headerlink" title="类对象调用类方法"></a>类对象调用类方法</h4><p><img src="/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/%E7%B1%BB%E5%AF%B9%E8%B1%A1%E8%B0%83%E7%94%A8%E7%B1%BB%E6%96%B9%E6%B3%95.png" alt="类对象调用类方法"></p>
+<p>对于<code> Student</code>类来说，并不知道 <code>abc</code> 方法在哪里，我们知道类方法放在 <code>meta-class</code>对象里面</p>
+<p>首先通过 <code>Student</code> 的 <code>class对象</code> 的 <code>isa</code> 指针找到其 <code>meta-class</code>对象，然后在方法列表里找是否有<code>abc</code>，如果有的话就调用，调用结束</p>
+<p>如果没有的话，就通过 <code>meta-class</code> 对象的 <code>superclass</code> 指针找到 <code>Student</code> 的父类 <code>Person</code> 的<code>meta-class</code>对象，然后查找<code>abc</code>方法，如果有的话就调用，调用结束</p>
+<p>没有的话，通过<code>meta-class</code>对象的<code>superclass</code>指针一层层往上查找</p>
+<p>如果到了基类<code>（NSObject）</code>的<code>meta-class</code>还没找到<code>abc</code>，接下来 <code>superclass</code> 指针会找到 <code>NSObject</code> 的<code>class对象</code>，此时会继续在 <code>NSObject</code> 的 <code>class对象</code> 里面，寻找 <code>abc</code>，如果找到就会调用</p>
+<p>如果没有找到，由于此时 <code>superclass</code> 是 <code>nil</code> ，最终系统会报错</p>
+<h4 id="验证isa指针指向"><a href="#验证isa指针指向" class="headerlink" title="验证isa指针指向"></a>验证isa指针指向</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LGPerson *person &#x3D; [[LGPerson alloc] init];</span><br><span class="line">Class personClass &#x3D; [LGPerson class];</span><br><span class="line">Class personMetaClass &#x3D; object_getClass(personClass);</span><br><span class="line">NSLog(@&quot;%p %p %p&quot;, person, personClass, personMetaClass);</span><br></pre></td></tr></table></figure>
+
+<p>打断点，LLDB调试打印 <code>person</code> 对象的 <code>isa</code> 指针</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p&#x2F;x person-&gt;isa</span><br><span class="line">(Class) $1 &#x3D; 0x000001a1044bd715 LGPerson</span><br><span class="line">(lldb) p&#x2F;x personClass</span><br><span class="line">(Class) $2 &#x3D; 0x00000001044bd710 LGPerson</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>p/x</code> 命令打印指针，<code>/</code>后面是打印参数，<code>x</code> 表示用 16 进制输出</p>
+<p>可以看到输出结果并不相等</p>
+<p>实例对象 <code>person 的 isa = 0x000001a1044bd715</code></p>
+<p>类对象 <code>personClass = 0x00000001044bd710</code></p>
+<p>从 64bit 开始，<code>isa</code> 需要进行一次位运算，才能计算出 <code>class对象</code> 的地址，系统提供了 <code>ISA_MASK</code>，在 <a target="_blank" rel="noopener" href="https://opensource.apple.com/tarballs/objc4/">objc4</a> 的源码中可以找到</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">objc_object::ISA() </span><br><span class="line">&#123;</span><br><span class="line">    assert(!isTaggedPointer()); </span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SUPPORT_INDEXED_ISA</span></span><br><span class="line">    <span class="keyword">if</span> (isa.nonpointer) &#123;</span><br><span class="line">        <span class="keyword">uintptr_t</span> slot = isa.indexcls;</span><br><span class="line">        <span class="keyword">return</span> classForIndex((<span class="keyword">unsigned</span>)slot);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (Class)isa.bits;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="keyword">return</span> (Class)(isa.bits &amp; ISA_MASK);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="meta-keyword">if</span> __arm64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MASK        0x0000000ffffffff8ULL</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">elif</span> __x86_64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MASK        0x00007ffffffffff8ULL</span></span><br></pre></td></tr></table></figure>
+
+<p>验证结果，通过和 <code>ISA_MASK</code>进行一次 <code>&amp;</code> 运算，得到了类对象 <code>personClass</code> 的地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p&#x2F;x 0x000001a1044bd715 &amp; 0x0000000ffffffff8ULL</span><br><span class="line">(unsigned long long) $4 &#x3D; 0x00000001044bd710</span><br></pre></td></tr></table></figure>
+
+<h4 id="objc-class"><a href="#objc-class" class="headerlink" title="objc_class"></a>objc_class</h4><p>查看源码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">objc_class</span> :</span> objc_object &#123;</span><br><span class="line">    <span class="comment">// Class ISA;			//isa占8字节</span></span><br><span class="line">    Class superclass; <span class="comment">//8字节</span></span><br><span class="line">    <span class="keyword">cache_t</span> cache;    <span class="comment">//16字节         // formerly cache pointer and vtable</span></span><br><span class="line">    <span class="keyword">class_data_bits_t</span> bits;    <span class="comment">// class_rw_t * plus custom rr/alloc flags</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">class_rw_t</span> *<span class="title">data</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> bits.data();</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看到 <code>class_rw_t</code> 看字面意思是可读可写的表，进入查看</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">class_rw_t</span> &#123;</span></span><br><span class="line">    <span class="comment">// Be warned that Symbolication knows the layout of this structure.</span></span><br><span class="line">    <span class="keyword">uint32_t</span> flags;</span><br><span class="line">    <span class="keyword">uint32_t</span> version;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">class_ro_t</span> *ro;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">method_array_t</span> methods;				<span class="comment">//方法列表</span></span><br><span class="line">    <span class="keyword">property_array_t</span> properties;  <span class="comment">//属性列表</span></span><br><span class="line">    <span class="keyword">protocol_array_t</span> protocols;   <span class="comment">//协议列表</span></span><br></pre></td></tr></table></figure>
+
+<p>方法、属性、协议信息都放在这里，还有一个 <code>class_ro_t</code> 只读表，进入查看哪些是只读的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">class_ro_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> flags;</span><br><span class="line">    <span class="keyword">uint32_t</span> instanceStart;</span><br><span class="line">    <span class="keyword">uint32_t</span> instanceSize;	<span class="comment">//实例对象size</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __LP64__</span></span><br><span class="line">    <span class="keyword">uint32_t</span> reserved;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint8_t</span> * ivarLayout;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * name;			<span class="comment">//类名</span></span><br><span class="line">    <span class="keyword">method_list_t</span> * baseMethodList;</span><br><span class="line">    <span class="keyword">protocol_list_t</span> * baseProtocols; <span class="comment">//成员变量描述信息，如名称，类型等</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">ivar_list_t</span> * ivars;</span><br></pre></td></tr></table></figure>
+
+<h4 id="通过MachO文件查找类和方法列表"><a href="#通过MachO文件查找类和方法列表" class="headerlink" title="通过MachO文件查找类和方法列表"></a>通过MachO文件查找类和方法列表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">   Person *p &#x3D; [[Person alloc] init];</span><br><span class="line">   p.name &#x3D; @&quot;pname&quot;;</span><br><span class="line">   p.age  &#x3D; 20;</span><br><span class="line">   NSLog(@&quot;%p&quot;, [p class]); &#x2F;&#x2F;0x100cc9718</span><br><span class="line">-&gt; NSLog(@&quot;end&quot;);</span><br><span class="line">   </span><br></pre></td></tr></table></figure>
+
+<p><code>image list</code> 查看偏移量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) image list</span><br><span class="line">[  0] E4FC76C2-878C-31CA-AB74-26EF8D1204D5 0x0000000100cc0000 &#x2F;</span><br><span class="line">xxx&#x2F;Build&#x2F;Products&#x2F;Debug-iphoneos&#x2F;Test.app&#x2F;Test </span><br></pre></td></tr></table></figure>
+
+<p>计算内存地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p&#x2F;x 0x100cc9718-0x0000000100cc0000</span><br><span class="line">(long) $0 &#x3D; 0x0000000000009718</span><br></pre></td></tr></table></figure>
+
+<p>将<code>Products/Debug-iphoneos/Test.app/Test</code> 目录下的可执行文件拖入到 <code>MachOView</code></p>
+<p><img src="/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/MachOView.jpg" alt="MachOView"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013480070/article/details/100154183">对象的本质（下）详解isa&amp;superclass指针</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/11/19/OC%E5%AF%B9%E8%B1%A1%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" rel="prev" title="OC对象底层原理">
+                  <i class="fa fa-chevron-left"></i> OC对象底层原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/12/01/Runtime%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" rel="next" title="Runtime底层原理">
+                  Runtime底层原理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
