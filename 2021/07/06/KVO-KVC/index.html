@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="KVCKVC 键值编码，一种间接访问对象属性的机制，通过字符串访问对象属性 setValue:forKey查找对应 key 的 setter 方法，顺序为：set&lt;Key&gt; -&gt; _set&lt;Key&gt; -&gt; setIs&lt;Key&gt; 查找到则直接设置属性的 value 如果没有，检查 accessInstanceVariableDirectly 是否允许访">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KVO KVC">
+<meta property="og:url" content="http://example.com/2021/07/06/KVO-KVC/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="KVCKVC 键值编码，一种间接访问对象属性的机制，通过字符串访问对象属性 setValue:forKey查找对应 key 的 setter 方法，顺序为：set&lt;Key&gt; -&gt; _set&lt;Key&gt; -&gt; setIs&lt;Key&gt; 查找到则直接设置属性的 value 如果没有，检查 accessInstanceVariableDirectly 是否允许访">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-06T03:39:21.000Z">
+<meta property="article:modified_time" content="2021-07-12T03:09:02.008Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2021/07/06/KVO-KVC/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>KVO KVC | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#KVC"><span class="nav-number">1.</span> <span class="nav-text">KVC</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#setValue-forKey"><span class="nav-number">1.1.</span> <span class="nav-text">setValue:forKey</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#valueforKey"><span class="nav-number">1.2.</span> <span class="nav-text">valueforKey:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KVO"><span class="nav-number">2.</span> <span class="nav-text">KVO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Swift-KVO"><span class="nav-number">3.</span> <span class="nav-text">Swift KVO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">面试题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%9B%B4%E6%8E%A5%E4%BF%AE%E6%94%B9%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E4%BC%9A%E8%A7%A6%E5%8F%91-KVO-%E5%90%97"><span class="nav-number">4.1.</span> <span class="nav-text">1、直接修改成员变量会触发 KVO 吗</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%89%8B%E5%8A%A8%E8%A7%A6%E5%8F%91-KVO"><span class="nav-number">4.2.</span> <span class="nav-text">2、手动触发 KVO</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E5%A6%82%E4%BD%95%E5%AF%B9%E5%8F%AF%E5%8F%98%E6%95%B0%E7%BB%84%E8%BF%9B%E8%A1%8C-KVO"><span class="nav-number">4.3.</span> <span class="nav-text">3、如何对可变数组进行 KVO</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/06/KVO-KVC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          KVO KVC
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-06 11:39:21" itemprop="dateCreated datePublished" datetime="2021-07-06T11:39:21+08:00">2021-07-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-07-12 11:09:02" itemprop="dateModified" datetime="2021-07-12T11:09:02+08:00">2021-07-12</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="KVC"><a href="#KVC" class="headerlink" title="KVC"></a>KVC</h4><p><code>KVC</code> 键值编码，一种间接访问对象属性的机制，通过字符串访问对象属性</p>
+<h5 id="setValue-forKey"><a href="#setValue-forKey" class="headerlink" title="setValue:forKey"></a>setValue:forKey</h5><p>查找对应 key 的 setter 方法，顺序为：<code>set&lt;Key&gt; -&gt; _set&lt;Key&gt; -&gt; setIs&lt;Key&gt;</code></p>
+<p>查找到则直接设置属性的 value</p>
+<p>如果没有，检查 <code>accessInstanceVariableDirectly</code> 是否允许访问成员变量</p>
+<p>如果 YES，则查找实例变量，顺序为：<code>_&lt;Key&gt; -&gt; _is&lt;Key&gt; -&gt; &lt;Key&gt; -&gt; &lt;isKey&gt;</code></p>
+<p>找到实例变量则赋值，否则执行 <code>setValueforUndefineKey:</code> 方法，抛出 <code>NSUndefinedKeyException</code></p>
+<h5 id="valueforKey"><a href="#valueforKey" class="headerlink" title="valueforKey:"></a>valueforKey:</h5><p>查找对应 key 的 getter 方法，顺序为：<code>get&lt;Key&gt; -&gt; &lt;key&gt; -&gt; is&lt;Key&gt; -&gt; _&lt;Key&gt;</code></p>
+<p>查找到直接返回结果</p>
+<p>如果没有，检查 <code>accessInstanceVariableDirectly</code> 是否允许访问成员变量</p>
+<p>如果 YES，则查找实例变量，顺序为：<code>_&lt;Key&gt; -&gt; _is&lt;Key&gt; -&gt; &lt;Key&gt; -&gt; &lt;isKey&gt;</code></p>
+<p>查找到直接返回结果，否则执行 <code>valueForUndefinedKey:</code> 方法，抛出 <code>NSUndefinedKeyException</code></p>
+<h4 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h4><p><code>KeyValueObserving</code> 键值观察者，可以监听对象属性的改变</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">self.person &#x3D; [[LGPerson alloc] init];</span><br><span class="line">self.person.age &#x3D; 1;</span><br><span class="line">NSKeyValueObservingOptions options &#x3D; NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;</span><br><span class="line">[self.person addObserver:self forKeyPath:@&quot;age&quot; options:options context:@&quot;1&quot;];</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (void)touchesBegan:(NSSet&lt;UITouch *&gt; *)touches withEvent:(UIEvent *)event &#123;</span><br><span class="line">    self.person.age &#x3D; 20;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary&lt;NSKeyValueChangeKey,id&gt; *)change context:(void *)context &#123;</span><br><span class="line">    NSLog(@&quot;%@ %@ %@ %@&quot;, keyPath, object, change, context);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加观察者后，KVO 会在运行时动态创建一个子类 <code>NSKVONotifing_XXX</code>，将对象的 isa 指向新创建的类</p>
+<p>修改对象属性时，会先调用子类 <code>NSKVONotifing_XXX</code> 的 setter 方法</p>
+<p>子类 setter 内部会调用：</p>
+<ol>
+<li><code>willChangeValueForKey:</code></li>
+<li>父类原来的 setter</li>
+<li><code>didChangeValueForKey:</code></li>
+<li>内部会触发监听器的监听方法 <code>(observeValueForKeyPath:ofObject:change:context:)</code></li>
+</ol>
+<h4 id="Swift-KVO"><a href="#Swift-KVO" class="headerlink" title="Swift KVO"></a>Swift KVO</h4><p>kVO 是一个纯 OC 特性，swift class 需要在声明时加 <code>@objcMembers</code> 关键字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@objcMembers class OCClass: NSObject &#123;</span><br><span class="line">    dynamic var name: String</span><br><span class="line">    init(name: String) &#123;</span><br><span class="line">        self.name &#x3D; name</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>观察的闭包需要强引用，否则函数离开这个观察闭包后会被回收</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">var occlass: OCClass?</span><br><span class="line">var observation: NSKeyValueObservation?</span><br><span class="line">  </span><br><span class="line">occlass &#x3D; OCClass(name: &quot;aa&quot;)</span><br><span class="line">observation &#x3D; occlass!.observe(\.name) &#123; obj, changed in</span><br><span class="line">    let new &#x3D; obj.name</span><br><span class="line">    print(&quot;new:\(new)&quot;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">override func touchesBegan(_ touches: Set&lt;UITouch&gt;, with event: UIEvent?) &#123;</span><br><span class="line">    occlass?.name &#x3D; &quot;1&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h4 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h4><h5 id="1、直接修改成员变量会触发-KVO-吗"><a href="#1、直接修改成员变量会触发-KVO-吗" class="headerlink" title="1、直接修改成员变量会触发 KVO 吗"></a>1、直接修改成员变量会触发 KVO 吗</h5><p>不会，没有调用重写后的 set 方法</p>
+<h5 id="2、手动触发-KVO"><a href="#2、手动触发-KVO" class="headerlink" title="2、手动触发 KVO"></a>2、手动触发 KVO</h5><p>手动调用 <code>willChangeValueForKey:</code> ，<code>didChangeValueForKey:</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[self.person willChangeValueForKey:@&quot;age&quot;];</span><br><span class="line">self.person-&gt;_age &#x3D; 2;</span><br><span class="line">[self.person didChangeValueForKey:@&quot;age&quot;];</span><br></pre></td></tr></table></figure>
+
+<h5 id="3、如何对可变数组进行-KVO"><a href="#3、如何对可变数组进行-KVO" class="headerlink" title="3、如何对可变数组进行 KVO"></a>3、如何对可变数组进行 KVO</h5><p>可变数组添加元素 <code>addObject:</code> 是不会调用 <code>setter</code> 方法的，不会触发 KVO 通知回调</p>
+<p>需要使用 <code>mutableArrayValueForKey</code> 获取要操作的可变数组，添加元素</p>
+<p>  <code>[[self mutableArrayValueForKey:@“arr”] addObject:item]</code> </p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/05/27/RunLoop/" rel="prev" title="RunLoop">
+                  <i class="fa fa-chevron-left"></i> RunLoop
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/07/20/%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92%E5%92%8C%E5%93%8D%E5%BA%94/" rel="next" title="事件传递和响应">
+                  事件传递和响应 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

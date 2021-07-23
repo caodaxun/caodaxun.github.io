@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="内存分布iOS 中的内存区域从低地址到高地址：.text 段（代码区）、.data 段（已初始化全局变量、静态变量）、.bss 段（未初始化全局变量、静态变量）、堆区、栈区   堆区： 低地址向高地址拓展数据结构，不连续的内存区域，先进先出，由程序员动态分配和释放，通过 alloc 分配的对象 缺点：手动管理，速度慢，容易产生内存碎片 栈区： 高地址向低地址拓展的数据结构，连续内存区域，后进先出，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存管理">
+<meta property="og:url" content="http://example.com/2021/07/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="内存分布iOS 中的内存区域从低地址到高地址：.text 段（代码区）、.data 段（已初始化全局变量、静态变量）、.bss 段（未初始化全局变量、静态变量）、堆区、栈区   堆区： 低地址向高地址拓展数据结构，不连续的内存区域，先进先出，由程序员动态分配和释放，通过 alloc 分配的对象 缺点：手动管理，速度慢，容易产生内存碎片 栈区： 高地址向低地址拓展的数据结构，连续内存区域，后进先出，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/07/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/内存分布.png">
+<meta property="og:image" content="http://example.com/2021/07/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/nsnumber.png">
+<meta property="article:published_time" content="2021-07-23T02:06:38.000Z">
+<meta property="article:modified_time" content="2021-07-23T08:51:00.140Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/07/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/内存分布.png">
+
+
+<link rel="canonical" href="http://example.com/2021/07/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>内存管理 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83"><span class="nav-number">1.</span> <span class="nav-text">内存分布</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TaggedPointer"><span class="nav-number">2.</span> <span class="nav-text">TaggedPointer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NONPOINTER-ISA"><span class="nav-number">3.</span> <span class="nav-text">NONPOINTER_ISA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%A3%E5%88%97%E8%A1%A8"><span class="nav-number">4.</span> <span class="nav-text">散列表</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#retain"><span class="nav-number">4.1.</span> <span class="nav-text">retain</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#release"><span class="nav-number">4.2.</span> <span class="nav-text">release</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          内存管理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-07-23 10:06:38 / 修改时间：16:51:00" itemprop="dateCreated datePublished" datetime="2021-07-23T10:06:38+08:00">2021-07-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="内存分布"><a href="#内存分布" class="headerlink" title="内存分布"></a>内存分布</h4><p>iOS 中的内存区域从低地址到高地址：.text 段（代码区）、.data 段（已初始化全局变量、静态变量）、.bss 段（未初始化全局变量、静态变量）、堆区、栈区</p>
+<img src="内存分布.png" alt="内存分布" style="zoom:40%;" />
+
+<p>堆区：</p>
+<p>低地址向高地址拓展数据结构，不连续的内存区域，先进先出，由程序员动态分配和释放，通过 alloc 分配的对象</p>
+<p>缺点：手动管理，速度慢，容易产生内存碎片</p>
+<p>栈区：</p>
+<p>高地址向低地址拓展的数据结构，连续内存区域，后进先出，一般运行时分配，编译器自动分配并释放</p>
+<p>由编译器自动分配并释放，不会产生内存碎片，速度快，缺点：内存大小限制不灵活</p>
+<h4 id="TaggedPointer"><a href="#TaggedPointer" class="headerlink" title="TaggedPointer"></a>TaggedPointer</h4><p>普通对象的查找过程：从栈中找到指针，然后去堆中寻找指针对应的内存空间，进而读取值</p>
+<p>64 bit 开始，引入了 TaggedPointer 技术，用于优化 NSNumber、NSDate、NSString 等小对象存储</p>
+<p>TaggedPointer 通过在其最后一个 bit 位设置一个特殊标记，用于将数据直接保存到指针本身</p>
+<p>TaggedPointer 指针的值不再是堆区地址，而是真正的值。所以实际上它不再是一个对象了，内存并不存储在堆中</p>
+<p>将对象的指针拆分成两部分，一部分直接保存数据，另一部分作为特殊标记，表示这是一个特殊指针，不指向任何一个地址</p>
+<ul>
+<li>引入 TaggedPointer 对象之后，64 位 CPU 下 NSNumber 的内存变成这样</li>
+</ul>
+<img src="nsnumber.png" alt="nsnumber" style="zoom:60%;" />
+
+
+
+<ul>
+<li>执行以下代码，有什么区别</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dispatch_queue_t queue &#x3D; dispatch_get_global_queue(0, 0);</span><br><span class="line">for (int i &#x3D; 0; i &lt; 1000; i++) &#123;</span><br><span class="line">    dispatch_async(queue, ^&#123;</span><br><span class="line">        self.name &#x3D; [NSString stringWithFormat:@&quot;abcdefghij&quot;];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dispatch_queue_t queue &#x3D; dispatch_get_global_queue(0, 0);</span><br><span class="line">for (int i &#x3D; 0; i &lt; 1000; i++) &#123;</span><br><span class="line">    dispatch_async(queue, ^&#123;</span><br><span class="line">        self.name &#x3D; [NSString stringWithFormat:@&quot;abc&quot;];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一个会 Crash，第二个正常运行</p>
+<p>第一个多线程同时访问 name 的 setter 方法，有可能多条线程同时执行 [_name release]，连续 release 两次造成对象的过度释放，导致 Crash</p>
+<p>第二个 name 指针为 TaggedPointer 类型，不存在 release 操作</p>
+<p>两个 name 的底层类型不一致，第一个 name 类型是 NSCFString 类型，存储在堆上，第二个 name 类型是NSTaggedPointerString 存储在常量区</p>
+<p>NSString 对于那些所需内存小于 60 位的字符串，它可以创建一个 TaggedPointer，其余则被放置在真正的 NSString 对象里，这使得常用短字符串的性能得到提升</p>
+<h4 id="NONPOINTER-ISA"><a href="#NONPOINTER-ISA" class="headerlink" title="NONPOINTER_ISA"></a>NONPOINTER_ISA</h4><p>和 TaggedPointer 设计思想类似，ISA 其实并不单单是一个指针，其中一些位仍旧编码指向对象的类，一部分额外空间存储其它内容</p>
+<p>ISA 指针第 1 位表示使用优化的 ISA 指针</p>
+<p>64 位架构下，ISA 指针本身占 64 位，64 位存储一个内存地址显然浪费，为了提高内存利用率，剩余比特位中存储了内存管理相关的内容</p>
+<ul>
+<li>nonpointer：表示是否对isa开启指针优化 。0代表是纯isa指针，1代表除了地址外，还包含了类的一些信息、对象的引用计数等</li>
+<li>has_assoc：关联对象标志位</li>
+<li>该对象是否有C++或Objc的析构器，如果有析构函数，则需要做一些析构的逻辑处理，如果没有，则可以更快的释放对象</li>
+<li>shiftcls：存在类指针的值，开启指针优化的情况下，arm64位中有33位来存储类的指针</li>
+<li>magic：判断当前对象是真的对象还是一段没有初始化的空间</li>
+<li>weakly_referenced：是否被指向或者曾经指向一个ARC的弱变量，没有弱引用的对象释放的更快</li>
+<li>deallocating：是否正在释放</li>
+<li>has_sidetable_rc：当对象引用计数大于10时，则需要进位</li>
+<li>extra_rc：表示该对象的引用计数值，实际上是引用计数减一。例如：如果引用计数为10，那么extra_rc为9。如果引用计数大于10，则需要使用has_sidetable_rc</li>
+</ul>
+<h4 id="散列表"><a href="#散列表" class="headerlink" title="散列表"></a>散列表</h4><p>当引用计数存储到一定值，并不会存储到 Nonpointer_isa 位域的 extra_rx 中，而是会存储到 SideTable 散列表中</p>
+<p>在 runtime 内存空间中，SideTable 是一个 hash 数组，里面存储了 SideTable</p>
+<p>SideTable 的 hash 键就是一个对象 obj 的 address，因此可以说，一个 obj，对应了一个 SideTable，但一个 SideTable 会对应多个 obj，因为SideTable 的数量有限，所有会有很多 obj 公用一个 SideTable</p>
+<p>SideTable结构中包含了自旋锁、引用计数表、弱引用表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct SideTable &#123;</span><br><span class="line">    spinlock_t slock;       &#x2F;&#x2F; 自旋锁</span><br><span class="line">    RefcountMap refcnts;    &#x2F;&#x2F;引用计数的Map表 key-value</span><br><span class="line">    weak_table_t weak_table;&#x2F;&#x2F;弱引用表</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>为什么不直接用一张SideTable，而是用SideTables去管理多个 SideTable</li>
+</ul>
+<p>SideTable 里有一个自旋锁，如果把所有的类都放在同一个 SideTable，有任何一个类有改动都会对整个 table 做操作，并且在操作一个类的同时，操作别的类会被锁住等待，这样会导致操作效率和查询效率都很低。而有多个SideTable 的话，操作的都是单个 Table，并不会影响其他的 table，这就是分离锁</p>
+<h5 id="retain"><a href="#retain" class="headerlink" title="retain"></a>retain</h5><p>retain 底层先判断是否是 Nonpointer_isa，如果不是，则直接操作散列表进行 +1 操作<br>如果是 Nonpointer_isa，extra_rc 引用计数+1，extra_rc只有8位，如果出现上溢出，需要借助散列表存储，一半存储在散列表中，另一半还是存储在 extra_rc 中</p>
+<h5 id="release"><a href="#release" class="headerlink" title="release"></a>release</h5><p>release 底层先判断是否是 Nonpointer_isa，如果不是，则直接操作散列表进行 -1 操作<br>如果是 Nonpointer_isa，extra_rc 引用计数-1，如果引用计数出现下溢出，看散列表中是否存储引用计数，从散列表中取一半进行 -1 操作，然后存储到 extra_rc 中，如果还是下溢出，就调用 dealloc</p>
+<p><a target="_blank" rel="noopener" href="https://www.infoq.cn/article/deep-understanding-of-tagged-pointer/">深入理解 TaggedPointer</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/20/%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92%E5%92%8C%E5%93%8D%E5%BA%94/" rel="prev" title="事件传递和响应">
+                  <i class="fa fa-chevron-left"></i> 事件传递和响应
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
