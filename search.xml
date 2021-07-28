@@ -819,6 +819,71 @@
 ]]></content>
   </entry>
   <entry>
+    <title>内存管理</title>
+    <url>/2021/07/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</url>
+    <content><![CDATA[<h4 id="内存分布"><a href="#内存分布" class="headerlink" title="内存分布"></a>内存分布</h4><p>iOS 中的内存区域从低地址到高地址：.text 段（代码区）、.data 段（已初始化全局变量、静态变量）、.bss 段（未初始化全局变量、静态变量）、堆区、栈区</p>
+<img src="内存分布.png" alt="内存分布" style="zoom:40%;" />
+
+<p>堆区：</p>
+<p>低地址向高地址拓展数据结构，不连续的内存区域，先进先出，由程序员动态分配和释放，通过 alloc 分配的对象</p>
+<p>缺点：手动管理，速度慢，容易产生内存碎片</p>
+<p>栈区：</p>
+<p>高地址向低地址拓展的数据结构，连续内存区域，后进先出，一般运行时分配，编译器自动分配并释放</p>
+<p>由编译器自动分配并释放，不会产生内存碎片，速度快，缺点：内存大小限制不灵活</p>
+<h4 id="TaggedPointer"><a href="#TaggedPointer" class="headerlink" title="TaggedPointer"></a>TaggedPointer</h4><p>普通对象的查找过程：从栈中找到指针，然后去堆中寻找指针对应的内存空间，进而读取值</p>
+<p>64 bit 开始，引入了 TaggedPointer 技术，用于优化 NSNumber、NSDate、NSString 等小对象存储</p>
+<p>TaggedPointer 通过在其最后一个 bit 位设置一个特殊标记，用于将数据直接保存到指针本身</p>
+<p>TaggedPointer 指针的值不再是堆区地址，而是真正的值。所以实际上它不再是一个对象了，内存并不存储在堆中</p>
+<p>将对象的指针拆分成两部分，一部分直接保存数据，另一部分作为特殊标记，表示这是一个特殊指针，不指向任何一个地址</p>
+<ul>
+<li>引入 TaggedPointer 对象之后，64 位 CPU 下 NSNumber 的内存变成这样</li>
+</ul>
+<img src="nsnumber.png" alt="nsnumber" style="zoom:60%;" />
+
+
+
+<ul>
+<li>执行以下代码，有什么区别</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dispatch_queue_t queue &#x3D; dispatch_get_global_queue(0, 0);</span><br><span class="line">for (int i &#x3D; 0; i &lt; 1000; i++) &#123;</span><br><span class="line">    dispatch_async(queue, ^&#123;</span><br><span class="line">        self.name &#x3D; [NSString stringWithFormat:@&quot;abcdefghij&quot;];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dispatch_queue_t queue &#x3D; dispatch_get_global_queue(0, 0);</span><br><span class="line">for (int i &#x3D; 0; i &lt; 1000; i++) &#123;</span><br><span class="line">    dispatch_async(queue, ^&#123;</span><br><span class="line">        self.name &#x3D; [NSString stringWithFormat:@&quot;abc&quot;];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一个会 Crash，第二个正常运行</p>
+<p>第一个多线程同时访问 name 的 setter 方法，有可能多条线程同时执行 [_name release]，连续 release 两次造成对象的过度释放，导致 Crash</p>
+<p>第二个 name 指针为 TaggedPointer 类型，不存在 release 操作</p>
+<p>两个 name 的底层类型不一致，第一个 name 类型是 NSCFString 类型，存储在堆上，第二个 name 类型是NSTaggedPointerString 存储在常量区</p>
+<p>NSString 对于那些所需内存小于 60 位的字符串，它可以创建一个 TaggedPointer，其余则被放置在真正的 NSString 对象里，这使得常用短字符串的性能得到提升</p>
+<h4 id="NONPOINTER-ISA"><a href="#NONPOINTER-ISA" class="headerlink" title="NONPOINTER_ISA"></a>NONPOINTER_ISA</h4><p>和 TaggedPointer 设计思想类似，ISA 其实并不单单是一个指针，其中一些位仍旧编码指向对象的类，一部分额外空间存储其它内容</p>
+<p>ISA 指针第 1 位表示使用优化的 ISA 指针</p>
+<p>64 位架构下，ISA 指针本身占 64 位，64 位存储一个内存地址显然浪费，为了提高内存利用率，剩余比特位中存储了内存管理相关的内容</p>
+<ul>
+<li>nonpointer：表示是否对isa开启指针优化 。0代表是纯isa指针，1代表除了地址外，还包含了类的一些信息、对象的引用计数等</li>
+<li>has_assoc：关联对象标志位</li>
+<li>该对象是否有C++或Objc的析构器，如果有析构函数，则需要做一些析构的逻辑处理，如果没有，则可以更快的释放对象</li>
+<li>shiftcls：存在类指针的值，开启指针优化的情况下，arm64位中有33位来存储类的指针</li>
+<li>magic：判断当前对象是真的对象还是一段没有初始化的空间</li>
+<li>weakly_referenced：是否被指向或者曾经指向一个ARC的弱变量，没有弱引用的对象释放的更快</li>
+<li>deallocating：是否正在释放</li>
+<li>has_sidetable_rc：当对象引用计数大于10时，则需要进位</li>
+<li>extra_rc：表示该对象的引用计数值，实际上是引用计数减一。例如：如果引用计数为10，那么extra_rc为9。如果引用计数大于10，则需要使用has_sidetable_rc</li>
+</ul>
+<h4 id="散列表"><a href="#散列表" class="headerlink" title="散列表"></a>散列表</h4><p>当引用计数存储到一定值，并不会存储到 Nonpointer_isa 位域的 extra_rx 中，而是会存储到 SideTable 散列表中</p>
+<p>在 runtime 内存空间中，SideTable 是一个 hash 数组，里面存储了 SideTable</p>
+<p>SideTable 的 hash 键就是一个对象 obj 的 address，因此可以说，一个 obj，对应了一个 SideTable，但一个 SideTable 会对应多个 obj，因为SideTable 的数量有限，所有会有很多 obj 公用一个 SideTable</p>
+<p>SideTable结构中包含了自旋锁、引用计数表、弱引用表</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">struct SideTable &#123;</span><br><span class="line">    spinlock_t slock;       &#x2F;&#x2F; 自旋锁</span><br><span class="line">    RefcountMap refcnts;    &#x2F;&#x2F;引用计数的Map表 key-value</span><br><span class="line">    weak_table_t weak_table;&#x2F;&#x2F;弱引用表</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>为什么不直接用一张SideTable，而是用SideTables去管理多个 SideTable</li>
+</ul>
+<p>SideTable 里有一个自旋锁，如果把所有的类都放在同一个 SideTable，有任何一个类有改动都会对整个 table 做操作，并且在操作一个类的同时，操作别的类会被锁住等待，这样会导致操作效率和查询效率都很低。而有多个SideTable 的话，操作的都是单个 Table，并不会影响其他的 table，这就是分离锁</p>
+<h5 id="retain"><a href="#retain" class="headerlink" title="retain"></a>retain</h5><p>retain 底层先判断是否是 Nonpointer_isa，如果不是，则直接操作散列表进行 +1 操作<br>如果是 Nonpointer_isa，extra_rc 引用计数+1，extra_rc只有8位，如果出现上溢出，需要借助散列表存储，一半存储在散列表中，另一半还是存储在 extra_rc 中</p>
+<h5 id="release"><a href="#release" class="headerlink" title="release"></a>release</h5><p>release 底层先判断是否是 Nonpointer_isa，如果不是，则直接操作散列表进行 -1 操作<br>如果是 Nonpointer_isa，extra_rc 引用计数-1，如果引用计数出现下溢出，看散列表中是否存储引用计数，从散列表中取一半进行 -1 操作，然后存储到 extra_rc 中，如果还是下溢出，就调用 dealloc</p>
+<p><a href="https://www.infoq.cn/article/deep-understanding-of-tagged-pointer/">深入理解 TaggedPointer</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>对象和方法底层原理</title>
     <url>/2020/12/01/%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%96%B9%E6%B3%95%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<h4 id="isa指针"><a href="#isa指针" class="headerlink" title="isa指针"></a>isa指针</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LGPerson *p  &#x3D; [LGPerson alloc];</span><br><span class="line">p.name &#x3D; @&quot;aa&quot;;</span><br><span class="line"></span><br><span class="line">Class cls1 &#x3D; [LGPerson class];</span><br><span class="line">Class cls2 &#x3D; p.class;</span><br><span class="line">Class cls3 &#x3D; object_getClass(p);</span><br><span class="line"></span><br><span class="line">NSLog(@&quot;%p %p %p&quot;, cls1, cls2, cls3); &#x2F;&#x2F;打印结果相同 只有一个类对象</span><br><span class="line"></span><br><span class="line">Class cls4 &#x3D; objcet_getClass(cls3);</span><br></pre></td></tr></table></figure>
@@ -885,69 +950,15 @@
 ]]></content>
   </entry>
   <entry>
-    <title>内存管理</title>
-    <url>/2021/07/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</url>
-    <content><![CDATA[<h4 id="内存分布"><a href="#内存分布" class="headerlink" title="内存分布"></a>内存分布</h4><p>iOS 中的内存区域从低地址到高地址：.text 段（代码区）、.data 段（已初始化全局变量、静态变量）、.bss 段（未初始化全局变量、静态变量）、堆区、栈区</p>
-<img src="内存分布.png" alt="内存分布" style="zoom:40%;" />
-
-<p>堆区：</p>
-<p>低地址向高地址拓展数据结构，不连续的内存区域，先进先出，由程序员动态分配和释放，通过 alloc 分配的对象</p>
-<p>缺点：手动管理，速度慢，容易产生内存碎片</p>
-<p>栈区：</p>
-<p>高地址向低地址拓展的数据结构，连续内存区域，后进先出，一般运行时分配，编译器自动分配并释放</p>
-<p>由编译器自动分配并释放，不会产生内存碎片，速度快，缺点：内存大小限制不灵活</p>
-<h4 id="TaggedPointer"><a href="#TaggedPointer" class="headerlink" title="TaggedPointer"></a>TaggedPointer</h4><p>普通对象的查找过程：从栈中找到指针，然后去堆中寻找指针对应的内存空间，进而读取值</p>
-<p>64 bit 开始，引入了 TaggedPointer 技术，用于优化 NSNumber、NSDate、NSString 等小对象存储</p>
-<p>TaggedPointer 通过在其最后一个 bit 位设置一个特殊标记，用于将数据直接保存到指针本身</p>
-<p>TaggedPointer 指针的值不再是堆区地址，而是真正的值。所以实际上它不再是一个对象了，内存并不存储在堆中</p>
-<p>将对象的指针拆分成两部分，一部分直接保存数据，另一部分作为特殊标记，表示这是一个特殊指针，不指向任何一个地址</p>
-<ul>
-<li>引入 TaggedPointer 对象之后，64 位 CPU 下 NSNumber 的内存变成这样</li>
-</ul>
-<img src="nsnumber.png" alt="nsnumber" style="zoom:60%;" />
-
-
-
-<ul>
-<li>执行以下代码，有什么区别</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dispatch_queue_t queue &#x3D; dispatch_get_global_queue(0, 0);</span><br><span class="line">for (int i &#x3D; 0; i &lt; 1000; i++) &#123;</span><br><span class="line">    dispatch_async(queue, ^&#123;</span><br><span class="line">        self.name &#x3D; [NSString stringWithFormat:@&quot;abcdefghij&quot;];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dispatch_queue_t queue &#x3D; dispatch_get_global_queue(0, 0);</span><br><span class="line">for (int i &#x3D; 0; i &lt; 1000; i++) &#123;</span><br><span class="line">    dispatch_async(queue, ^&#123;</span><br><span class="line">        self.name &#x3D; [NSString stringWithFormat:@&quot;abc&quot;];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>第一个会 Crash，第二个正常运行</p>
-<p>第一个多线程同时访问 name 的 setter 方法，有可能多条线程同时执行 [_name release]，连续 release 两次造成对象的过度释放，导致 Crash</p>
-<p>第二个 name 指针为 TaggedPointer 类型，不存在 release 操作</p>
-<p>两个 name 的底层类型不一致，第一个 name 类型是 NSCFString 类型，存储在堆上，第二个 name 类型是NSTaggedPointerString 存储在常量区</p>
-<p>NSString 对于那些所需内存小于 60 位的字符串，它可以创建一个 TaggedPointer，其余则被放置在真正的 NSString 对象里，这使得常用短字符串的性能得到提升</p>
-<h4 id="NONPOINTER-ISA"><a href="#NONPOINTER-ISA" class="headerlink" title="NONPOINTER_ISA"></a>NONPOINTER_ISA</h4><p>和 TaggedPointer 设计思想类似，ISA 其实并不单单是一个指针，其中一些位仍旧编码指向对象的类，一部分额外空间存储其它内容</p>
-<p>ISA 指针第 1 位表示使用优化的 ISA 指针</p>
-<p>64 位架构下，ISA 指针本身占 64 位，64 位存储一个内存地址显然浪费，为了提高内存利用率，剩余比特位中存储了内存管理相关的内容</p>
-<ul>
-<li>nonpointer：表示是否对isa开启指针优化 。0代表是纯isa指针，1代表除了地址外，还包含了类的一些信息、对象的引用计数等</li>
-<li>has_assoc：关联对象标志位</li>
-<li>该对象是否有C++或Objc的析构器，如果有析构函数，则需要做一些析构的逻辑处理，如果没有，则可以更快的释放对象</li>
-<li>shiftcls：存在类指针的值，开启指针优化的情况下，arm64位中有33位来存储类的指针</li>
-<li>magic：判断当前对象是真的对象还是一段没有初始化的空间</li>
-<li>weakly_referenced：是否被指向或者曾经指向一个ARC的弱变量，没有弱引用的对象释放的更快</li>
-<li>deallocating：是否正在释放</li>
-<li>has_sidetable_rc：当对象引用计数大于10时，则需要进位</li>
-<li>extra_rc：表示该对象的引用计数值，实际上是引用计数减一。例如：如果引用计数为10，那么extra_rc为9。如果引用计数大于10，则需要使用has_sidetable_rc</li>
-</ul>
-<h4 id="散列表"><a href="#散列表" class="headerlink" title="散列表"></a>散列表</h4><p>当引用计数存储到一定值，并不会存储到 Nonpointer_isa 位域的 extra_rx 中，而是会存储到 SideTable 散列表中</p>
-<p>在 runtime 内存空间中，SideTable 是一个 hash 数组，里面存储了 SideTable</p>
-<p>SideTable 的 hash 键就是一个对象 obj 的 address，因此可以说，一个 obj，对应了一个 SideTable，但一个 SideTable 会对应多个 obj，因为SideTable 的数量有限，所有会有很多 obj 公用一个 SideTable</p>
-<p>SideTable结构中包含了自旋锁、引用计数表、弱引用表</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">struct SideTable &#123;</span><br><span class="line">    spinlock_t slock;       &#x2F;&#x2F; 自旋锁</span><br><span class="line">    RefcountMap refcnts;    &#x2F;&#x2F;引用计数的Map表 key-value</span><br><span class="line">    weak_table_t weak_table;&#x2F;&#x2F;弱引用表</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>为什么不直接用一张SideTable，而是用SideTables去管理多个 SideTable</li>
-</ul>
-<p>SideTable 里有一个自旋锁，如果把所有的类都放在同一个 SideTable，有任何一个类有改动都会对整个 table 做操作，并且在操作一个类的同时，操作别的类会被锁住等待，这样会导致操作效率和查询效率都很低。而有多个SideTable 的话，操作的都是单个 Table，并不会影响其他的 table，这就是分离锁</p>
-<h5 id="retain"><a href="#retain" class="headerlink" title="retain"></a>retain</h5><p>retain 底层先判断是否是 Nonpointer_isa，如果不是，则直接操作散列表进行 +1 操作<br>如果是 Nonpointer_isa，extra_rc 引用计数+1，extra_rc只有8位，如果出现上溢出，需要借助散列表存储，一半存储在散列表中，另一半还是存储在 extra_rc 中</p>
-<h5 id="release"><a href="#release" class="headerlink" title="release"></a>release</h5><p>release 底层先判断是否是 Nonpointer_isa，如果不是，则直接操作散列表进行 -1 操作<br>如果是 Nonpointer_isa，extra_rc 引用计数-1，如果引用计数出现下溢出，看散列表中是否存储引用计数，从散列表中取一半进行 -1 操作，然后存储到 extra_rc 中，如果还是下溢出，就调用 dealloc</p>
-<p><a href="https://www.infoq.cn/article/deep-understanding-of-tagged-pointer/">深入理解 TaggedPointer</a></p>
-]]></content>
+    <title>测试下</title>
+    <url>/2020/11/17/%E6%B5%8B%E8%AF%95%E4%B8%8B/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>分类1</category>
+      </categories>
+      <tags>
+        <tag>标签1</tag>
+      </tags>
   </entry>
   <entry>
     <title>逆</title>
@@ -966,17 +977,6 @@
       </categories>
       <tags>
         <tag>逆</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>测试下</title>
-    <url>/2020/11/17/%E6%B5%8B%E8%AF%95%E4%B8%8B/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>分类1</category>
-      </categories>
-      <tags>
-        <tag>标签1</tag>
       </tags>
   </entry>
   <entry>
