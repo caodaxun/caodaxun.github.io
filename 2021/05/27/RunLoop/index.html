@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://example.com/2021/05/27/RunLoop/bt.png">
 <meta property="og:image" content="http://example.com/2021/05/27/RunLoop/RunLoop%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.png">
 <meta property="article:published_time" content="2021-05-27T08:21:29.000Z">
-<meta property="article:modified_time" content="2021-07-22T06:45:47.464Z">
+<meta property="article:modified_time" content="2021-07-28T08:14:32.733Z">
 <meta property="article:author" content="daxun">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/05/27/RunLoop/RunLoop_0.png">
@@ -315,7 +315,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-07-22 14:45:47" itemprop="dateModified" datetime="2021-07-22T14:45:47+08:00">2021-07-22</time>
+        <time title="修改时间：2021-07-28 16:14:32" itemprop="dateModified" datetime="2021-07-28T16:14:32+08:00">2021-07-28</time>
       </span>
 
   
@@ -420,7 +420,7 @@
 <p>线程刚被唤醒，通知观察者</p>
 <p>处理唤醒时收到的消息，之后回到第2步</p>
 <p><img src="/2021/05/27/RunLoop/RunLoop%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.png" alt="RunLoop事件循环"></p>
-<h4 id="自动释放池-AutoReleasePool"><a href="#自动释放池-AutoReleasePool" class="headerlink" title="自动释放池 AutoReleasePool"></a>自动释放池 AutoReleasePool</h4><p>OC 的一种内存自动回收机制，将自动释放池 utoreleasepool 中变量的 release 时机延迟</p>
+<h4 id="自动释放池-AutoReleasePool"><a href="#自动释放池-AutoReleasePool" class="headerlink" title="自动释放池 AutoReleasePool"></a>自动释放池 AutoReleasePool</h4><p>OC 的一种内存自动回收机制，将自动释放池 autoreleasepool 中变量的 release 时机延迟</p>
 <p>将对象加入到自动释放池中，这个对象不会立即释放，而是等到 runloop 休眠或者超出 autoreleasepool 作用域之后才释放</p>
 <h5 id="自动释放池原理"><a href="#自动释放池原理" class="headerlink" title="自动释放池原理"></a>自动释放池原理</h5><p>每个自动释放池都是由若干个 <code>AutoreleasePoolPage</code> 组成的双向链表结构</p>
 <p>自动释放池本质是一个 <code>AutoreleasePoolPage 结构体对象</code> ，是一个栈结构存储的页</p>
