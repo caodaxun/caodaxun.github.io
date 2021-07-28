@@ -789,7 +789,7 @@
 
 <h4 id="2、事件响应"><a href="#2、事件响应" class="headerlink" title="2、事件响应"></a>2、事件响应</h4><p>传递链是用来获取第一响应者，接下来开始响应事件</p>
 <p>响应链条：firstView -&gt; super view -&gt; … -&gt; viewcontroller -&gt;window -&gt; application -&gt; appdelegate</p>
-<p>找打最合适的视图后，事件会从视图开始，沿着响应链 nextResponder 传递，直到找到处理事件的视图，没有处理的事件会被丢弃</p>
+<p>找到最合适的视图后，事件会从视图开始，沿着响应链 nextResponder 传递，直到找到处理事件的视图，没有处理的事件会被丢弃</p>
 <p>如果有父视图，则 nextResponder指向父视图</p>
 <p>响应链传递</p>
 <p><img src="/2021/07/20/%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92%E5%92%8C%E5%93%8D%E5%BA%94/%E5%93%8D%E5%BA%94%E9%93%BE%E4%BC%A0%E9%80%92.png" alt="响应链传递"></p>
