@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="5 容器类组件布局类组件一般都需要接收一个 widget 数组（children），容器类组件一般只需要接收一个子 widget（child） 布局类 widget 是按照一定的排列方式来对其子 widget 进行排列；容器类widget一般只是包装其子 widget，对其添加一些修饰（补白或背景色等）、变换（旋转裁剪等）、或限制（大小等） 5.1 Padding可以给子节点添加填充（留白），和间">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Flutter实战第二版》五：容器类组件">
+<meta property="og:url" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="5 容器类组件布局类组件一般都需要接收一个 widget 数组（children），容器类组件一般只需要接收一个子 widget（child） 布局类 widget 是按照一定的排列方式来对其子 widget 进行排列；容器类widget一般只是包装其子 widget，对其添加一些修饰（补白或背景色等）、变换（旋转裁剪等）、或限制（大小等） 5.1 Padding可以给子节点添加填充（留白），和间">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/《Flutter实战第二版》五：容器类组件/WeChat6661e3955fcbc5012a3fbf2acb8b2009.png">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChatb229d2ef3c49cb4ea45184fc4edabea2.png">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChat1771bb23256be799e6f11bbc2a98325a.png">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChat7c79d01b2fac91e32fdb2602d6be1ee1.png">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChatf5d0a9a9d12548219cbe16cae734cd85.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/《Flutter实战第二版》五：容器类组件/WeChat351cd0ae2781d4d6e03e8d598ef69023.png">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChat48a70d601784f808caac89583b0d4d09.png">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChatedd5eb5c6aef971412aded090c9a4d5d.png">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChat2c36ee6dff4f283649d2ef335b96036f.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/《Flutter实战第二版》五：容器类组件/WeChatc17b2a1e3c1f5eddd9695a65c7bf9423.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/《Flutter实战第二版》五：容器类组件/WeChatf8d080b6a4934b277d35eae7dee059d2.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/《Flutter实战第二版》五：容器类组件/WeChataf1f187dc2c0ab4fa149ec5e1962aaf7.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/《Flutter实战第二版》五：容器类组件/WeChat32ad216f5189993f92ba6d3d40aae74c.png">
+<meta property="article:published_time" content="2022-01-18T04:18:01.000Z">
+<meta property="article:modified_time" content="2022-03-10T04:11:17.625Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/《Flutter实战第二版》五：容器类组件/WeChat6661e3955fcbc5012a3fbf2acb8b2009.png">
+
+
+<link rel="canonical" href="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《Flutter实战第二版》五：容器类组件 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">5 容器类组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-Padding"><span class="nav-number">1.1.</span> <span class="nav-text">5.1 Padding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-%E5%B0%BA%E5%AF%B8%E9%99%90%E5%88%B6%E7%B1%BB%E5%AE%B9%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">5.2 尺寸限制类容器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#5-2-1-ConstrainedBox"><span class="nav-number">1.2.1.</span> <span class="nav-text">5.2.1 ConstrainedBox</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-%E8%A3%85%E9%A5%B0%E5%AE%B9%E5%99%A8-DecoratedBox"><span class="nav-number">1.3.</span> <span class="nav-text">5.3 装饰容器 DecoratedBox</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-%E5%8F%98%E6%8D%A2"><span class="nav-number">1.4.</span> <span class="nav-text">5.4 变换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-5-Container"><span class="nav-number">1.5.</span> <span class="nav-text">5.5 Container</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-6-%E8%A3%81%E5%89%AA"><span class="nav-number">1.6.</span> <span class="nav-text">5.6 裁剪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-7-%E7%A9%BA%E9%97%B4%E9%80%82%E9%85%8D-FittedBox"><span class="nav-number">1.7.</span> <span class="nav-text">5.7 空间适配 FittedBox</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#5-7-1-FittedBox"><span class="nav-number">1.7.1.</span> <span class="nav-text">5.7.1 FittedBox</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-7-2-%E5%8D%95%E8%A1%8C%E7%BC%A9%E6%94%BE%E5%B8%83%E5%B1%80"><span class="nav-number">1.7.2.</span> <span class="nav-text">5.7.2 单行缩放布局</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-8-Scaffold"><span class="nav-number">1.8.</span> <span class="nav-text">5.8 Scaffold</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#5-8-1-Scaffold"><span class="nav-number">1.8.1.</span> <span class="nav-text">5.8.1 Scaffold</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-8-2-AppBar"><span class="nav-number">1.8.2.</span> <span class="nav-text">5.8.2 AppBar</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-8-3-%E6%8A%BD%E5%B1%89%E8%8F%9C%E5%8D%95-Drawer"><span class="nav-number">1.8.3.</span> <span class="nav-text">5.8.3 抽屉菜单 Drawer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-8-4-FloatingActionButton"><span class="nav-number">1.8.4.</span> <span class="nav-text">5.8.4 FloatingActionButton</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-8-5-%E5%BA%95%E9%83%A8-Tab-%E5%AF%BC%E8%88%AA%E6%A0%8F"><span class="nav-number">1.8.5.</span> <span class="nav-text">5.8.5 底部 Tab 导航栏</span></a></li></ol></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《Flutter实战第二版》五：容器类组件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-18 12:18:01" itemprop="dateCreated datePublished" datetime="2022-01-18T12:18:01+08:00">2022-01-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-03-10 12:11:17" itemprop="dateModified" datetime="2022-03-10T12:11:17+08:00">2022-03-10</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="5-容器类组件"><a href="#5-容器类组件" class="headerlink" title="5 容器类组件"></a>5 容器类组件</h3><p>布局类组件一般都需要接收一个 widget 数组（children），容器类组件一般只需要接收一个子 widget（child）</p>
+<p>布局类 widget 是按照一定的排列方式来对其子 widget 进行排列；容器类widget一般只是包装其子 widget，对其添加一些修饰（补白或背景色等）、变换（旋转裁剪等）、或限制（大小等）</p>
+<h4 id="5-1-Padding"><a href="#5-1-Padding" class="headerlink" title="5.1 Padding"></a>5.1 Padding</h4><p>可以给子节点添加填充（留白），和间距效果类似</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Padding(&#123;</span><br><span class="line">  ...</span><br><span class="line">  EdgeInsetsGeometry padding,</span><br><span class="line">  Widget child,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>EdgeInsetsGeometry 是一个抽象类，开发中一般使用 EdgeInsets 类，它是 EdgeInsetsGeometry 的一个子类，定义了一些设置填充的便捷方法</p>
+<ul>
+<li>EdgeInsets</li>
+</ul>
+<p>EdgeInsets 的便捷方法：</p>
+<p><code>fromLTRB(double left, double top, double right, double bottom)</code> 分别指定四个方向的填充</p>
+<p><code>all(double value)</code> 所有方向均使用相同数值填充</p>
+<p><code>only(&#123;left, top, right ,bottom &#125;)</code> 设置某个方向的填充（可以同时指多个方向）</p>
+<p><code>symmetric(&#123; vertical, horizontal &#125;)</code> 用于设置对称方向的填充，vertical 指 top 和bottom，horizontal 指 left 和 right</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PaddingTestRoute</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Padding(</span><br><span class="line">      <span class="comment">//上下左右各添加16像素补白</span></span><br><span class="line">      padding: EdgeInsets.all(<span class="number">16.0</span>),</span><br><span class="line">      child: Column(</span><br><span class="line">        <span class="comment">//显式指定对齐方式为左对齐，排除对齐干扰</span></span><br><span class="line">        crossAxisAlignment: CrossAxisAlignment.start,</span><br><span class="line">        children: &lt;Widget&gt;[</span><br><span class="line">          Padding(</span><br><span class="line">            <span class="comment">//左边添加8像素补白</span></span><br><span class="line">            padding: <span class="keyword">const</span> EdgeInsets.only(left: <span class="number">8.0</span>),</span><br><span class="line">            child: Text(<span class="string">&quot;Hello world&quot;</span>),</span><br><span class="line">          ),</span><br><span class="line">          Padding(</span><br><span class="line">            <span class="comment">//上下各添加8像素补白</span></span><br><span class="line">            padding: <span class="keyword">const</span> EdgeInsets.symmetric(vertical: <span class="number">8.0</span>),</span><br><span class="line">            child: Text(<span class="string">&quot;I am Jack&quot;</span>),</span><br><span class="line">          ),</span><br><span class="line">          Padding(</span><br><span class="line">            <span class="comment">// 分别指定四个方向的补白</span></span><br><span class="line">            padding: <span class="keyword">const</span> EdgeInsets.fromLTRB(<span class="number">20.0</span>,<span class="number">.0</span>,<span class="number">20.0</span>,<span class="number">20.0</span>),</span><br><span class="line">            child: Text(<span class="string">&quot;Your friend&quot;</span>),</span><br><span class="line">          )</span><br><span class="line">        ],</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》五：容器类组件/WeChat6661e3955fcbc5012a3fbf2acb8b2009.png" alt="WeChat6661e3955fcbc5012a3fbf2acb8b2009" style="zoom:80%;" />
+
+<h4 id="5-2-尺寸限制类容器"><a href="#5-2-尺寸限制类容器" class="headerlink" title="5.2 尺寸限制类容器"></a>5.2 尺寸限制类容器</h4><p>尺寸限制类容器用于限制容器大小，ConstrainedBox<code>、</code>SizedBox<code>、</code>UnconstrainedBox<code>、</code>AspectRatio 等</p>
+<p>尺寸限制类容器涉及到Flutter 布局流程 ，确定子组件大小的步骤为：<br>上层组件向下层组件传递约束条件<br>下层组件确定自己的大小，然后告诉上层组件，注意下层组件的大小必须符合父组件的约束</p>
+<h5 id="5-2-1-ConstrainedBox"><a href="#5-2-1-ConstrainedBox" class="headerlink" title="5.2.1 ConstrainedBox"></a>5.2.1 ConstrainedBox</h5><p>ConstrainedBox 用于对子组件添加额外约束</p>
+<p>。。看 四：布局类组件 4.2 布局原理与约束</p>
+<h4 id="5-3-装饰容器-DecoratedBox"><a href="#5-3-装饰容器-DecoratedBox" class="headerlink" title="5.3 装饰容器 DecoratedBox"></a>5.3 装饰容器 DecoratedBox</h4><p>DecoratedBox 可以在其子组件绘制前或后绘制一些装饰，如背景、边框、渐变等</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> DecoratedBox(&#123;</span><br><span class="line">  Decoration decoration,</span><br><span class="line">  DecorationPosition position = DecorationPosition.background,</span><br><span class="line">  Widget? child</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>decoration 代表将要绘制的装饰</p>
+<p>position 决定哪里绘制，接收 DecorationPositon 的枚举，background 在子组件之后绘制，即背景，foreground 在子组件之上绘制，即前景</p>
+<ul>
+<li>BoxDecoration</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">BoxDecoration(&#123;</span><br><span class="line">  Color color, <span class="comment">//颜色</span></span><br><span class="line">  DecorationImage image,<span class="comment">//图片</span></span><br><span class="line">  BoxBorder border, <span class="comment">//边框</span></span><br><span class="line">  BorderRadiusGeometry borderRadius, <span class="comment">//圆角</span></span><br><span class="line">  <span class="built_in">List</span>&lt;BoxShadow&gt; boxShadow, <span class="comment">//阴影,可以指定多个</span></span><br><span class="line">  Gradient gradient, <span class="comment">//渐变</span></span><br><span class="line">  BlendMode backgroundBlendMode, <span class="comment">//背景混合模式</span></span><br><span class="line">  BoxShape shape = BoxShape.rectangle, <span class="comment">//形状</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>绘制一个带阴影的背景色渐变的按钮</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">DecoratedBox(</span><br><span class="line">   decoration: BoxDecoration(</span><br><span class="line">     gradient: LinearGradient(colors:[Colors.red,Colors.orange.shade700]), <span class="comment">//背景渐变</span></span><br><span class="line">     borderRadius: BorderRadius.circular(<span class="number">3.0</span>), <span class="comment">//3像素圆角</span></span><br><span class="line">     boxShadow: [ <span class="comment">//阴影</span></span><br><span class="line">       BoxShadow(</span><br><span class="line">         color:Colors.black54,</span><br><span class="line">         offset: Offset(<span class="number">2.0</span>,<span class="number">2.0</span>),</span><br><span class="line">         blurRadius: <span class="number">4.0</span></span><br><span class="line">       )</span><br><span class="line">     ]</span><br><span class="line">   ),</span><br><span class="line">  child: Padding(</span><br><span class="line">    padding: EdgeInsets.symmetric(horizontal: <span class="number">80.0</span>, vertical: <span class="number">18.0</span>),</span><br><span class="line">    child: Text(<span class="string">&quot;Login&quot;</span>, style: TextStyle(color: Colors.white),),</span><br><span class="line">  )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChatb229d2ef3c49cb4ea45184fc4edabea2.png" alt="WeChatb229d2ef3c49cb4ea45184fc4edabea2"></p>
+<p>上面用到 LinearGradient 类，是用于定义线性渐变的类，Flutter 还提供了其它渐变配置 RadialGradient、SweepGradient</p>
+<h4 id="5-4-变换"><a href="#5-4-变换" class="headerlink" title="5.4 变换"></a>5.4 变换</h4><p>Matrix4 是一个 4D 矩阵</p>
+<ul>
+<li>平移</li>
+</ul>
+<p>Transform.translate  接收一个 offset 参数，可以在绘制是沿 x y 轴对子组件平移指定距离</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DecoratedBox(</span><br><span class="line">  decoration:BoxDecoration(color: Colors.red),</span><br><span class="line">  <span class="comment">//默认原点为左上角，左移20像素，向上平移5像素  </span></span><br><span class="line">  child: Transform.translate(</span><br><span class="line">    offset: Offset(<span class="number">-20.0</span>, <span class="number">-5.0</span>),</span><br><span class="line">    child: Text(<span class="string">&quot;Hello world&quot;</span>),</span><br><span class="line">  ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChat1771bb23256be799e6f11bbc2a98325a.png" alt="WeChat1771bb23256be799e6f11bbc2a98325a"></p>
+<ul>
+<li>旋转</li>
+</ul>
+<p>Transform.rotate </p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:math&#x27;</span> <span class="keyword">as</span> math;</span><br><span class="line">DecoratedBox(</span><br><span class="line">  decoration:BoxDecoration(color: Colors.red),</span><br><span class="line">  child: Transform.rotate(</span><br><span class="line">    <span class="comment">//旋转90度</span></span><br><span class="line">    angle:math.pi/<span class="number">2</span> ,</span><br><span class="line">    child: Text(<span class="string">&quot;Hello world&quot;</span>),</span><br><span class="line">  ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>缩放</li>
+</ul>
+<p>Transform.scale</p>
+<ul>
+<li>RotatedBox</li>
+</ul>
+<p>Transform 的变换是应用在绘制阶段，不是应用在布局（layout）阶段，无论对子组件应用何种变换，其占用空间大小和在屏幕上的位置都是固定不变的</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Row(</span><br><span class="line">  mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">  children: &lt;Widget&gt;[</span><br><span class="line">    DecoratedBox(</span><br><span class="line">      decoration:BoxDecoration(color: Colors.red),</span><br><span class="line">      child: Transform.scale(scale: <span class="number">1.5</span>,</span><br><span class="line">          child: Text(<span class="string">&quot;Hello world&quot;</span>)</span><br><span class="line">      )</span><br><span class="line">    ),</span><br><span class="line">    Text(<span class="string">&quot;你好&quot;</span>, style: TextStyle(color: Colors.green, fontSize: <span class="number">18.0</span>),)</span><br><span class="line">  ],</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChat7c79d01b2fac91e32fdb2602d6be1ee1.png" alt="WeChat7c79d01b2fac91e32fdb2602d6be1ee1"></p>
+<p>第一个 Text 放大后，绘制时会放大，但占用空间还是红色部分</p>
+<p>RotatedBox 的变换是在 layout 阶段，会影响子组件位置和大小</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Row(</span><br><span class="line">  mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">  children: &lt;Widget&gt;[</span><br><span class="line">    DecoratedBox(</span><br><span class="line">      decoration: BoxDecoration(color: Colors.red),</span><br><span class="line">      <span class="comment">//将Transform.rotate换成RotatedBox  </span></span><br><span class="line">      child: RotatedBox(</span><br><span class="line">        quarterTurns: <span class="number">1</span>, <span class="comment">//旋转90度(1/4圈)</span></span><br><span class="line">        child: Text(<span class="string">&quot;Hello world&quot;</span>),</span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">    Text(<span class="string">&quot;你好&quot;</span>, style: TextStyle(color: Colors.green, fontSize: <span class="number">18.0</span>),)</span><br><span class="line">  ],</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChatf5d0a9a9d12548219cbe16cae734cd85.png" alt="WeChatf5d0a9a9d12548219cbe16cae734cd85"></p>
+<h4 id="5-5-Container"><a href="#5-5-Container" class="headerlink" title="5.5 Container"></a>5.5 Container</h4><p>Container 是一个组合类容器，<code>DecoratedBox</code>、<code>ConstrainedBox、Transform</code>、<code>Padding</code>、<code>Align</code> 等组件组合的一个多功能容器</p>
+<p>只需要通过一个 Container 组件可以实现同时需要装饰、变换、限制的场景</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Container(&#123;</span><br><span class="line">  <span class="keyword">this</span>.alignment,</span><br><span class="line">  <span class="keyword">this</span>.padding, <span class="comment">//容器内补白，属于decoration的装饰范围</span></span><br><span class="line">  Color color, <span class="comment">// 背景色</span></span><br><span class="line">  Decoration decoration, <span class="comment">// 背景装饰</span></span><br><span class="line">  Decoration foregroundDecoration, <span class="comment">//前景装饰</span></span><br><span class="line">  <span class="built_in">double</span> width,<span class="comment">//容器的宽度</span></span><br><span class="line">  <span class="built_in">double</span> height, <span class="comment">//容器的高度</span></span><br><span class="line">  BoxConstraints constraints, <span class="comment">//容器大小的限制条件</span></span><br><span class="line">  <span class="keyword">this</span>.margin,<span class="comment">//容器外补白，不属于decoration的装饰范围</span></span><br><span class="line">  <span class="keyword">this</span>.transform, <span class="comment">//变换</span></span><br><span class="line">  <span class="keyword">this</span>.child,</span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>容器大小可以通过 width、height 属性来指定，也可以通过 constraints 来指定，如果同时存在，width、height 优先</p>
+<p>color 和 decoration 是互斥的</p>
+<p>例子</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Container(</span><br><span class="line">  margin: EdgeInsets.only(top: <span class="number">50.0</span>, left: <span class="number">120.0</span>),</span><br><span class="line">  constraints: BoxConstraints.tightFor(width: <span class="number">200.0</span>, height: <span class="number">150.0</span>),<span class="comment">//卡片大小</span></span><br><span class="line">  decoration: BoxDecoration(  <span class="comment">//背景装饰</span></span><br><span class="line">    gradient: RadialGradient( <span class="comment">//背景径向渐变</span></span><br><span class="line">      colors: [Colors.red, Colors.orange],</span><br><span class="line">      center: Alignment.topLeft,</span><br><span class="line">      radius: <span class="number">.98</span>,</span><br><span class="line">    ),</span><br><span class="line">    boxShadow: [</span><br><span class="line">      <span class="comment">//卡片阴影</span></span><br><span class="line">      BoxShadow(</span><br><span class="line">        color: Colors.black54,</span><br><span class="line">        offset: Offset(<span class="number">2.0</span>, <span class="number">2.0</span>),</span><br><span class="line">        blurRadius: <span class="number">4.0</span>,</span><br><span class="line">      )</span><br><span class="line">    ],</span><br><span class="line">  ),</span><br><span class="line">  transform: Matrix4.rotationZ(<span class="number">.2</span>),<span class="comment">//卡片倾斜变换</span></span><br><span class="line">  alignment: Alignment.center, <span class="comment">//卡片内文字居中</span></span><br><span class="line">  child: Text(</span><br><span class="line">    <span class="comment">//卡片文字</span></span><br><span class="line">    <span class="string">&quot;5.20&quot;</span>, style: TextStyle(color: Colors.white, fontSize: <span class="number">40.0</span>),</span><br><span class="line">  ),</span><br><span class="line"> )</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》五：容器类组件/WeChat351cd0ae2781d4d6e03e8d598ef69023.png" alt="WeChat351cd0ae2781d4d6e03e8d598ef69023" style="zoom:80%;" />
+
+<ul>
+<li>Padding 和 Margin</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Container(</span><br><span class="line">  margin: EdgeInsets.all(<span class="number">20.0</span>), <span class="comment">//容器外补白</span></span><br><span class="line">  color: Colors.orange,</span><br><span class="line">  child: Text(<span class="string">&quot;Hello world!&quot;</span>),</span><br><span class="line">),</span><br><span class="line">Container(</span><br><span class="line">  padding: EdgeInsets.all(<span class="number">20.0</span>), <span class="comment">//容器内补白</span></span><br><span class="line">  color: Colors.orange,</span><br><span class="line">  child: Text(<span class="string">&quot;Hello world!&quot;</span>),</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChat48a70d601784f808caac89583b0d4d09.png" alt="WeChat48a70d601784f808caac89583b0d4d09"></p>
+<p>margin 的留白在容器外部，padding 的留白在容器内部</p>
+<h4 id="5-6-裁剪"><a href="#5-6-裁剪" class="headerlink" title="5.6 裁剪"></a>5.6 裁剪</h4><table>
+<thead>
+<tr>
+<th>剪裁Widget</th>
+<th>默认行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ClipOval</td>
+<td>子组件为正方形时剪裁成内贴圆形；为矩形时，剪裁成内贴椭圆</td>
+</tr>
+<tr>
+<td>ClipRRect</td>
+<td>将子组件剪裁为圆角矩形</td>
+</tr>
+<tr>
+<td>ClipRect</td>
+<td>默认剪裁掉子组件布局空间之外的绘制内容（溢出部分剪裁）</td>
+</tr>
+<tr>
+<td>ClipPath</td>
+<td>按照自定义的路径剪裁</td>
+</tr>
+</tbody></table>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClipTestRoute</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="comment">// 头像  </span></span><br><span class="line">    Widget avatar = Image.asset(<span class="string">&quot;imgs/avatar.png&quot;</span>, width: <span class="number">60.0</span>);</span><br><span class="line">    <span class="keyword">return</span> Center(</span><br><span class="line">      child: Column(</span><br><span class="line">        children: &lt;Widget&gt;[</span><br><span class="line">          avatar, <span class="comment">//不剪裁</span></span><br><span class="line">          ClipOval(child: avatar), <span class="comment">//剪裁为圆形</span></span><br><span class="line">          ClipRRect( <span class="comment">//剪裁为圆角矩形</span></span><br><span class="line">            borderRadius: BorderRadius.circular(<span class="number">5.0</span>),</span><br><span class="line">            child: avatar,</span><br><span class="line">          ), </span><br><span class="line">          Row(</span><br><span class="line">            mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">            children: &lt;Widget&gt;[</span><br><span class="line">              Align(</span><br><span class="line">                alignment: Alignment.topLeft,</span><br><span class="line">                widthFactor: <span class="number">.5</span>,<span class="comment">//宽度设为原来宽度一半，另一半会溢出</span></span><br><span class="line">                child: avatar,</span><br><span class="line">              ),</span><br><span class="line">              Text(<span class="string">&quot;你好世界&quot;</span>, style: TextStyle(color: Colors.green),)</span><br><span class="line">            ],</span><br><span class="line">          ),</span><br><span class="line">          Row(</span><br><span class="line">            mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">            children: &lt;Widget&gt;[</span><br><span class="line">              ClipRect(<span class="comment">//将溢出部分剪裁</span></span><br><span class="line">                child: Align(</span><br><span class="line">                  alignment: Alignment.topLeft,</span><br><span class="line">                  widthFactor: <span class="number">.5</span>,<span class="comment">//宽度设为原来宽度一半</span></span><br><span class="line">                  child: avatar,</span><br><span class="line">                ),</span><br><span class="line">              ),</span><br><span class="line">              Text(<span class="string">&quot;你好世界&quot;</span>,style: TextStyle(color: Colors.green))</span><br><span class="line">            ],</span><br><span class="line">          ),</span><br><span class="line">        ],</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChatedd5eb5c6aef971412aded090c9a4d5d.png" alt="WeChatedd5eb5c6aef971412aded090c9a4d5d"></p>
+<ul>
+<li>CustomClipper</li>
+</ul>
+<p>自定义裁剪区域</p>
+<p>自定义一个 CustomClipper</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClipper</span> <span class="keyword">extends</span> <span class="title">CustomClipper</span>&lt;<span class="title">Rect</span>&gt; </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Rect getClip(Size size) &#123;</span><br><span class="line">    <span class="keyword">return</span> Rect.fromLTWH(<span class="number">10.0</span>, <span class="number">15.0</span>, <span class="number">40.0</span>, <span class="number">30.0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">bool</span> shouldReclip(<span class="keyword">covariant</span> CustomClipper&lt;Rect&gt; oldClipper) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>getClip 用于获取裁剪区域的接口，返回的裁剪区域为 Rect.fromLTWH(10.0, 15.0, 40.0, 30.0)</p>
+<p>shouldReclip 接口决定是否重新裁剪，如果应用中裁剪区域不会发生变化时应该返回false，就不会触发重新裁剪，避免不必要的性能开销，如果裁剪区域会发生变化，那么变化后应该返回 true 来重新执行裁剪</p>
+<p>然后通过 ClipRect 来执行裁剪 </p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">DecoratedBox(</span><br><span class="line">  decoration: BoxDecoration(</span><br><span class="line">    color: Colors.red</span><br><span class="line">  ),</span><br><span class="line">  child: ClipRect(</span><br><span class="line">    clipper: MyClipper(), <span class="comment">//使用自定义的clipper</span></span><br><span class="line">    child: avatar</span><br><span class="line">  ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>ClipPath 可以按照自定义的路径实现裁剪，需要自定义一个 <code>CustomClipper&lt;Path&gt;</code> 类型的Clipper，定义方式和 MyClipper 类似，getClip 返回一个 Path</p>
+<h4 id="5-7-空间适配-FittedBox"><a href="#5-7-空间适配-FittedBox" class="headerlink" title="5.7 空间适配 FittedBox"></a>5.7 空间适配 FittedBox</h4><h5 id="5-7-1-FittedBox"><a href="#5-7-1-FittedBox" class="headerlink" title="5.7.1 FittedBox"></a>5.7.1 FittedBox</h5><p>子组件大小超出父组件大小时，如果不经过处理的话 Flutter 中就会显示一个溢出警告</p>
+<p>为了方便开发者自定义适配规则，Flutter 提供了 FittedBox 组件</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> FittedBox(&#123;</span><br><span class="line">  Key? key,</span><br><span class="line">  <span class="keyword">this</span>.fit = BoxFit.contain, <span class="comment">// 适配方式</span></span><br><span class="line">  <span class="keyword">this</span>.alignment = Alignment.center, <span class="comment">//对齐方式</span></span><br><span class="line">  <span class="keyword">this</span>.clipBehavior = Clip.none, <span class="comment">//是否剪裁</span></span><br><span class="line">  Widget? child,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">  <span class="keyword">return</span> Center(</span><br><span class="line">    child: Column(</span><br><span class="line">      children: [</span><br><span class="line">        wContainer(BoxFit.none),</span><br><span class="line">        Text(<span class="string">&#x27;Wendux&#x27;</span>),</span><br><span class="line">        wContainer(BoxFit.contain),</span><br><span class="line">        Text(<span class="string">&#x27;Flutter中国&#x27;</span>),</span><br><span class="line">      ],</span><br><span class="line">    ),</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Widget wContainer(BoxFit boxFit) &#123;</span><br><span class="line">  <span class="keyword">return</span> Container(</span><br><span class="line">    width: <span class="number">50</span>,</span><br><span class="line">    height: <span class="number">50</span>,</span><br><span class="line">    color: Colors.red,</span><br><span class="line">    child: FittedBox(</span><br><span class="line">      fit: boxFit,</span><br><span class="line">      <span class="comment">// 子容器超过父容器大小</span></span><br><span class="line">      child: Container(width: <span class="number">60</span>, height: <span class="number">70</span>, color: Colors.blue),</span><br><span class="line">    ),</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%94%EF%BC%9A%E5%AE%B9%E5%99%A8%E7%B1%BB%E7%BB%84%E4%BB%B6/WeChat2c36ee6dff4f283649d2ef335b96036f.png" alt="WeChat2c36ee6dff4f283649d2ef335b96036f"></p>
+<p>父 Container 要比子 Container 小，没置顶任何适配方式时，子组件按照真实大小绘制，蓝色区域超出父组件空间，因而看不到红色区域</p>
+<p>第二个适配方式 BoxFit.contain，含义是按子组件的比例缩放，尽可能多的占据父组件的空间，子组件的长宽不相同，按照比例适配父组件后，父组件能显示一部分</p>
+<p>未指定适配方式时，子组件的大小超出了父组件，但 FittedBox 自身还是要遵守父组件传递的约束，所以 FittedBox 本身大小是 50x50，所以蓝色下面文本重叠了</p>
+<p>如果不想让蓝色超出父组件布局范围，可以使用 ClipRec 对超出部分裁剪掉</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ClipRect( <span class="comment">// 将超出子组件布局范围的绘制内容剪裁掉</span></span><br><span class="line">  child: Container(</span><br><span class="line">    width: <span class="number">50</span>,</span><br><span class="line">    height: <span class="number">50</span>,</span><br><span class="line">    color: Colors.red,</span><br><span class="line">    child: FittedBox(</span><br><span class="line">      fit: boxFit,</span><br><span class="line">      child: Container(width: <span class="number">60</span>, height: <span class="number">70</span>, color: Colors.blue),</span><br><span class="line">    ),</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-7-2-单行缩放布局"><a href="#5-7-2-单行缩放布局" class="headerlink" title="5.7.2 单行缩放布局"></a>5.7.2 单行缩放布局</h5><p>三个数据指标，需要一行显示，我们希望当无法一行显示时能够对组件进行适当的缩放确保一行显示</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"> Widget build(BuildContext context) &#123;</span><br><span class="line">   <span class="keyword">return</span> Center(</span><br><span class="line">     child: Column(</span><br><span class="line">       children:  [</span><br><span class="line">         wRow(<span class="string">&#x27; 90000000000000000 &#x27;</span>),</span><br><span class="line">         FittedBox(child: wRow(<span class="string">&#x27; 90000000000000000 &#x27;</span>)),</span><br><span class="line">         wRow(<span class="string">&#x27; 800 &#x27;</span>),</span><br><span class="line">         FittedBox(child: wRow1(<span class="string">&#x27; 800 &#x27;</span>)),</span><br><span class="line">   		]</span><br><span class="line">       .map((e) =&gt; Padding(</span><br><span class="line">             padding: EdgeInsets.symmetric(vertical: <span class="number">20</span>),</span><br><span class="line">             child: e,</span><br><span class="line">           ))</span><br><span class="line">       .toList();,</span><br><span class="line">     ),</span><br><span class="line">   );</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 直接使用Row</span></span><br><span class="line"> Widget wRow(<span class="built_in">String</span> text) &#123;</span><br><span class="line">   Widget child = Text(text);</span><br><span class="line">   child = Row(</span><br><span class="line">     mainAxisAlignment: MainAxisAlignment.spaceEvenly,</span><br><span class="line">     children: [child, child, child],</span><br><span class="line">   );</span><br><span class="line">   <span class="keyword">return</span> child;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》五：容器类组件/WeChatc17b2a1e3c1f5eddd9695a65c7bf9423.png" alt="WeChatc17b2a1e3c1f5eddd9695a65c7bf9423" style="zoom:80%;" />
+
+<p>Row 在主轴的对齐方式为 MainAxisAlignment.spaceEvenly，会将水平方向的剩余显示空间均分成多份穿插在每个 child 之间</p>
+<p>第一行超出屏幕宽度，直接使用 Row 会溢出</p>
+<p>第二行加上 FittedBox 就可以按比例缩放至一行显示</p>
+<p>Row 没被 FittedBox 包裹时，父组件传给 Row 的约束的 maxWidth 为屏幕宽度，Row的宽度也就是屏幕宽度</p>
+<p>当被 FittedBox 包裹时，FittedBox 传给 Row的约束的 maxWidth 为无限大，因此 Row的最终宽度就是子组件的宽度之和</p>
+<p>所以只需要让 FittedBox 子元素接收到的约束的 maxWidth 为屏幕宽度即可</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SingleLineFittedBox</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> SingleLineFittedBox(&#123;Key? key,<span class="keyword">this</span>.child&#125;) : <span class="keyword">super</span>(key: key);</span><br><span class="line"> <span class="keyword">final</span> Widget? child;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> LayoutBuilder(</span><br><span class="line">      builder: (_, constraints) &#123;</span><br><span class="line">        <span class="keyword">return</span> FittedBox(</span><br><span class="line">          child: ConstrainedBox(</span><br><span class="line">            constraints: constraints.copyWith(</span><br><span class="line">              minWidth: constraints.maxWidth,</span><br><span class="line">              maxWidth: <span class="built_in">double</span>.infinity,</span><br><span class="line">              <span class="comment">//maxWidth: constraints.maxWidth</span></span><br><span class="line">            ),</span><br><span class="line">            child: child,</span><br><span class="line">          ),</span><br><span class="line">        );</span><br><span class="line">      &#125;,</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》五：容器类组件/WeChatf8d080b6a4934b277d35eae7dee059d2.png" alt="WeChatf8d080b6a4934b277d35eae7dee059d2" style="zoom:80%;" />
+
+<h4 id="5-8-Scaffold"><a href="#5-8-Scaffold" class="headerlink" title="5.8 Scaffold"></a>5.8 Scaffold</h4><h5 id="5-8-1-Scaffold"><a href="#5-8-1-Scaffold" class="headerlink" title="5.8.1 Scaffold"></a>5.8.1 Scaffold</h5><p>Scaffold 是一个路由页的骨架</p>
+<p>实现一个页面：<br>1.一个导航栏<br>2.导航栏右边分享按钮<br>3.一个抽屉菜单<br>4.有一个底部导航<br>5.右下角悬浮动作按钮</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ScaffoldRoute</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _ScaffoldRouteState createState() =&gt; _ScaffoldRouteState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_ScaffoldRouteState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">ScaffoldRoute</span>&gt; </span>&#123;</span><br><span class="line">  <span class="built_in">int</span> _selectedIndex = <span class="number">1</span>;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(</span><br><span class="line">        title: Text(<span class="string">&#x27;标题&#x27;</span>),</span><br><span class="line">        actions: [</span><br><span class="line">          IconButton(onPressed: ()&#123;&#125;, icon: Icon(Icons.share))</span><br><span class="line">        ],</span><br><span class="line">      ),</span><br><span class="line">      bottomNavigationBar: BottomNavigationBar(</span><br><span class="line">          items: [</span><br><span class="line">            BottomNavigationBarItem(icon: Icon(Icons.home), title: Text(<span class="string">&#x27;Home&#x27;</span>)),</span><br><span class="line">            BottomNavigationBarItem(icon: Icon(Icons.business), title:Text(<span class="string">&#x27;Business&#x27;</span>)),</span><br><span class="line">            BottomNavigationBarItem(icon: Icon(Icons.school), title: Text(<span class="string">&#x27;School&#x27;</span>)),</span><br><span class="line">          ],</span><br><span class="line">          currentIndex: _selectedIndex,</span><br><span class="line">          fixedColor: Colors.blue, <span class="comment">//选中index图标颜色</span></span><br><span class="line">          onTap: _onItemTapped,</span><br><span class="line">      ),</span><br><span class="line">      floatingActionButton: FloatingActionButton(</span><br><span class="line">          child: Icon(Icons.add),</span><br><span class="line">          onPressed: _onAdd,</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">void</span> _onItemTapped(<span class="built_in">int</span> index) &#123;</span><br><span class="line">    setState(() &#123;</span><br><span class="line">      _selectedIndex = index;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">void</span> _onAdd() &#123;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》五：容器类组件/WeChataf1f187dc2c0ab4fa149ec5e1962aaf7.png" alt="WeChataf1f187dc2c0ab4fa149ec5e1962aaf7" style="zoom:80%;" />
+
+<p>AppBar 导航栏骨架</p>
+<p>BottomNavigationBar 底部导航栏</p>
+<p>FloatingActionButton 悬浮按钮</p>
+<h5 id="5-8-2-AppBar"><a href="#5-8-2-AppBar" class="headerlink" title="5.8.2 AppBar"></a>5.8.2 AppBar</h5><p>APPBar 是一个 Material 风格的导航栏，通过它可以设置导航栏标题、导航栏菜单、导航栏底部Tab标题等</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">AppBar(&#123;</span><br><span class="line">  Key? key,</span><br><span class="line">  <span class="keyword">this</span>.leading, <span class="comment">//导航栏最左侧Widget，常见为抽屉菜单按钮或返回按钮。</span></span><br><span class="line">  <span class="keyword">this</span>.automaticallyImplyLeading = <span class="keyword">true</span>, <span class="comment">//如果leading为null，是否自动实现默认的leading按钮</span></span><br><span class="line">  <span class="keyword">this</span>.title,<span class="comment">// 页面标题</span></span><br><span class="line">  <span class="keyword">this</span>.actions, <span class="comment">// 导航栏右侧菜单</span></span><br><span class="line">  <span class="keyword">this</span>.bottom, <span class="comment">// 导航栏底部菜单，通常为Tab按钮组</span></span><br><span class="line">  <span class="keyword">this</span>.elevation = <span class="number">4.0</span>, <span class="comment">// 导航栏阴影</span></span><br><span class="line">  <span class="keyword">this</span>.centerTitle, <span class="comment">//标题是否居中 </span></span><br><span class="line">  <span class="keyword">this</span>.backgroundColor,</span><br><span class="line">  ...   <span class="comment">//其它属性见源码注释</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>如果给 Scaffold 添加了菜单，默认情况下 Scaffold 会自动将 leading 设置为菜单按钮，点击它就可以打开抽屉菜单，也可以自定义图标</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Scaffold(</span><br><span class="line">  appBar: AppBar(</span><br><span class="line">    title: Text(<span class="string">&quot;App Name&quot;</span>),</span><br><span class="line">    leading: Builder(builder: (context) &#123;</span><br><span class="line">      <span class="keyword">return</span> IconButton(</span><br><span class="line">        icon: Icon(Icons.dashboard, color: Colors.white), <span class="comment">//自定义图标</span></span><br><span class="line">        onPressed: () &#123;</span><br><span class="line">          <span class="comment">// 打开抽屉菜单  </span></span><br><span class="line">          Scaffold.of(context).openDrawer(); </span><br><span class="line">        &#125;,</span><br><span class="line">      );</span><br><span class="line">    &#125;),</span><br><span class="line">    ...  </span><br><span class="line">  )  </span><br></pre></td></tr></table></figure>
+
+<h5 id="5-8-3-抽屉菜单-Drawer"><a href="#5-8-3-抽屉菜单-Drawer" class="headerlink" title="5.8.3 抽屉菜单 Drawer"></a>5.8.3 抽屉菜单 Drawer</h5><p>Scaffold 的 drawer 和 endDrawer 属性可以分别接受一个 widget 来作为左、右抽屉菜单</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDrawer</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> MyDrawer(&#123;</span><br><span class="line">    Key? key,</span><br><span class="line">  &#125;) : <span class="keyword">super</span>(key: key);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Drawer(</span><br><span class="line">      child: MediaQuery.removePadding(</span><br><span class="line">        context: context,</span><br><span class="line">        <span class="comment">//移除抽屉菜单顶部默认留白</span></span><br><span class="line">        removeTop: <span class="keyword">true</span>,</span><br><span class="line">        child: Column(</span><br><span class="line">          crossAxisAlignment: CrossAxisAlignment.start,</span><br><span class="line">          children: &lt;Widget&gt;[</span><br><span class="line">            Padding(</span><br><span class="line">              padding: <span class="keyword">const</span> EdgeInsets.only(top: <span class="number">38.0</span>),</span><br><span class="line">              child: Row(</span><br><span class="line">                children: &lt;Widget&gt;[</span><br><span class="line">                  Padding(</span><br><span class="line">                    padding: <span class="keyword">const</span> EdgeInsets.symmetric(horizontal: <span class="number">16.0</span>),</span><br><span class="line">                    child: ClipOval(</span><br><span class="line">                      child: Image.asset(</span><br><span class="line">                        <span class="string">&quot;img/avatar.png&quot;</span>,</span><br><span class="line">                        width: <span class="number">80</span>,</span><br><span class="line">                      ),</span><br><span class="line">                    ),</span><br><span class="line">                  ),</span><br><span class="line">                  Text(</span><br><span class="line">                    <span class="string">&quot;Wendux&quot;</span>,</span><br><span class="line">                    style: TextStyle(fontWeight: FontWeight.bold),</span><br><span class="line">                  )</span><br><span class="line">                ],</span><br><span class="line">              ),</span><br><span class="line">            ),</span><br><span class="line">            Expanded(</span><br><span class="line">              child: ListView(</span><br><span class="line">                children: &lt;Widget&gt;[</span><br><span class="line">                  ListTile(</span><br><span class="line">                    leading: <span class="keyword">const</span> Icon(Icons.add),</span><br><span class="line">                    title: <span class="keyword">const</span> Text(<span class="string">&#x27;Add account&#x27;</span>),</span><br><span class="line">                  ),</span><br><span class="line">                  ListTile(</span><br><span class="line">                    leading: <span class="keyword">const</span> Icon(Icons.settings),</span><br><span class="line">                    title: <span class="keyword">const</span> Text(<span class="string">&#x27;Manage accounts&#x27;</span>),</span><br><span class="line">                  ),</span><br><span class="line">                ],</span><br><span class="line">              ),</span><br><span class="line">            ),</span><br><span class="line">          ],</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>抽屉菜单通常将 Drawer 组件作为根节点，MediaQuery.removePadding 可以移除 Drawer 默认的一些留白（比如Drawer默认顶部会留手机状态栏等高的留白）</p>
+<h5 id="5-8-4-FloatingActionButton"><a href="#5-8-4-FloatingActionButton" class="headerlink" title="5.8.4 FloatingActionButton"></a>5.8.4 FloatingActionButton</h5><p>可以通过 floatingActionButtonLocation 属性指定其在页面中悬浮的位置</p>
+<h5 id="5-8-5-底部-Tab-导航栏"><a href="#5-8-5-底部-Tab-导航栏" class="headerlink" title="5.8.5 底部 Tab 导航栏"></a>5.8.5 底部 Tab 导航栏</h5><p>Material 组件库中提供了一个 BottomAPPBar 组件，可以和 FloatingActionButton 配合实现打洞效果</p>
+<img src="《Flutter实战第二版》五：容器类组件/WeChat32ad216f5189993f92ba6d3d40aae74c.png" alt="WeChat32ad216f5189993f92ba6d3d40aae74c" style="zoom:80%;" />
+
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">bottomNavigationBar: BottomAppBar(</span><br><span class="line">  color: Colors.white,</span><br><span class="line">  shape: CircularNotchedRectangle(), <span class="comment">// 底部导航栏打一个圆形的洞</span></span><br><span class="line">  child: Row(</span><br><span class="line">    children: [</span><br><span class="line">      IconButton(icon: Icon(Icons.home)),</span><br><span class="line">      SizedBox(), <span class="comment">//中间位置空出</span></span><br><span class="line">      IconButton(icon: Icon(Icons.business)),</span><br><span class="line">    ],</span><br><span class="line">    mainAxisAlignment: MainAxisAlignment.spaceAround, <span class="comment">//均分底部导航栏横向空间</span></span><br><span class="line">  ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>上面代码没有控制打洞位置的属性，实际上打洞位置取决于 FloatingActionButton 的位置</p>
+<p>上面 FloatingActionButton 的位置为</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,</span><br></pre></td></tr></table></figure>
+
+<p>打洞位置在导航栏正中间</p>
+<p>shape 属性决定洞的外形，也可以自定义外形</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E5%9B%9B%EF%BC%9A%E5%B8%83%E5%B1%80%E7%B1%BB%E7%BB%84%E4%BB%B6/" rel="prev" title="">
+                  <i class="fa fa-chevron-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E5%85%AD%EF%BC%9A%E5%8F%AF%E6%BB%9A%E5%8A%A8%E7%BB%84%E4%BB%B6/" rel="next" title="《Flutter实战第二版》六：可滚动组件">
+                  《Flutter实战第二版》六：可滚动组件 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

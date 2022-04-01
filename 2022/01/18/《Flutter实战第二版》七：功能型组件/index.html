@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="7 功能型组件功能型组件指的是不影响UI布局及外观的组件，通常具有一定的功能，如事件监听、数据存储等 FocusScope（焦点控制住）、PageStorage（数据存储）、NotificationListener（事件监听）都属于功能型组件 7.1 导航返回拦截 WillPopScopeFlutter 可以通过 willPopScope 来实现返回按钮拦截 12345const WillPopS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Flutter实战第二版》七：功能型组件">
+<meta property="og:url" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="7 功能型组件功能型组件指的是不影响UI布局及外观的组件，通常具有一定的功能，如事件监听、数据存储等 FocusScope（焦点控制住）、PageStorage（数据存储）、NotificationListener（事件监听）都属于功能型组件 7.1 导航返回拦截 WillPopScopeFlutter 可以通过 willPopScope 来实现返回按钮拦截 12345const WillPopS">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/《Flutter实战第二版》七：功能型组件/WeChat82decdb61c34cabc1597ca20cba3581b.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/《Flutter实战第二版》七：功能型组件/7-5.6f1c5012.jpeg">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/《Flutter实战第二版》七：功能型组件/WeChat480a699489c96afae7c2834566a2792f.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/《Flutter实战第二版》七：功能型组件/WeChata5da268a632103c4c715f5e27552825c.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/《Flutter实战第二版》七：功能型组件/WeChatbfb98a9a1f4c131945af42218a1998ee.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/《Flutter实战第二版》七：功能型组件/WeChat27864c95f0c816238363a69b4f71ff06.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/《Flutter实战第二版》七：功能型组件/WeChatf310a19612106d0766aaec0ad0fde4d9.png">
+<meta property="article:published_time" content="2022-01-18T04:19:00.000Z">
+<meta property="article:modified_time" content="2022-02-16T01:48:05.676Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/《Flutter实战第二版》七：功能型组件/WeChat82decdb61c34cabc1597ca20cba3581b.png">
+
+
+<link rel="canonical" href="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《Flutter实战第二版》七：功能型组件 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">7 功能型组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#7-1-%E5%AF%BC%E8%88%AA%E8%BF%94%E5%9B%9E%E6%8B%A6%E6%88%AA-WillPopScope"><span class="nav-number">1.1.</span> <span class="nav-text">7.1 导航返回拦截 WillPopScope</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-2-%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB-InheritedWidget"><span class="nav-number">1.2.</span> <span class="nav-text">7.2 数据共享 InheritedWidget</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#didChangeDependencies"><span class="nav-number">1.2.1.</span> <span class="nav-text">didChangeDependencies</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#InheritedWidget"><span class="nav-number">1.2.2.</span> <span class="nav-text">InheritedWidget</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-3-%E8%B7%A8%E7%BB%84%E4%BB%B6%E7%8A%B6%E6%80%81%E5%85%B1%E4%BA%AB-Provider"><span class="nav-number">1.3.</span> <span class="nav-text">7.3 跨组件状态共享 Provider</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#7-3-1-Provider"><span class="nav-number">1.3.1.</span> <span class="nav-text">7.3.1 Provider</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-%E9%A2%9C%E8%89%B2%E5%92%8C%E4%B8%BB%E9%A2%98"><span class="nav-number">1.4.</span> <span class="nav-text">7.4 颜色和主题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#7-4-1-%E9%A2%9C%E8%89%B2"><span class="nav-number">1.4.1.</span> <span class="nav-text">7.4.1 颜色</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-4-2-Theme"><span class="nav-number">1.4.2.</span> <span class="nav-text">7.4.2 Theme</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-5-ValueListenableBuilder"><span class="nav-number">1.5.</span> <span class="nav-text">7.5 ValueListenableBuilder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-6-%E5%BC%82%E6%AD%A5-UI-%E6%9B%B4%E6%96%B0"><span class="nav-number">1.6.</span> <span class="nav-text">7.6 异步 UI 更新</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#7-6-1-FutureBuilder"><span class="nav-number">1.6.1.</span> <span class="nav-text">7.6.1 FutureBuilder</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-6-2-StreamBuilder"><span class="nav-number">1.6.2.</span> <span class="nav-text">7.6.2 StreamBuilder</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-7-%E5%AF%B9%E8%AF%9D%E6%A1%86%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.7.</span> <span class="nav-text">7.7 对话框详解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#7-7-1-%E4%BD%BF%E7%94%A8%E5%AF%B9%E8%AF%9D%E6%A1%86"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.7.1 使用对话框</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-7-2-%E5%AF%B9%E8%AF%9D%E6%A1%86%E6%89%93%E5%BC%80%E5%8A%A8%E7%94%BB%E5%8F%8A%E9%81%AE%E7%BD%A9"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.7.2 对话框打开动画及遮罩</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-7-3-%E5%AF%B9%E8%AF%9D%E6%A1%86%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.7.3 对话框实现原理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-7-4-%E5%AF%B9%E8%AF%9D%E6%A1%86%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.7.4 对话框状态管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-7-5-%E5%85%B6%E5%AE%83%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%AF%B9%E8%AF%9D%E6%A1%86"><span class="nav-number">1.7.5.</span> <span class="nav-text">7.7.5 其它类型的对话框</span></a></li></ol></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%83%EF%BC%9A%E5%8A%9F%E8%83%BD%E5%9E%8B%E7%BB%84%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《Flutter实战第二版》七：功能型组件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-18 12:19:00" itemprop="dateCreated datePublished" datetime="2022-01-18T12:19:00+08:00">2022-01-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-02-16 09:48:05" itemprop="dateModified" datetime="2022-02-16T09:48:05+08:00">2022-02-16</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="7-功能型组件"><a href="#7-功能型组件" class="headerlink" title="7 功能型组件"></a>7 功能型组件</h3><p>功能型组件指的是不影响UI布局及外观的组件，通常具有一定的功能，如事件监听、数据存储等</p>
+<p>FocusScope（焦点控制住）、PageStorage（数据存储）、NotificationListener（事件监听）都属于功能型组件</p>
+<h4 id="7-1-导航返回拦截-WillPopScope"><a href="#7-1-导航返回拦截-WillPopScope" class="headerlink" title="7.1 导航返回拦截 WillPopScope"></a>7.1 导航返回拦截 WillPopScope</h4><p>Flutter 可以通过 willPopScope 来实现返回按钮拦截</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> WillPopScope(&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">required</span> WillPopCallback onWillPop,</span><br><span class="line">  <span class="keyword">required</span> Widget child</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>onWillPop 当用户点击返回按钮时被调用，该回调需要返回一个 Future 对象</p>
+<ul>
+<li>示例</li>
+</ul>
+<p>为防止用户误触返回键退出，拦截返回事件。用户 1 秒内点击两次返回按钮时，则退出；如果间隔超过 1 秒则不退出，并重新计时</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WillPopScopeTestRouteState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">WillPopScopeTestRoute</span>&gt; </span>&#123;</span><br><span class="line">  <span class="built_in">DateTime?</span> _lastPressedAt; <span class="comment">//上次点击时间</span></span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> WillPopScope(</span><br><span class="line">      onWillPop: () <span class="keyword">async</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (_lastPressedAt == <span class="keyword">null</span> ||</span><br><span class="line">            <span class="built_in">DateTime</span>.now().difference(_lastPressedAt!) &gt; <span class="built_in">Duration</span>(seconds: <span class="number">1</span>)) &#123;</span><br><span class="line">          <span class="comment">//两次点击间隔超过1秒则重新计时</span></span><br><span class="line">          _lastPressedAt = <span class="built_in">DateTime</span>.now();</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">      &#125;,</span><br><span class="line">      child: Container(</span><br><span class="line">        alignment: Alignment.center,</span><br><span class="line">        child: Text(<span class="string">&quot;1秒内连续按两次返回键退出&quot;</span>),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-2-数据共享-InheritedWidget"><a href="#7-2-数据共享-InheritedWidget" class="headerlink" title="7.2 数据共享 InheritedWidget"></a>7.2 数据共享 InheritedWidget</h4><p>InheritedWidget 提供了一种在 widget 树中从上到下共享数据的方式。比如在根 widget 中通过 InheritedWidget 共享了一个数据，那么我们可以在任意子 widget 中获取共享的数据</p>
+<p>Flutter SDK 中通过 InheritedWidget 来共享主题和 Locale 信息</p>
+<h5 id="didChangeDependencies"><a href="#didChangeDependencies" class="headerlink" title="didChangeDependencies"></a>didChangeDependencies</h5><p>State 对象有个 didChangeDependencies 回调，它会在依赖发生变化时被 Flutter 框架调用，</p>
+<p>这个依赖指的是，子 widget 是否使用了父 widget 中 InheritedWidget 的数据，</p>
+<p>这种机制可以使子组件在依赖的 InheritedWidget 变化时更新自身，如主题、语言等变化时，依赖他们的子 widget 的 didChangeDependencies 会被调用</p>
+<ul>
+<li>示例</li>
+</ul>
+<p>首先通过继承 InheritedWidget，将计数器点击次数保存在 ShareDataWidget 的 data 属性中</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ShareDataWidget</span> <span class="keyword">extends</span> <span class="title">InheritedWidget</span> </span>&#123;</span><br><span class="line">  ShareDataWidget(&#123;</span><br><span class="line">    Key? key,</span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">this</span>.data, <span class="comment">//需要在子树中共享的数据，保存点击次数</span></span><br><span class="line">    <span class="keyword">required</span> Widget child,</span><br><span class="line">  &#125;) : <span class="keyword">super</span>(key: key, child: child);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">int</span> data;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//定义一个便捷方法，方便子树中的widget获取共享数据</span></span><br><span class="line">  <span class="keyword">static</span> ShareDataWidget? of(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> context.dependOnInheritedWidgetOfExactType&lt;ShareDataWidget&gt;();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//该回调决定当data发生变化时，是否通知子树中依赖data的Widget</span></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">bool</span> updateShouldNotify(<span class="keyword">covariant</span> ShareDataWidget oldWidget) &#123;</span><br><span class="line">    <span class="keyword">return</span> oldWidget.data != data;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后实现一个子组件 _TestWidget，在 build 方法中引用了 ShareDataWidget 中的数据，同时在 didChangeDependencies 回调中打印日志 </p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_TestWidget</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> _TestWidget(&#123;Key? key&#125;) : <span class="keyword">super</span>(key: key);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _TestWidgetState createState() =&gt; _TestWidgetState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_TestWidgetState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">_TestWidget</span>&gt; </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="comment">//使用InheritedWidget中的共享数据</span></span><br><span class="line">    <span class="keyword">return</span> Text(ShareDataWidget.of(context)!.data.toString());</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> didChangeDependencies() &#123;</span><br><span class="line">    <span class="keyword">super</span>.didChangeDependencies();</span><br><span class="line">    <span class="comment">//父或祖先widget中的InheritedWidget改变(updateShouldNotify返回true)时会被调用。</span></span><br><span class="line">    <span class="comment">//如果build中没有依赖InheritedWidget，则此回调不会被调用。</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Dependencies change&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后创建按钮，每点击一次就 ShareDataWidget 的值自增</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InheritedWidgetTestRoute</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _InheritedWidgetTestRouteState createState() =&gt; _InheritedWidgetTestRouteState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_InheritedWidgetTestRouteState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">InheritedWidgetTestRoute</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(title: Text(<span class="string">&#x27;标题&#x27;</span>)),</span><br><span class="line">      body: Center(</span><br><span class="line">        child: ShareDataWidget(<span class="comment">//使用ShareDataWidget</span></span><br><span class="line">          data: count,</span><br><span class="line">          child: Column(</span><br><span class="line">            mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">            children: [</span><br><span class="line">              Padding(</span><br><span class="line">                padding: EdgeInsets.only(bottom: <span class="number">20.0</span>),</span><br><span class="line">                child: _TestWidget(),<span class="comment">//子widget中依赖ShareDataWidget</span></span><br><span class="line">              ),</span><br><span class="line">              ElevatedButton(</span><br><span class="line">                	<span class="comment">//每点击一次，将count自增，然后重新build,ShareDataWidget的data将被更新  </span></span><br><span class="line">                  onPressed: () =&gt; setState(() &#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                  &#125;),</span><br><span class="line">                  child: Text(<span class="string">&#x27;Increment&#x27;</span>)</span><br><span class="line">              ),</span><br><span class="line">            ],</span><br><span class="line">          ),</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》七：功能型组件/WeChat82decdb61c34cabc1597ca20cba3581b.png" alt="WeChat82decdb61c34cabc1597ca20cba3581b" style="zoom:80%;" />
+
+<p>每点击一次，计数器就会自增，控制台就会打印一句日志 flutter: Dependencies change，依赖变化后，其 didChangeDependencies 会被调用</p>
+<p>如果 _TestWidget 的 build 方法中没有使用 ShareDataWidget 的数据，那么它的 didChangeDependencies 将不会被调用，因为它没有依赖 ShareDataWidget，即将上面改成 </p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">  <span class="comment">//使用InheritedWidget中的共享数据</span></span><br><span class="line">  <span class="comment">//return Text(ShareDataWidget.of(context)!.data.toString());</span></span><br><span class="line">  retirn Text(<span class="string">&#x27;text&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>didChangeDependencies 中做什么</li>
+</ul>
+<p>一般子 widget 很少会重写此方法，因为依赖改变后 Flutter 也都会调用 build() 方法重新构建组件树。但是，如果需要在依赖改变后执行一些昂贵 的操作，比如网络请求，这时最好的方式是在此方法中执行，可以避免每次 build 都执行这些昂贵操作</p>
+<h5 id="InheritedWidget"><a href="#InheritedWidget" class="headerlink" title="InheritedWidget"></a>InheritedWidget</h5><p>如果只想在 _TestWidgetState 中引用 ShareDataWidget 数据，但不希望在 ShareDataWidget 发生变化时调用 _TestWidgetState 的 didChangeDependencies</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义一个便捷方法，方便子树中的widget获取共享数据</span></span><br><span class="line"><span class="keyword">static</span> ShareDataWidget of(BuildContext context) &#123;</span><br><span class="line">  <span class="comment">//return context.dependOnInheritedWidgetOfExactType&lt;ShareDataWidget&gt;();</span></span><br><span class="line">  <span class="keyword">return</span> context.getElementForInheritedWidgetOfExactType&lt;ShareDataWidget&gt;().widget;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>dependOnInheritedWidgetOfExactType 和 getElementForInheritedWidgetOfExactType 的区别是前者会注册依赖关系，后者不会。</p>
+<p>调用 dependOnInheritedWidgetOfExactType 后，InheritedWidget 和依赖它的子孙组件关系便完成了注册，之后 InheritedWidget 发生变化，就会更新依赖它的子孙组件，也就会调用子孙组件的 didChangeDependencies 方法和 build 方法</p>
+<h4 id="7-3-跨组件状态共享-Provider"><a href="#7-3-跨组件状态共享-Provider" class="headerlink" title="7.3 跨组件状态共享 Provider"></a>7.3 跨组件状态共享 Provider</h4><p>登录状态同步的示例</p>
+<p>定义事件：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Event&#123;</span><br><span class="line">  login,</span><br><span class="line">  ... <span class="comment">//省略其它事件</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>登录页代码大致如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 登录状态改变后发布状态改变事件</span></span><br><span class="line">bus.emit(Event.login);</span><br></pre></td></tr></table></figure>
+
+<p>依赖登录状态的页面：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> onLoginChanged(e)&#123;</span><br><span class="line">  <span class="comment">//登录状态变化处理逻辑</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> initState() &#123;</span><br><span class="line">  <span class="comment">//订阅登录状态改变事件</span></span><br><span class="line">  bus.<span class="keyword">on</span>(Event.login,onLogin);</span><br><span class="line">  <span class="keyword">super</span>.initState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> dispose() &#123;</span><br><span class="line">  <span class="comment">//取消订阅</span></span><br><span class="line">  bus.off(Event.login,onLogin);</span><br><span class="line">  <span class="keyword">super</span>.dispose();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过观察者模式来实现跨组件状态共享缺点：<br>必须显式定义各种事件，不好管理<br>订阅者必须显式注册状态改变回调，必须组件销毁时手动解绑回调以避免内存泄漏</p>
+<p>InheritedWidget 的特性就是能绑定 InheritedWidget 与依赖它的子孙组件的依赖关系，且 InheritedWidget 数据发生变化时，可以自动更新依赖的子孙组件。利用这个特性，我们可以将需要跨组件共享的状态保存在 InheritedWidget 中，然后在子组件中引用 InheritedWidget 即可</p>
+<h5 id="7-3-1-Provider"><a href="#7-3-1-Provider" class="headerlink" title="7.3.1 Provider"></a>7.3.1 Provider</h5><p>实现一个最小功能的 Provider</p>
+<p>首先需要一个保存共享的数据 InheritedWidget，由于具体业务数据不可预期，使用泛型，定义一个通用的 InheritedProvider 类，它继承自 InheritedWidget</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InHeritedProvider</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">InheritedWidget</span> </span>&#123;</span><br><span class="line">  InHeritedProvider(&#123;</span><br><span class="line">    Key? key,</span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">this</span>.data,</span><br><span class="line">    <span class="keyword">required</span> Widget child,</span><br><span class="line">  &#125;) : <span class="keyword">super</span>(child: child);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> T data;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">bool</span> updateShouldNotify(<span class="keyword">covariant</span> InHeritedProvider&lt;T&gt; oldWidget) &#123;</span><br><span class="line">    <span class="comment">//在此简单返回true，则每次更新都会调用依赖其的子孙节点的`didChangeDependencies`。</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数据发生变化怎么通知？</li>
+</ul>
+<p>Flutter 提供了 ChangeNotifier 类，继承自 Listenable 定义大致如下</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChangeNotifier</span> <span class="keyword">implements</span> <span class="title">Listenable</span> </span>&#123;</span><br><span class="line">  <span class="built_in">List</span> listeners=[];</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> addListener(VoidCallback listener) &#123;</span><br><span class="line">     <span class="comment">//添加监听器</span></span><br><span class="line">     listeners.add(listener);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> removeListener(VoidCallback listener) &#123;</span><br><span class="line">    <span class="comment">//移除监听器</span></span><br><span class="line">    listeners.remove(listener);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">void</span> notifyListeners() &#123;</span><br><span class="line">    <span class="comment">//通知所有监听器，触发监听器回调 </span></span><br><span class="line">    listeners.forEach((item)=&gt;item());</span><br><span class="line">  &#125;</span><br><span class="line">   </span><br><span class="line">  ... <span class="comment">//省略无关代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，将要共享的状态放到一个 Model 类中，让它继承自 ChangeNotifier，这样当共享状态发生改变时，只需调用 notifyListeners() 来通知订阅者，然后订阅者重新构建 InheritedProvider</p>
+<p>//TODO：。。。。</p>
+<h4 id="7-4-颜色和主题"><a href="#7-4-颜色和主题" class="headerlink" title="7.4 颜色和主题"></a>7.4 颜色和主题</h4><h5 id="7-4-1-颜色"><a href="#7-4-1-颜色" class="headerlink" title="7.4.1 颜色"></a>7.4.1 颜色</h5><ul>
+<li>MaterialColor</li>
+</ul>
+<p>MaterialColor 包含一种颜色的10个级别的渐变色，通过 [] 运算符的索引值来代表颜色的深度，有效的索引有：50，100，200，.. 800，900 数值越大，颜色越深，默认值为索引等于500的颜色</p>
+<p>可以根据 shadeXX 来获取具体索引的颜色 Color.blue.shade50 </p>
+<img src="《Flutter实战第二版》七：功能型组件/7-5.6f1c5012.jpeg" alt="7-5.6f1c5012" style="zoom:80%;" />
+
+<h5 id="7-4-2-Theme"><a href="#7-4-2-Theme" class="headerlink" title="7.4.2 Theme"></a>7.4.2 Theme</h5><ul>
+<li>ThemeData</li>
+</ul>
+<p>ThemeData 用于保存 Material 组件库的主题数据</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ThemeData(&#123;</span><br><span class="line">  Brightness? brightness, <span class="comment">//深色还是浅色</span></span><br><span class="line">  MaterialColor? primarySwatch, <span class="comment">//主题颜色样本，见下面介绍</span></span><br><span class="line">  Color? primaryColor, <span class="comment">//主色，决定导航栏颜色</span></span><br><span class="line">  Color? cardColor, <span class="comment">//卡片颜色</span></span><br><span class="line">  Color? dividerColor, <span class="comment">//分割线颜色</span></span><br><span class="line">  ButtonThemeData buttonTheme, <span class="comment">//按钮主题</span></span><br><span class="line">  Color dialogBackgroundColor,<span class="comment">//对话框背景颜色</span></span><br><span class="line">  <span class="built_in">String</span> fontFamily, <span class="comment">//文字字体</span></span><br><span class="line">  TextTheme textTheme,<span class="comment">// 字体主题，包括标题、body等文字样式</span></span><br><span class="line">  IconThemeData iconTheme, <span class="comment">// Icon的默认样式</span></span><br><span class="line">  TargetPlatform platform, <span class="comment">//指定平台，应用特定平台控件风格</span></span><br><span class="line">  ColorScheme? colorScheme,</span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>路由换肤示例</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThemeTestRoute</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _ThemeTestRouteState createState() =&gt; _ThemeTestRouteState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_ThemeTestRouteState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">ThemeTestRoute</span>&gt; </span>&#123;</span><br><span class="line">  MaterialColor _themeColor = Colors.teal; <span class="comment">//当前路由主题色</span></span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    ThemeData themeData = Theme.of(context);</span><br><span class="line">    <span class="keyword">return</span> Theme(</span><br><span class="line">      data: ThemeData(</span><br><span class="line">          primarySwatch: _themeColor, <span class="comment">//用于导航栏、FloatingActionButton的背景色等</span></span><br><span class="line">          iconTheme: IconThemeData(color: _themeColor) <span class="comment">//用于Icon颜色</span></span><br><span class="line">      ),</span><br><span class="line">      child: Scaffold(</span><br><span class="line">        appBar: AppBar(title: Text(<span class="string">&quot;主题测试&quot;</span>)),</span><br><span class="line">        body: Column(</span><br><span class="line">          mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">          children: &lt;Widget&gt;[</span><br><span class="line">            <span class="comment">//第一行Icon使用主题中的iconTheme</span></span><br><span class="line">            Row(</span><br><span class="line">                mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">                children: &lt;Widget&gt;[</span><br><span class="line">                  Icon(Icons.favorite),</span><br><span class="line">                  Icon(Icons.airport_shuttle),</span><br><span class="line">                  Text(<span class="string">&quot;  颜色跟随主题&quot;</span>)</span><br><span class="line">                ]</span><br><span class="line">            ),</span><br><span class="line">            <span class="comment">//为第二行Icon自定义颜色（固定为黑色)</span></span><br><span class="line">            Theme(</span><br><span class="line">              data: themeData.copyWith(</span><br><span class="line">                iconTheme: themeData.iconTheme.copyWith(</span><br><span class="line">                    color: Colors.black</span><br><span class="line">                ),</span><br><span class="line">              ),</span><br><span class="line">              child: Row(</span><br><span class="line">                  mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">                  children: &lt;Widget&gt;[</span><br><span class="line">                    Icon(Icons.favorite),</span><br><span class="line">                    Icon(Icons.airport_shuttle),</span><br><span class="line">                    Text(<span class="string">&quot;  颜色固定黑色&quot;</span>)</span><br><span class="line">                  ]</span><br><span class="line">              ),</span><br><span class="line">            ),</span><br><span class="line">          ],</span><br><span class="line">        ),</span><br><span class="line">        floatingActionButton: FloatingActionButton(</span><br><span class="line">            onPressed: () =&gt;  <span class="comment">//切换主题</span></span><br><span class="line">                setState(() =&gt;</span><br><span class="line">                _themeColor =</span><br><span class="line">                _themeColor == Colors.teal ? Colors.blue : Colors.teal</span><br><span class="line">                ),</span><br><span class="line">            child: Icon(Icons.palette)</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》七：功能型组件/WeChat480a699489c96afae7c2834566a2792f.png" alt="WeChat480a699489c96afae7c2834566a2792f" style="zoom:80%;" />
+
+<p>可以通过局部主题覆盖全局主题</p>
+<h4 id="7-5-ValueListenableBuilder"><a href="#7-5-ValueListenableBuilder" class="headerlink" title="7.5 ValueListenableBuilder"></a>7.5 ValueListenableBuilder</h4><p>ValueListenableBuilder 功能是监听一个数据源，如果数据源发生变化，则会重新执行其 builder</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ValueListenableBuilder(&#123;</span><br><span class="line">  Key? key,</span><br><span class="line">  <span class="keyword">required</span> <span class="keyword">this</span>.valueListenable, <span class="comment">// 数据源，类型为ValueListenable&lt;T&gt;</span></span><br><span class="line">  <span class="keyword">required</span> <span class="keyword">this</span>.builder, <span class="comment">// builder</span></span><br><span class="line">  <span class="keyword">this</span>.child,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>valueListenable：类型为 <code>ValueListenable&lt;T&gt;</code> ，表示一个可监听的数据源</p>
+<p>builder：数据源发生变化通知时，会重新调用 builder 重新 builder 子组件树</p>
+<p>child：builder 中每次都会重新构建整个子组件树，如果子组件树中有一些不变的部分，可以传递给 child</p>
+<p>点击器示例</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ValueListenableRoute</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> ValueListenableRoute(&#123;Key? key&#125;) : <span class="keyword">super</span>(key: key);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _ValueListenableRouteState createState() =&gt; _ValueListenableRouteState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_ValueListenableRouteState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">ValueListenableRoute</span>&gt; </span>&#123;</span><br><span class="line">  <span class="comment">// 定义一个ValueNotifier，当数字变化时会通知 ValueListenableBuilder</span></span><br><span class="line">  <span class="keyword">final</span> ValueNotifier&lt;<span class="built_in">int</span>&gt; _counter = ValueNotifier&lt;<span class="built_in">int</span>&gt;(<span class="number">0</span>);</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">const</span> <span class="built_in">double</span> textScaleFactor = <span class="number">1.5</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;build&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(title: Text(<span class="string">&#x27;ValueListenableBuilder 测试&#x27;</span>)),</span><br><span class="line">      body: Center(</span><br><span class="line">        child: ValueListenableBuilder(</span><br><span class="line">            valueListenable: _counter,</span><br><span class="line">            builder: (BuildContext context, <span class="built_in">int</span> value, Widget? child) &#123;</span><br><span class="line">              <span class="comment">// builder 方法只会在 _counter 变化时被调用</span></span><br><span class="line">              <span class="keyword">return</span> Row(</span><br><span class="line">                mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">                children: [</span><br><span class="line">                  Text(<span class="string">&#x27;点击了<span class="subst">$value</span>次&#x27;</span>, textScaleFactor: textScaleFactor,)</span><br><span class="line">                ],</span><br><span class="line">              );</span><br><span class="line">            &#125;,</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">      floatingActionButton: FloatingActionButton(</span><br><span class="line">        <span class="comment">// 点击后值 +1，触发 ValueListenableBuilder 重新构建</span></span><br><span class="line">        onPressed: () =&gt; _counter.value += <span class="number">1</span>,</span><br><span class="line">        child: Icon(Icons.add),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》七：功能型组件/WeChata5da268a632103c4c715f5e27552825c.png" alt="WeChata5da268a632103c4c715f5e27552825c" style="zoom:80%;" />
+
+<p>控制台只在打开时 build 了一次，点击 + 按钮时只是 ValueListenableBuilder 重新构建了子组件树，整个页面没有重新 build；尽可能让 ValueListenableBuilder 只构建依赖数据源的 widget，这样的话可以缩小重新构建的范围</p>
+<p>ValueListenableBuilder 和数据流向无关，可以实现任意数据流向的数据共享，实践中 ValueListenableBuilder 的拆分粒度应该尽可能的细</p>
+<h4 id="7-6-异步-UI-更新"><a href="#7-6-异步-UI-更新" class="headerlink" title="7.6 异步 UI 更新"></a>7.6 异步 UI 更新</h4><h5 id="7-6-1-FutureBuilder"><a href="#7-6-1-FutureBuilder" class="headerlink" title="7.6.1 FutureBuilder"></a>7.6.1 FutureBuilder</h5><p>FutureBuilder 会依赖一个 Future，会根据所依赖的 Future 的状态来动态构建自身</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FutureBuilder(&#123;</span><br><span class="line">  <span class="keyword">this</span>.future,</span><br><span class="line">  <span class="keyword">this</span>.initialData,</span><br><span class="line">  <span class="keyword">required</span> <span class="keyword">this</span>.builder,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>future：FutureBuilder 依赖的 future，通常是一个异步耗时的任务</p>
+<p>initialData：初始数据，用户设置默认数据</p>
+<p>builder：widget 构建器，该构建器会在 Future 执行的不同阶段被多次调用</p>
+<p>签名如下</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> AsyncWidgetBuilder&lt;T&gt; = Widget <span class="built_in">Function</span>(BuildContext context, AsyncSnapshot&lt;T&gt; snapshot);</span><br></pre></td></tr></table></figure>
+
+<p>snapshot 会包含当前异步任务的状态信息及结果信息，<br>snapshot.connectionState 获取异步任务的状态信息<br>snapshot.hasError 判断异步任务是否有错误等</p>
+<ul>
+<li>示例</li>
+</ul>
+<p>实现一个路由从网上获取数据，获取数据时弹一个加载框；获取结束时，如果成功则显示获取到的数据，失败则显示错误</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_DemoState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">Demo</span>&gt; </span>&#123;</span><br><span class="line">  </span><br><span class="line">  Future&lt;<span class="built_in">String</span>&gt; mockNetworkData() <span class="keyword">async</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Future.delayed(<span class="built_in">Duration</span>(seconds: <span class="number">2</span>), () =&gt; <span class="string">&quot;我是从互联网上获取的数据&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(title: Text(<span class="string">&#x27;标题&#x27;</span>)),</span><br><span class="line">      body: Container(</span><br><span class="line">        child: FutureBuilder(</span><br><span class="line">          future: mockNetworkData(),</span><br><span class="line">          builder: (BuildContext context, AsyncSnapshot snapshot) &#123;</span><br><span class="line">            <span class="comment">// 请求已结束</span></span><br><span class="line">            <span class="keyword">if</span> (snapshot.connectionState == ConnectionState.done) &#123;</span><br><span class="line">              <span class="keyword">if</span> (snapshot.hasError) &#123;</span><br><span class="line">                <span class="comment">// 请求失败，显示错误</span></span><br><span class="line">                <span class="keyword">return</span> Text(<span class="string">&quot;Error: <span class="subst">$&#123;snapshot.error&#125;</span>&quot;</span>);</span><br><span class="line">              &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 请求成功，显示数据</span></span><br><span class="line">                <span class="keyword">return</span> Text(<span class="string">&quot;Contents: <span class="subst">$&#123;snapshot.data&#125;</span>&quot;</span>);</span><br><span class="line">              &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              <span class="comment">// 请求未结束，显示loading</span></span><br><span class="line">              <span class="keyword">return</span> CircularProgressIndicator();</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;,</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》七：功能型组件/WeChatbfb98a9a1f4c131945af42218a1998ee.png" alt="WeChatbfb98a9a1f4c131945af42218a1998ee" style="zoom: 67%;" />
+
+<p>connectionState 异步任务状态是个枚举</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> ConnectionState &#123;</span><br><span class="line">  <span class="comment">/// <span class="markdown">当前没有异步任务，比如[FutureBuilder]的[future]为null时</span></span></span><br><span class="line">  none,</span><br><span class="line">  <span class="comment">/// <span class="markdown">异步任务处于等待状态</span></span></span><br><span class="line">  waiting,</span><br><span class="line">  <span class="comment">/// <span class="markdown">Stream处于激活状态（流上已经有数据传递了），对于FutureBuilder没有该状态。</span></span></span><br><span class="line">  active,</span><br><span class="line">  <span class="comment">/// <span class="markdown">异步任务已经终止.</span></span></span><br><span class="line">  done,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ConnectionState.active 只有在 StreamBuilder 中才会出现</p>
+<h5 id="7-6-2-StreamBuilder"><a href="#7-6-2-StreamBuilder" class="headerlink" title="7.6.2 StreamBuilder"></a>7.6.2 StreamBuilder</h5><p>Dart 中 Stream 也是用于接收异步事件数据，和 Future 不同的是，它可以接收多个异步操作的结果，常用于会多次读取数据的异步任务场景，如网络内容下载，文件读写</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">StreamBuilder(&#123;</span><br><span class="line">  <span class="keyword">this</span>.initialData,</span><br><span class="line">  Stream&lt;T&gt; stream,</span><br><span class="line">  <span class="keyword">required</span> <span class="keyword">this</span>.builder,</span><br><span class="line">&#125;) </span><br></pre></td></tr></table></figure>
+
+<p>和 FutureBuilder 有一点不同，前者需要一个 future，后者需要一个 stream</p>
+<ul>
+<li>示例</li>
+</ul>
+<p>创建一个计时器，每隔1秒，计数加1，这里使用 Stream 来实现每隔一秒生成一个数字</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;<span class="built_in">int</span>&gt; counter() &#123;</span><br><span class="line">  <span class="keyword">return</span> Stream.periodic(<span class="built_in">Duration</span>(seconds: <span class="number">1</span>), (i) &#123;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Widget build(BuildContext context) &#123;</span><br><span class="line">   <span class="keyword">return</span> StreamBuilder&lt;<span class="built_in">int</span>&gt;(</span><br><span class="line">     stream: counter(), <span class="comment">//</span></span><br><span class="line">     <span class="comment">//initialData: ,// a Stream&lt;int&gt; or null</span></span><br><span class="line">     builder: (BuildContext context, AsyncSnapshot&lt;<span class="built_in">int</span>&gt; snapshot) &#123;</span><br><span class="line">       <span class="keyword">if</span> (snapshot.hasError)</span><br><span class="line">         <span class="keyword">return</span> Text(<span class="string">&#x27;Error: <span class="subst">$&#123;snapshot.error&#125;</span>&#x27;</span>);</span><br><span class="line">       <span class="keyword">switch</span> (snapshot.connectionState) &#123;</span><br><span class="line">         <span class="keyword">case</span> ConnectionState.none:</span><br><span class="line">           <span class="keyword">return</span> Text(<span class="string">&#x27;没有Stream&#x27;</span>);</span><br><span class="line">         <span class="keyword">case</span> ConnectionState.waiting:</span><br><span class="line">           <span class="keyword">return</span> Text(<span class="string">&#x27;等待数据...&#x27;</span>);</span><br><span class="line">         <span class="keyword">case</span> ConnectionState.active:</span><br><span class="line">           <span class="keyword">return</span> Text(<span class="string">&#x27;active: <span class="subst">$&#123;snapshot.data&#125;</span>&#x27;</span>);</span><br><span class="line">         <span class="keyword">case</span> ConnectionState.done:</span><br><span class="line">           <span class="keyword">return</span> Text(<span class="string">&#x27;Stream 已关闭&#x27;</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">null</span>; <span class="comment">// unreachable</span></span><br><span class="line">     &#125;,</span><br><span class="line">   );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实战中，凡是UI会依赖多个异步数据而发生变化的场景都可以使用 StreamBuilder</p>
+<h4 id="7-7-对话框详解"><a href="#7-7-对话框详解" class="headerlink" title="7.7 对话框详解"></a>7.7 对话框详解</h4><h5 id="7-7-1-使用对话框"><a href="#7-7-1-使用对话框" class="headerlink" title="7.7.1 使用对话框"></a>7.7.1 使用对话框</h5><ul>
+<li>AlertDialog</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> AlertDialog(&#123;</span><br><span class="line">  Key? key,</span><br><span class="line">  <span class="keyword">this</span>.title, <span class="comment">//对话框标题组件</span></span><br><span class="line">  <span class="keyword">this</span>.titlePadding, <span class="comment">// 标题填充</span></span><br><span class="line">  <span class="keyword">this</span>.titleTextStyle, <span class="comment">//标题文本样式</span></span><br><span class="line">  <span class="keyword">this</span>.content, <span class="comment">// 对话框内容组件</span></span><br><span class="line">  <span class="keyword">this</span>.contentPadding = <span class="keyword">const</span> EdgeInsets.fromLTRB(<span class="number">24.0</span>, <span class="number">20.0</span>, <span class="number">24.0</span>, <span class="number">24.0</span>), <span class="comment">//内容的填充</span></span><br><span class="line">  <span class="keyword">this</span>.contentTextStyle,<span class="comment">// 内容文本样式</span></span><br><span class="line">  <span class="keyword">this</span>.actions, <span class="comment">// 对话框操作按钮组</span></span><br><span class="line">  <span class="keyword">this</span>.backgroundColor, <span class="comment">// 对话框背景色</span></span><br><span class="line">  <span class="keyword">this</span>.elevation,<span class="comment">// 对话框的阴影</span></span><br><span class="line">  <span class="keyword">this</span>.semanticLabel, <span class="comment">//对话框语义化标签(用于读屏软件)</span></span><br><span class="line">  <span class="keyword">this</span>.shape, <span class="comment">// 对话框外形</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _DemoState createState() =&gt; _DemoState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_DemoState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">Demo</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//弹出对话框</span></span><br><span class="line">  Future&lt;<span class="built_in">bool?</span>&gt; showDialog1() &#123;</span><br><span class="line">    <span class="keyword">return</span> showDialog&lt;<span class="built_in">bool</span>&gt;(</span><br><span class="line">        context: context,</span><br><span class="line">        builder: (context) &#123;</span><br><span class="line">          <span class="keyword">return</span> AlertDialog(</span><br><span class="line">            title: Text(<span class="string">&#x27;提示&#x27;</span>),</span><br><span class="line">            content: Text(<span class="string">&#x27;您确定要删除当前文件吗?&#x27;</span>),</span><br><span class="line">            actions: [</span><br><span class="line">              TextButton(</span><br><span class="line">                  onPressed: () =&gt; Navigator.of(context).pop(),<span class="comment">//关闭对话框</span></span><br><span class="line">                  child: Text(<span class="string">&#x27;取消&#x27;</span>)</span><br><span class="line">              ),</span><br><span class="line">              TextButton(</span><br><span class="line">                  onPressed: ()&#123;</span><br><span class="line">                    <span class="comment">//关闭对话框并返回true</span></span><br><span class="line">                    Navigator.of(context).pop(<span class="keyword">true</span>);</span><br><span class="line">                  &#125;,<span class="comment">// ... 执行删除操作</span></span><br><span class="line">                  child: Text(<span class="string">&#x27;删除&#x27;</span>)</span><br><span class="line">              ),</span><br><span class="line">            ],</span><br><span class="line">          );</span><br><span class="line">        &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(title: Text(<span class="string">&#x27;标题&#x27;</span>)),</span><br><span class="line">      body: Container(</span><br><span class="line">        child: Column(</span><br><span class="line">          mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">          children: [</span><br><span class="line">            ElevatedButton(</span><br><span class="line">                onPressed: () <span class="keyword">async</span> &#123;</span><br><span class="line">                  <span class="comment">//弹出对话框并等待其关闭</span></span><br><span class="line">                  <span class="built_in">bool?</span> delete = <span class="keyword">await</span> showDialog1();</span><br><span class="line">                  <span class="keyword">if</span> (delete == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;取消删除&quot;</span>);</span><br><span class="line">                  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;已确认删除&quot;</span>);</span><br><span class="line">                    <span class="comment">//... 删除文件</span></span><br><span class="line">                  &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                child: Text(<span class="string">&#x27;对话框1&#x27;</span>),</span><br><span class="line">            ),</span><br><span class="line">          ],</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》七：功能型组件/WeChat27864c95f0c816238363a69b4f71ff06.png" alt="WeChat27864c95f0c816238363a69b4f71ff06" style="zoom:80%;" />
+
+<p>通过 Navigator.of(context).pop(…) 方法来关闭对话框，都可以返回一个结果数据</p>
+<ul>
+<li>弹出对话框 showDialog()</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;T?&gt; showDialog&lt;T&gt;(&#123;</span><br><span class="line">  <span class="keyword">required</span> BuildContext context,</span><br><span class="line">  <span class="keyword">required</span> WidgetBuilder builder, <span class="comment">// 对话框UI的builder</span></span><br><span class="line">  <span class="built_in">bool</span> barrierDismissible = <span class="keyword">true</span>, <span class="comment">//点击对话框barrier(遮罩)时是否关闭它</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>SimpleDialog</li>
+</ul>
+<p>会展示一个列表，用于列表选择的场景</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="keyword">void</span>&gt; changeLanguage() <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="built_in">int?</span> i = <span class="keyword">await</span> showDialog(</span><br><span class="line">      context: context,</span><br><span class="line">      builder: (context) &#123;</span><br><span class="line">        <span class="keyword">return</span> SimpleDialog(</span><br><span class="line">          title: Text(<span class="string">&#x27;请选择语言&#x27;</span>),</span><br><span class="line">          children: [</span><br><span class="line">            SimpleDialogOption(</span><br><span class="line">              child: Padding(</span><br><span class="line">                  padding: EdgeInsets.symmetric(vertical: <span class="number">6</span>),</span><br><span class="line">                  child: Text(<span class="string">&#x27;中文简体&#x27;</span>),</span><br><span class="line">              ),</span><br><span class="line">              onPressed: () &#123;</span><br><span class="line">                Navigator.pop(context, <span class="number">1</span>);</span><br><span class="line">              &#125;,</span><br><span class="line">            ),</span><br><span class="line">            SimpleDialogOption(</span><br><span class="line">              child: Padding(</span><br><span class="line">                padding: EdgeInsets.symmetric(vertical: <span class="number">6</span>),</span><br><span class="line">                child: Text(<span class="string">&#x27;美国英语&#x27;</span>),</span><br><span class="line">              ),</span><br><span class="line">              onPressed: () &#123;</span><br><span class="line">                Navigator.pop(context, <span class="number">2</span>);</span><br><span class="line">              &#125;,</span><br><span class="line">            ),</span><br><span class="line">          ],</span><br><span class="line">        );</span><br><span class="line">      &#125;,</span><br><span class="line">  );</span><br><span class="line">  <span class="keyword">if</span> (i != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;选择了：<span class="subst">$&#123;i == <span class="number">1</span> ? <span class="string">&quot;中文简体&quot;</span> : <span class="string">&quot;美国英语&quot;</span>&#125;</span>&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>列表项组件使用了 SimpleDialogOption 包装了，相当于一个 TextButton，只不过按钮是左对齐的，并且 padding 较小</p>
+<ul>
+<li>Dialog</li>
+</ul>
+<p>如果对话框需要嵌套一个 ListView 可以直接使用 Dialog 类</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="keyword">void</span>&gt; showListDialog() <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="built_in">int?</span> index = <span class="keyword">await</span> showDialog(</span><br><span class="line">      context: context,</span><br><span class="line">      builder: (context) &#123;</span><br><span class="line">        <span class="keyword">var</span> child = Column(</span><br><span class="line">          children: [</span><br><span class="line">            ListTile(title: Text(<span class="string">&#x27;请选择&#x27;</span>)),</span><br><span class="line">            Expanded(</span><br><span class="line">                child: ListView.builder(</span><br><span class="line">                    itemCount: <span class="number">30</span>,</span><br><span class="line">                    itemBuilder: (context, index) &#123;</span><br><span class="line">                      <span class="keyword">return</span> ListTile(</span><br><span class="line">                        title: Text(<span class="string">&quot;<span class="subst">$index</span>&quot;</span>),</span><br><span class="line">                        onTap: () =&gt; Navigator.of(context).pop(index),</span><br><span class="line">                      );</span><br><span class="line">                    &#125;,</span><br><span class="line">                ),</span><br><span class="line">            ),</span><br><span class="line">          ],</span><br><span class="line">        );</span><br><span class="line">        <span class="keyword">return</span> Dialog(child: child);</span><br><span class="line">      &#125;,</span><br><span class="line">  );</span><br><span class="line">  <span class="keyword">if</span> (index != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;点击了：<span class="subst">$index</span>&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="《Flutter实战第二版》七：功能型组件/WeChatf310a19612106d0766aaec0ad0fde4d9.png" alt="WeChatf310a19612106d0766aaec0ad0fde4d9" style="zoom: 67%;" />
+
+<h5 id="7-7-2-对话框打开动画及遮罩"><a href="#7-7-2-对话框打开动画及遮罩" class="headerlink" title="7.7.2 对话框打开动画及遮罩"></a>7.7.2 对话框打开动画及遮罩</h5><p>如何打开一个普通风格的对话框（非 Material风格）？Flutter 提供了一个 showGeneralDialog 方法</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;T?&gt; showGeneralDialog&lt;T&gt;(&#123;</span><br><span class="line">  <span class="keyword">required</span> BuildContext context,</span><br><span class="line">  <span class="keyword">required</span> RoutePageBuilder pageBuilder, <span class="comment">//构建对话框内部UI</span></span><br><span class="line">  <span class="built_in">bool</span> barrierDismissible = <span class="keyword">false</span>, <span class="comment">//点击遮罩是否关闭对话框</span></span><br><span class="line">  <span class="built_in">String?</span> barrierLabel, <span class="comment">// 语义化标签(用于读屏软件)</span></span><br><span class="line">  Color barrierColor = <span class="keyword">const</span> Color(<span class="number">0x80000000</span>), <span class="comment">// 遮罩颜色</span></span><br><span class="line">  <span class="built_in">Duration</span> transitionDuration = <span class="keyword">const</span> <span class="built_in">Duration</span>(milliseconds: <span class="number">200</span>), <span class="comment">// 对话框打开/关闭的动画时长</span></span><br><span class="line">  RouteTransitionsBuilder? transitionBuilder, <span class="comment">// 对话框打开/关闭的动画</span></span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>showDialog 方法正是 showGeneralDialog 的一个封装，定制了 Material 风格对话框的遮罩颜色和动画</p>
+<ul>
+<li>封装一个 showCustomDialog 方法</li>
+</ul>
+<h5 id="7-7-3-对话框实现原理"><a href="#7-7-3-对话框实现原理" class="headerlink" title="7.7.3 对话框实现原理"></a>7.7.3 对话框实现原理</h5><p>直接调用 Navigatio 的 push 方法打开了一个新的对话框路由 RawDialogRoute，然后返回了 push 的返回值，对话框实际上正是通过路由的形式打开的</p>
+<h5 id="7-7-4-对话框状态管理"><a href="#7-7-4-对话框状态管理" class="headerlink" title="7.7.4 对话框状态管理"></a>7.7.4 对话框状态管理</h5><h5 id="7-7-5-其它类型的对话框"><a href="#7-7-5-其它类型的对话框" class="headerlink" title="7.7.5 其它类型的对话框"></a>7.7.5 其它类型的对话框</h5><ul>
+<li>Loading 框</li>
+<li>日历选择</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E5%85%AD%EF%BC%9A%E5%8F%AF%E6%BB%9A%E5%8A%A8%E7%BB%84%E4%BB%B6/" rel="prev" title="《Flutter实战第二版》六：可滚动组件">
+                  <i class="fa fa-chevron-left"></i> 《Flutter实战第二版》六：可滚动组件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E5%85%AB%EF%BC%9A%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E4%B8%8E%E9%80%9A%E7%9F%A5/" rel="next" title="《Flutter实战第二版》八：事件处理与通知">
+                  《Flutter实战第二版》八：事件处理与通知 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

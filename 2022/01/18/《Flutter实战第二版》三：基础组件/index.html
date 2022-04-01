@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="3 基础组件3.1 文本及样式123456789101112131415161718192021222324252627282930313233343536373839404142void main() &amp;#123;  runApp(MaterialApp(home: TextDemo()));&amp;#125;class TextDemo extends StatelessWidget &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Flutter实战第二版》三：基础组件">
+<meta property="og:url" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="3 基础组件3.1 文本及样式123456789101112131415161718192021222324252627282930313233343536373839404142void main() &amp;#123;  runApp(MaterialApp(home: TextDemo()));&amp;#125;class TextDemo extends StatelessWidget &amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChat312b40c64293529cd163ce4550ee7471.png?lastModify=1642479994">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChatd910839e3ff49d0f3f1548df3adf920f.png?lastModify=1642479994">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChata1d3c6be4375dfacab4bffe55cf60aa5.png">
+<meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/《Flutter实战第二版》三：基础组件/WeChatfd803adaf46878bf208e18fb3907acc4.png">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChate24ea09c0c08061e88779c644b095b75.png?lastModify=1642479994">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChatce892753a9d9210783f5c2d69dadd941.png?lastModify=1642479994">
+<meta property="og:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChat803de70354088ea04b9983c0a122d48b.png?lastModify=1642479994">
+<meta property="article:published_time" content="2022-01-18T04:17:02.000Z">
+<meta property="article:modified_time" content="2022-01-18T07:21:55.109Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChat312b40c64293529cd163ce4550ee7471.png?lastModify=1642479994">
+
+
+<link rel="canonical" href="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《Flutter实战第二版》三：基础组件 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">3 基础组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E6%96%87%E6%9C%AC%E5%8F%8A%E6%A0%B7%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">3.1 文本及样式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-1-Text"><span class="nav-number">1.1.1.</span> <span class="nav-text">3.1.1 Text</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-2-TextStyle"><span class="nav-number">1.1.2.</span> <span class="nav-text">3.1.2 TextStyle</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-3-TextSpan"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.1.3 TextSpan</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-4-DefaultTextStyle"><span class="nav-number">1.1.4.</span> <span class="nav-text">3.1.4 DefaultTextStyle</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-5-%E5%AD%97%E4%BD%93"><span class="nav-number">1.1.5.</span> <span class="nav-text">3.1.5 字体</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E6%8C%89%E9%92%AE"><span class="nav-number">1.2.</span> <span class="nav-text">3.2 按钮</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-%E5%9B%BE%E7%89%87%E5%8F%8AICON"><span class="nav-number">1.3.</span> <span class="nav-text">3.3 图片及ICON</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-3-1-%E5%9B%BE%E7%89%87"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.3.1 图片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-3-2-iconfont"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.3.2 iconfont</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-%E5%8D%95%E9%80%89%E5%BC%80%E5%85%B3%E5%92%8C%E5%A4%8D%E9%80%89%E6%A1%86"><span class="nav-number">1.4.</span> <span class="nav-text">3.4 单选开关和复选框</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-%E8%BE%93%E5%85%A5%E6%A1%86%E5%8F%8A%E8%A1%A8%E5%8D%95"><span class="nav-number">1.5.</span> <span class="nav-text">3.5 输入框及表单</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-5-1-%E8%BE%93%E5%85%A5%E6%A1%86-TextField"><span class="nav-number">1.5.1.</span> <span class="nav-text">3.5.1 输入框 TextField</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-5-2-%E8%A1%A8%E5%8D%95-Form"><span class="nav-number">1.5.2.</span> <span class="nav-text">3.5.2 表单 Form</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-%E8%BF%9B%E5%BA%A6%E6%8C%87%E7%A4%BA%E5%99%A8"><span class="nav-number">1.6.</span> <span class="nav-text">3.6 进度指示器</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《Flutter实战第二版》三：基础组件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-01-18 12:17:02 / 修改时间：15:21:55" itemprop="dateCreated datePublished" datetime="2022-01-18T12:17:02+08:00">2022-01-18</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="3-基础组件"><a href="#3-基础组件" class="headerlink" title="3 基础组件"></a>3 基础组件</h3><h4 id="3-1-文本及样式"><a href="#3-1-文本及样式" class="headerlink" title="3.1 文本及样式"></a>3.1 文本及样式</h4><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> main() &#123;</span><br><span class="line">  runApp(MaterialApp(home: TextDemo()));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TextDemo</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(</span><br><span class="line">        title: Text(<span class="string">&#x27;标题&#x27;</span>),</span><br><span class="line">      ),</span><br><span class="line">      body: Center(</span><br><span class="line">        child: Column(</span><br><span class="line">          children: [</span><br><span class="line">            Text(<span class="string">&#x27;hello&#x27;</span>,</span><br><span class="line">              style: TextStyle(</span><br><span class="line">                color: Colors.blue,</span><br><span class="line">                fontSize: <span class="number">30</span>,</span><br><span class="line">                height: <span class="number">1.2</span>,</span><br><span class="line">                fontFamily: <span class="string">&#x27;Courier&#x27;</span>,</span><br><span class="line">                background: Paint()..color=Colors.yellow,</span><br><span class="line">                decoration: TextDecoration.underline,</span><br><span class="line">                decorationStyle: TextDecorationStyle.dashed,</span><br><span class="line">              ),</span><br><span class="line">            ),</span><br><span class="line">            Text.rich(</span><br><span class="line">                TextSpan(children: [</span><br><span class="line">                  TextSpan(text: <span class="string">&#x27;Home: &#x27;</span>,</span><br><span class="line">                      style: TextStyle(fontSize: <span class="number">30</span>)</span><br><span class="line">                  ),</span><br><span class="line">                  TextSpan(text: <span class="string">&#x27;//flutterchina.club&#x27;</span>,</span><br><span class="line">                      style: TextStyle(</span><br><span class="line">                          color: Colors.blue, fontSize: <span class="number">30</span>),</span><br><span class="line">                  ),</span><br><span class="line">                ])</span><br><span class="line">            ),</span><br><span class="line">          ],</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChat312b40c64293529cd163ce4550ee7471.png?lastModify=1642479994" alt="WeChat312b40c64293529cd163ce4550ee7471"></p>
+<h5 id="3-1-1-Text"><a href="#3-1-1-Text" class="headerlink" title="3.1.1 Text"></a>3.1.1 Text</h5><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">body: Container(</span><br><span class="line">  child: Column(</span><br><span class="line">    children: [</span><br><span class="line">      Text(<span class="string">&#x27;Hello world&#x27;</span>, textAlign: TextAlign.left),</span><br><span class="line">      Text(<span class="string">&#x27;Hello world I`m Jack&#x27;</span>*<span class="number">4</span>, maxLines: <span class="number">1</span>, overflow: TextOverflow.ellipsis),</span><br><span class="line">      Text(<span class="string">&#x27;Hello world&#x27;</span>, textScaleFactor: <span class="number">2</span>),</span><br><span class="line">    ],</span><br><span class="line">  ),</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Text 的构造方法</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Text(<span class="keyword">this</span>.data, &#123;  <span class="comment">//Text显示的内容</span></span><br><span class="line">Key key,</span><br><span class="line"><span class="keyword">this</span>.style, <span class="comment">//Text显示的样式</span></span><br><span class="line"><span class="keyword">this</span>.textAlign,<span class="comment">//文本应该如何水平对齐,TextAlign.start,end 或者center</span></span><br><span class="line"><span class="keyword">this</span>.textDirection, <span class="comment">//文本方向,TextDirection.ltr\TextDirection.rtl</span></span><br><span class="line"><span class="keyword">this</span>.locale,</span><br><span class="line"><span class="keyword">this</span>.softWrap,  <span class="comment">//是否自动换行，若为false，文字将不考虑容器大小，单行显示，超出屏幕部分将默认截断处理</span></span><br><span class="line"><span class="keyword">this</span>.overflow, <span class="comment">//当文字超出屏幕的时候，如何处理,TextOverflow.clip(裁剪)\TextOverflow.fade(渐隐)\TextOverflow.ellipsis(省略号)</span></span><br><span class="line"><span class="keyword">this</span>.textScaleFactor, <span class="comment">//字体大小缩放因子，将字体设置成10.0，然后倍率为2，使用字体大小就是20</span></span><br><span class="line"><span class="keyword">this</span>.maxLines, <span class="comment">//最大行数设置</span></span><br><span class="line"><span class="keyword">this</span>.semanticsLabel,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-1-2-TextStyle"><a href="#3-1-2-TextStyle" class="headerlink" title="3.1.2 TextStyle"></a>3.1.2 TextStyle</h5><ul>
+<li>TextStyle 构造方法</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> TextStyle(&#123;</span><br><span class="line">    <span class="keyword">this</span>.inherit: <span class="keyword">true</span>,      <span class="comment">// 为false的时候不继承默认样式</span></span><br><span class="line">    <span class="keyword">this</span>.color,              <span class="comment">// 颜色 </span></span><br><span class="line">    <span class="keyword">this</span>.fontSize,           <span class="comment">// 字号</span></span><br><span class="line">    <span class="keyword">this</span>.fontWeight,         <span class="comment">// 字重，加粗也用这个字段  FontWeight.w700</span></span><br><span class="line">    <span class="keyword">this</span>.fontStyle,          <span class="comment">// FontStyle.normal  FontStyle.italic斜体</span></span><br><span class="line">    <span class="keyword">this</span>.letterSpacing,      <span class="comment">// 字符间距  就是单个字母或者汉字之间的间隔，可以是负数</span></span><br><span class="line">    <span class="keyword">this</span>.wordSpacing,        <span class="comment">// 字间距 句字之间的间距</span></span><br><span class="line">    <span class="keyword">this</span>.textBaseline,       <span class="comment">// 基线，两个值，字面意思是一个用来排字母的，一人用来排表意字的（类似中文）</span></span><br><span class="line">    <span class="keyword">this</span>.height,            <span class="comment">// 当用来Text控件上时，行高（会乘以fontSize,所以不以设置过大）</span></span><br><span class="line">    <span class="keyword">this</span>.decoration,        <span class="comment">// 添加上划线，下划线，删除线 </span></span><br><span class="line">    <span class="keyword">this</span>.decorationColor,   <span class="comment">// 划线的颜色</span></span><br><span class="line">    <span class="keyword">this</span>.decorationStyle,   <span class="comment">// 这个style可能控制画实线，虚线，两条线，点, 波浪线等</span></span><br><span class="line">    <span class="keyword">this</span>.debugLabel,</span><br><span class="line">    <span class="built_in">String</span> fontFamily,    <span class="comment">// 字体</span></span><br><span class="line">    <span class="built_in">String</span> package,</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="3-1-3-TextSpan"><a href="#3-1-3-TextSpan" class="headerlink" title="3.1.3 TextSpan"></a>3.1.3 TextSpan</h5><p>TextSpan 将 Text 内容的不同部分按照不同的样式显示</p>
+<ul>
+<li>TextSpan 的定义:</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> TextSpan(&#123;</span><br><span class="line">   TextStyle style, </span><br><span class="line">   Sting text,</span><br><span class="line">   <span class="built_in">List</span>&lt;TextSpan&gt; children,</span><br><span class="line">   GestureRecognizer recognizer,</span><br><span class="line"> &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>style 和 text 属性代表该文本的样式和内容，children 是 TextSpan 数组，也就是 TextSpan 可以包括其它 TextSpan，recognizer 用于文本片段上手势识别处理</p>
+<h5 id="3-1-4-DefaultTextStyle"><a href="#3-1-4-DefaultTextStyle" class="headerlink" title="3.1.4 DefaultTextStyle"></a>3.1.4 DefaultTextStyle</h5><p>文本样式可以被默认继承（子类文本组件未指定具体样式可以使用 Widget 树中父级的默认样式）</p>
+<p>DefaultTextStyle 用于设置默认文本样式</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TextDemo</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(</span><br><span class="line">        title: Text(<span class="string">&#x27;标题&#x27;</span>),</span><br><span class="line">      ),</span><br><span class="line">      body: DefaultTextStyle(</span><br><span class="line">          style: TextStyle(</span><br><span class="line">            color: Colors.red,</span><br><span class="line">            fontSize: <span class="number">20</span>,</span><br><span class="line">          ),</span><br><span class="line">          child: Column(</span><br><span class="line">            children: [</span><br><span class="line">              Text(<span class="string">&#x27;123&#x27;</span>),</span><br><span class="line">              Text(<span class="string">&#x27;456&#x27;</span>),</span><br><span class="line">              Text(<span class="string">&#x27;789&#x27;</span>, style: TextStyle(</span><br><span class="line">                  inherit: <span class="keyword">false</span>,</span><br><span class="line">                  color: Colors.grey)</span><br><span class="line">              ),</span><br><span class="line">            ],</span><br><span class="line">          )</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChatd910839e3ff49d0f3f1548df3adf920f.png?lastModify=1642479994" alt="WeChatd910839e3ff49d0f3f1548df3adf920f"></p>
+<h5 id="3-1-5-字体"><a href="#3-1-5-字体" class="headerlink" title="3.1.5 字体"></a>3.1.5 字体</h5><p>pubspec.yaml 中声明</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">flutter:</span><br><span class="line">  fonts:</span><br><span class="line">    - family: Raleway</span><br><span class="line">      fonts:</span><br><span class="line">        - asset: assets/fonts/Raleway-Regular.ttf</span><br><span class="line">        - asset: assets/fonts/Raleway-Medium.ttf</span><br><span class="line">          weight: <span class="number">500</span></span><br><span class="line">        - asset: assets/fonts/Raleway-SemiBold.ttf</span><br><span class="line">          weight: <span class="number">600</span></span><br><span class="line">    - family: AbrilFatface</span><br><span class="line">      fonts:</span><br><span class="line">        - asset: assets/fonts/abrilfatface/AbrilFatface-Regular.ttf</span><br></pre></td></tr></table></figure>
+
+<p>使用字体</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 声明文本样式</span></span><br><span class="line"><span class="keyword">const</span> textStyle = <span class="keyword">const</span> TextStyle(</span><br><span class="line">  fontFamily: <span class="string">&#x27;Raleway&#x27;</span>,</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用文本样式</span></span><br><span class="line"><span class="keyword">var</span> buttonText = <span class="keyword">const</span> Text(</span><br><span class="line">  <span class="string">&quot;Use the font for this text&quot;</span>,</span><br><span class="line">  style: textStyle,</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-按钮"><a href="#3-2-按钮" class="headerlink" title="3.2 按钮"></a>3.2 按钮</h4><p>Material 库中的按钮，按下时都还有水波纹动画，就是点击按钮上会出现水波纹扩展动画</p>
+<p>有一个 onPressed 属性来设置点击回调</p>
+<p><img src="/../../../../../../%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChata1d3c6be4375dfacab4bffe55cf60aa5.png" alt="WeChata1d3c6be4375dfacab4bffe55cf60aa5"></p>
+<ul>
+<li>ElevatedButton</li>
+</ul>
+<p>漂浮按钮，默认带阴影和灰色背景，按下后阴影会变大</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ElevatedButton(</span><br><span class="line">    onPressed: ()&#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&#x27;onPressed&#x27;</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    child: Text(<span class="string">&#x27;normal&#x27;</span>),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>TextButton</li>
+</ul>
+<p>文本按钮，默认背景透明不带阴影，按下后会有背景色</p>
+<ul>
+<li>OutlineButton</li>
+</ul>
+<p>默认有一个灰色边框，不带阴影背景透明，按下后边框颜色变亮，同时出现背景和阴影</p>
+<p>构造方法：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">const</span> OutlineButton(&#123;</span><br><span class="line">   Key key,</span><br><span class="line">   <span class="meta">@required</span> VoidCallback onPressed,</span><br><span class="line">   ButtonTextTheme textTheme,  <span class="comment">//按钮上字体主题</span></span><br><span class="line">   Color textColor,  <span class="comment">//字体颜色</span></span><br><span class="line">   Color disabledTextColor, <span class="comment">//按钮禁用时候文字的颜色</span></span><br><span class="line">   Color color,  <span class="comment">//按钮背景颜色</span></span><br><span class="line">   Color highlightColor,<span class="comment">//点击或者toch控件高亮的时候显示在控件上面，水波纹下面的颜色</span></span><br><span class="line">   Color splashColor, <span class="comment">//水波纹的颜色</span></span><br><span class="line">   <span class="built_in">double</span> highlightElevation,<span class="comment">//高亮时候的阴影</span></span><br><span class="line">   <span class="keyword">this</span>.borderSide,<span class="comment">//按钮边框</span></span><br><span class="line">   <span class="keyword">this</span>.disabledBorderColor, <span class="comment">//按钮禁用时边框的颜色</span></span><br><span class="line">   <span class="keyword">this</span>.highlightedBorderColor,<span class="comment">//高亮时边框的颜色</span></span><br><span class="line">   EdgeInsetsGeometry padding,<span class="comment">//边距</span></span><br><span class="line">   ShapeBorder shape, <span class="comment">//设置shape</span></span><br><span class="line">   Clip clipBehavior = Clip.none,</span><br><span class="line">   Widget child,</span><br><span class="line">&#125;) </span><br></pre></td></tr></table></figure>
+
+<p>设置圆角和边框颜色</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">OutlineButton(</span><br><span class="line"> borderSide: BorderSide(color: Colors.red),</span><br><span class="line"> shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(<span class="number">20</span>)),</span><br><span class="line"> child: Text(<span class="string">&#x27;normal&#x27;</span>),</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>IconButton</li>
+</ul>
+<p>可点击 Icon，默认没有背景点击后出现背景</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IconButton(</span><br><span class="line">     onPressed: ()&#123;</span><br><span class="line">       <span class="built_in">print</span>(<span class="string">&#x27;onPressed&#x27;</span>);</span><br><span class="line">     &#125;,</span><br><span class="line">     icon: Icon(Icons.thumb_up),</span><br><span class="line"> )</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>带图标按钮</li>
+</ul>
+<p>ElevatedButton、OutlineButton、IconButton 都有一个 icon 构造函数，通过 icon 创建带图标按钮</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ElevatedButton.icon(</span><br><span class="line">   icon: Icon(Icons.send),</span><br><span class="line">   label: Text(<span class="string">&quot;发送&quot;</span>),</span><br><span class="line">   onPressed: _onPressed,</span><br><span class="line"> )</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-图片及ICON"><a href="#3-3-图片及ICON" class="headerlink" title="3.3 图片及ICON"></a>3.3 图片及ICON</h4><h5 id="3-3-1-图片"><a href="#3-3-1-图片" class="headerlink" title="3.3.1 图片"></a>3.3.1 图片</h5><ul>
+<li>asset 中加载图片</li>
+</ul>
+<p>根目录创建一个 images 目录，avata.png 拷贝到目录</p>
+<p>pubspec.yaml 中的 flutter 部分添加内容</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">assets:</span><br><span class="line">	- images/avatar.png</span><br><span class="line">也可以</span><br><span class="line">	- images/</span><br></pre></td></tr></table></figure>
+
+<p>加载图片</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Image(image: AssetImage(<span class="string">&#x27;images/avatar.png&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>也提供了快捷构造函数 Image.asset</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Image.asset(<span class="string">&#x27;images/avatar.png&#x27;</span>, width: <span class="number">100</span>,)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>网络加载图片</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Image(image: NetworkImage(<span class="string">&#x27;https://xxxx&#x27;</span>), width: <span class="number">100</span>,)</span><br><span class="line">Image.network(<span class="string">&#x27;https://xxxx&#x27;</span>, width: <span class="number">100.0</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Image 参数</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Image(&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">this</span>.width, <span class="comment">//图片的宽</span></span><br><span class="line">  <span class="keyword">this</span>.height, <span class="comment">//图片高度</span></span><br><span class="line">  <span class="keyword">this</span>.color, <span class="comment">//图片的混合色值</span></span><br><span class="line">  <span class="keyword">this</span>.colorBlendMode, <span class="comment">//混合模式</span></span><br><span class="line">  <span class="keyword">this</span>.fit,<span class="comment">//缩放模式</span></span><br><span class="line">  <span class="keyword">this</span>.alignment = Alignment.center, <span class="comment">//对齐方式</span></span><br><span class="line">  <span class="keyword">this</span>.repeat = ImageRepeat.noRepeat, <span class="comment">//重复方式</span></span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>width、height 设置图片宽高，不指定宽高时，图片会根据父容器的限制，尽可能显示原始大小，如果只设置一个，另一个属性会按比例缩放</p>
+<p>fit：图片显示空间和图片大小不同时指定图片适应模式</p>
+<p>fill 拉伸填充满显示空间，长宽比发生变化，图片会变形</p>
+<p>cover 按图片长宽比放大后居中填充显示空间，图片不会变形，超出显示被裁剪</p>
+<p>fit width 图片宽度缩放到显示空间宽度，高度按比例缩放，居中显示，图片不变形，超出显示被裁剪</p>
+<p>fit height</p>
+<p>none 没有适应策略，图片比显示空间达，则显示图片中间部分</p>
+<p>repeat：图片大小小于显示空间时，指定图片重复规则</p>
+<img src="《Flutter实战第二版》三：基础组件/WeChatfd803adaf46878bf208e18fb3907acc4.png" alt="WeChatfd803adaf46878bf208e18fb3907acc4" style="zoom:80%;" />
+
+<h5 id="3-3-2-iconfont"><a href="#3-3-2-iconfont" class="headerlink" title="3.3.2 iconfont"></a>3.3.2 iconfont</h5><p>Flutter 默认包含了一套 Material Design 的字体图标，是将图标做成字体文件，通过指定不同字符显示不同图片</p>
+<p>在 pubspec.yaml 中配置</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flutter:</span><br><span class="line">  users-material-design: <span class="keyword">true</span></span><br></pre></td></tr></table></figure>
+
+<p>Material Design 所有图标可以在官网查看 <a target="_blank" rel="noopener" href="https://material.io/tools/icons/">https://material.io/tools/icons/</a></p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">String</span> icons = <span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="comment">// accessible: 0xe03e</span></span><br><span class="line">icons += <span class="string">&quot;\uE03e&quot;</span>;</span><br><span class="line"><span class="comment">// error:  0xe237</span></span><br><span class="line">icons += <span class="string">&quot; \uE237&quot;</span>;</span><br><span class="line"><span class="comment">// fingerprint: 0xe287</span></span><br><span class="line">icons += <span class="string">&quot; \uE287&quot;</span>;</span><br><span class="line"></span><br><span class="line">Text(</span><br><span class="line">  icons,</span><br><span class="line">  style: TextStyle(</span><br><span class="line">    fontFamily: <span class="string">&quot;MaterialIcons&quot;</span>,</span><br><span class="line">    fontSize: <span class="number">24.0</span>,</span><br><span class="line">    color: Colors.green,</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>Flutter 封装了 IconData 和 Icon 来专门显示字体图标</p>
+<p>icons 类中包含了所有 Material Design 图标的 IconData 静态变量定义</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Row(</span><br><span class="line">   mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">   children: &lt;Widget&gt;[</span><br><span class="line">     Icon(MyIcons.book,color: Colors.purple),</span><br><span class="line">     Icon(MyIcons.wechat,color: Colors.green),</span><br><span class="line">   ],</span><br><span class="line"> )</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>使用自定义字体图标 </li>
+</ul>
+<p>导入字体图标文件</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fonts:</span><br><span class="line">  - family: myIcon  #指定一个字体名</span><br><span class="line">    fonts:</span><br><span class="line">      - asset: fonts/iconfont.ttf</span><br></pre></td></tr></table></figure>
+
+<p>为了使用方便，定义 MyIcons 类，将字体文件中的所有图标都定义成静态变量</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyIcons</span></span>&#123;</span><br><span class="line">  <span class="comment">// book 图标</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">const</span> IconData book = <span class="keyword">const</span> IconData(</span><br><span class="line">      <span class="number">0xe614</span>, </span><br><span class="line">      fontFamily: <span class="string">&#x27;myIcon&#x27;</span>, </span><br><span class="line">      matchTextDirection: <span class="keyword">true</span></span><br><span class="line">  );</span><br><span class="line">  <span class="comment">// 微信图标</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">const</span> IconData wechat = <span class="keyword">const</span> IconData(</span><br><span class="line">      <span class="number">0xec7d</span>,  </span><br><span class="line">      fontFamily: <span class="string">&#x27;myIcon&#x27;</span>, </span><br><span class="line">      matchTextDirection: <span class="keyword">true</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-4-单选开关和复选框"><a href="#3-4-单选开关和复选框" class="headerlink" title="3.4 单选开关和复选框"></a>3.4 单选开关和复选框</h4><p>它们本身不会保存当前选中状态</p>
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChate24ea09c0c08061e88779c644b095b75.png?lastModify=1642479994" alt="WeChate24ea09c0c08061e88779c644b095b75"></p>
+<p>都有个 activeColor 属性设置激活态颜色</p>
+<p>Checkbox 大小固定，无法自定义</p>
+<p>Switch 只能自定宽度，高度固定</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> <span class="built_in">bool</span> _switchSelected=<span class="keyword">true</span>; <span class="comment">//维护单选开关状态</span></span><br><span class="line"> <span class="built_in">bool</span> _checkboxSelected=<span class="keyword">true</span>;<span class="comment">//维护复选框状态</span></span><br><span class="line"> Switch(</span><br><span class="line"> value: _switchSelected,</span><br><span class="line"> onChanged: (value)&#123;</span><br><span class="line">   setState(() &#123;</span><br><span class="line">     _switchSelected = value;</span><br><span class="line">   &#125;);</span><br><span class="line"> &#125;),</span><br><span class="line">Checkbox(</span><br><span class="line"> value: _checkboxSelected,</span><br><span class="line"> onChanged: (value)&#123;</span><br><span class="line">   setState(() &#123;</span><br><span class="line">     _checkboxSelected = value ?? <span class="keyword">false</span>;</span><br><span class="line">   &#125;);</span><br><span class="line"> &#125;),</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-5-输入框及表单"><a href="#3-5-输入框及表单" class="headerlink" title="3.5 输入框及表单"></a>3.5 输入框及表单</h4><h5 id="3-5-1-输入框-TextField"><a href="#3-5-1-输入框-TextField" class="headerlink" title="3.5.1 输入框 TextField"></a>3.5.1 输入框 TextField</h5><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> TextField(&#123;</span><br><span class="line">   Key key,</span><br><span class="line">   <span class="keyword">this</span>.controller,           <span class="comment">//控制器，控制TextField文字</span></span><br><span class="line">   <span class="keyword">this</span>.focusNode, <span class="comment">//控制textField是否占有当前键盘的输入焦点</span></span><br><span class="line">   <span class="keyword">this</span>.decoration = <span class="keyword">const</span> InputDecoration(),    <span class="comment">//输入器装饰</span></span><br><span class="line">   TextInputType keyboardType,   <span class="comment">//输入的类型</span></span><br><span class="line">   <span class="keyword">this</span>.textInputAction,  <span class="comment">//键盘回车键图标</span></span><br><span class="line">   <span class="keyword">this</span>.textCapitalization = TextCapitalization.none,</span><br><span class="line">   <span class="keyword">this</span>.style,</span><br><span class="line">   <span class="keyword">this</span>.textAlign = TextAlign.start,   <span class="comment">//文字显示位置</span></span><br><span class="line">   <span class="keyword">this</span>.autofocus = <span class="keyword">false</span>, <span class="comment">//是否自动获取焦点</span></span><br><span class="line">   <span class="keyword">this</span>.obscureText = <span class="keyword">false</span>, <span class="comment">//是否*号显示</span></span><br><span class="line">   <span class="keyword">this</span>.autocorrect = <span class="keyword">true</span>,</span><br><span class="line">   <span class="keyword">this</span>.maxLines = <span class="number">1</span>,</span><br><span class="line">   <span class="keyword">this</span>.maxLength, <span class="comment">//文本框最大长度，设置后输入框右下角会显示输入的文本计数</span></span><br><span class="line">   <span class="keyword">this</span>.maxLengthEnforced = <span class="keyword">true</span>,</span><br><span class="line">   <span class="keyword">this</span>.onChanged,                <span class="comment">//文字改变触发</span></span><br><span class="line">   <span class="keyword">this</span>.onEditingComplete,   <span class="comment">//当用户提交可编辑内容时调用</span></span><br><span class="line">   <span class="keyword">this</span>.onSubmitted,   <span class="comment">////<span class="markdown">文字提交触发（键盘按键）</span></span></span><br><span class="line">   <span class="keyword">this</span>.inputFormatters, <span class="comment">//指定输入格式，输入内容改变时，会根据指定格式校验</span></span><br><span class="line">   <span class="keyword">this</span>.enabled,</span><br><span class="line">   <span class="keyword">this</span>.cursorWidth = <span class="number">2.0</span>, <span class="comment">//输入光标宽度</span></span><br><span class="line">   <span class="keyword">this</span>.cursorRadius,    <span class="comment">//输入光标圆角  </span></span><br><span class="line">   <span class="keyword">this</span>.cursorColor,   <span class="comment">//输入光标颜色</span></span><br><span class="line">   <span class="keyword">this</span>.keyboardAppearance,</span><br><span class="line">   <span class="keyword">this</span>.scrollPadding = <span class="keyword">const</span> EdgeInsets.all(<span class="number">20.0</span>),</span><br><span class="line"> &#125;)</span><br></pre></td></tr></table></figure>
+
+<p>controller 编辑框的控制器，通过它可以设置/获取编辑框的内容、选择编辑内容、监听文本改变事件。</p>
+<p>focusNode 用于控制 TextField 是否占有当前键盘的输入焦点</p>
+<p>decoration 用于控制 TextField 的外观显示，如提示文本、背景颜色、边框</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">FocusNode focusNode1 = FocusNode();</span><br><span class="line">FocusNode focusNode2 = FocusNode();</span><br><span class="line">FocusScopeNode? focusScopeNode;</span><br><span class="line"></span><br><span class="line">body: Center(</span><br><span class="line">  child: Column(</span><br><span class="line">    children: [</span><br><span class="line">      TextField(</span><br><span class="line">        autofocus: <span class="keyword">true</span>,</span><br><span class="line">        focusNode: focusNode1,</span><br><span class="line">        controller: _unameController,</span><br><span class="line">        decoration: InputDecoration(</span><br><span class="line">          labelText: <span class="string">&#x27;用户名&#x27;</span>,</span><br><span class="line">          hintText: <span class="string">&#x27;用户名或邮箱&#x27;</span>,</span><br><span class="line">          prefixIcon: Icon(Icons.person),</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">      TextField(</span><br><span class="line">        focusNode: focusNode2,</span><br><span class="line">        decoration: InputDecoration(</span><br><span class="line">          labelText: <span class="string">&#x27;密码&#x27;</span>,</span><br><span class="line">          hintText: <span class="string">&#x27;登录密码&#x27;</span>,</span><br><span class="line">          prefixIcon: Icon(Icons.lock),</span><br><span class="line">        ),</span><br><span class="line">        obscureText: <span class="keyword">true</span>,</span><br><span class="line">      ),</span><br><span class="line">      ElevatedButton(</span><br><span class="line">        onPressed: ()&#123;</span><br><span class="line">          <span class="keyword">if</span> (<span class="keyword">null</span> == focusScopeNode) &#123;</span><br><span class="line">            focusScopeNode = FocusScope.of(context);</span><br><span class="line">          &#125;</span><br><span class="line">          focusScopeNode!.requestFocus(focusNode2);</span><br><span class="line">        &#125;,</span><br><span class="line">        child: Text(<span class="string">&#x27;移动焦点&#x27;</span>),</span><br><span class="line">      ),</span><br><span class="line">      ElevatedButton(</span><br><span class="line">        onPressed: ()&#123;</span><br><span class="line">          focusNode1.unfocus();</span><br><span class="line">          focusNode2.unfocus();</span><br><span class="line">        &#125;,</span><br><span class="line">        child: Text(<span class="string">&#x27;隐藏键盘&#x27;</span>),</span><br><span class="line">      ),</span><br><span class="line">    ],</span><br><span class="line">  ),</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChatce892753a9d9210783f5c2d69dadd941.png?lastModify=1642479994" alt="WeChatce892753a9d9210783f5c2d69dadd941"></p>
+<ul>
+<li>获取输入内容</li>
+</ul>
+<p>定义一个 controller</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TextEditingController _unameController = TextEditingController();</span><br></pre></td></tr></table></figure>
+
+<p>设置输入 controller</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TextField(</span><br><span class="line">    autofocus: <span class="keyword">true</span>,</span><br><span class="line">    controller: _unameController,</span><br></pre></td></tr></table></figure>
+
+<p>通过 onChange 回调获取输入内容</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TextField(</span><br><span class="line">    autofocus: <span class="keyword">true</span>,</span><br><span class="line">    onChanged: (v) &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;onChange: <span class="subst">$v</span>&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>通过 controller 监听获取输入的内容</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> initState() &#123;</span><br><span class="line">  <span class="keyword">super</span>.initState();</span><br><span class="line">  _unameController.addListener(() &#123;</span><br><span class="line">    <span class="built_in">print</span>(_unameController.text);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>onChange 是专门用于监听文本变化</p>
+<p>controller 还可以设置默认值、选择文本</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_selectionController.text=<span class="string">&quot;hello world!&quot;</span>;</span><br><span class="line">_selectionController.selection=TextSelection(</span><br><span class="line">    baseOffset: <span class="number">2</span>,</span><br><span class="line">    extentOffset: _selectionController.text.length</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>控制焦点</li>
+</ul>
+<p>通过 FocusScopeNode 在输入框之间移动焦点、设置默认焦点</p>
+<p>通过 FocusScope.of(context) 获取 Widget 树中默认的 FocusScopeNode</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FocusScopeNode? focusScopeNode;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">null</span> == focusScopeNode) &#123;</span><br><span class="line">  focusScopeNode = FocusScope.of(context);</span><br><span class="line">&#125;</span><br><span class="line">focusScopeNode!.requestFocus(focusNode2); <span class="comment">//移动焦点</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>监听焦点改变事件</li>
+</ul>
+<p>获取到焦点时 focusNode.hasFocus 为 true 失去焦点时为 false</p>
+<p>FocusNode 继承自 ChangeNotifier，通过 FocusNode 可以监听焦点的改变</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//隐藏键盘</span></span><br><span class="line">focusNode1.unfocus();</span><br><span class="line">...</span><br><span class="line"><span class="comment">// 创建 focusNode   </span></span><br><span class="line">FocusNode focusNode = FocusNode();</span><br><span class="line">...</span><br><span class="line"><span class="comment">// focusNode绑定输入框   </span></span><br><span class="line">TextField(focusNode: focusNode);</span><br><span class="line">...</span><br><span class="line"><span class="comment">// 监听焦点变化    </span></span><br><span class="line">focusNode.addListener(()&#123;</span><br><span class="line">   <span class="built_in">print</span>(focusNode.hasFocus);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自定义样式</li>
+</ul>
+<p>分别设置输入框未获得和获得焦点下划线颜色</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">decoration: InputDecoration(</span><br><span class="line">  labelText: <span class="string">&#x27;用户名&#x27;</span>,</span><br><span class="line">  hintText: <span class="string">&#x27;用户名或邮箱&#x27;</span>,</span><br><span class="line">  prefixIcon: Icon(Icons.person),</span><br><span class="line">  enabledBorder: UnderlineInputBorder( <span class="comment">//未获得焦点下划线颜色</span></span><br><span class="line">    borderSide: BorderSide(color: Colors.red),</span><br><span class="line">  ),</span><br><span class="line">  focusedBorder: UnderlineInputBorder( <span class="comment">//获得焦点下划线颜色</span></span><br><span class="line">    borderSide: BorderSide(color: Colors.yellow),</span><br><span class="line">  ),</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+<p>通过主题自定义输入框样式</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Theme(</span><br><span class="line">  data: Theme.of(context).copyWith(</span><br><span class="line">      hintColor: Colors.grey[<span class="number">200</span>], <span class="comment">//定义下划线颜色</span></span><br><span class="line">      inputDecorationTheme: InputDecorationTheme(</span><br><span class="line">          labelStyle: TextStyle(color: Colors.grey),<span class="comment">//定义label字体样式</span></span><br><span class="line">          hintStyle: TextStyle(color: Colors.grey, fontSize: <span class="number">14.0</span>)<span class="comment">//定义提示文本样式</span></span><br><span class="line">      )</span><br><span class="line">  ),</span><br></pre></td></tr></table></figure>
+
+<p>另一种灵活的方式是直接隐藏 TextField 本身的下划线，通过 Container 去嵌套定义样式</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Container(</span><br><span class="line">  child: TextField(</span><br><span class="line">    keyboardType: TextInputType.emailAddress,</span><br><span class="line">    decoration: InputDecoration(</span><br><span class="line">        labelText: <span class="string">&quot;Email&quot;</span>,</span><br><span class="line">        hintText: <span class="string">&quot;电子邮件地址&quot;</span>,</span><br><span class="line">        prefixIcon: Icon(Icons.email),</span><br><span class="line">        border: InputBorder.none <span class="comment">//隐藏下划线</span></span><br><span class="line">    )</span><br><span class="line">  ),</span><br><span class="line">  decoration: BoxDecoration(</span><br><span class="line">      <span class="comment">// 下滑线浅灰色，宽度1像素</span></span><br><span class="line">      border: Border(bottom: BorderSide(color: Colors.grey[<span class="number">200</span>], width: <span class="number">1.0</span>))</span><br><span class="line">  ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-5-2-表单-Form"><a href="#3-5-2-表单-Form" class="headerlink" title="3.5.2 表单 Form"></a>3.5.2 表单 Form</h5><ul>
+<li>Form</li>
+</ul>
+<p>可以对输入框进行分组，然后进行统一操作</p>
+<p>Form 类的定义 </p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Form(&#123;</span><br><span class="line">  <span class="keyword">required</span> Widget child,</span><br><span class="line">  <span class="built_in">bool</span> autovalidate = <span class="keyword">false</span>,</span><br><span class="line">  WillPopCallback onWillPop,</span><br><span class="line">  VoidCallback onChanged,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>autovalidate 是否自动校验输入内容，为 true 时，每个 FormField 内容变化时自动校验合法性，显示错误信息，否则需要通过调用 FormState.validate() 来手动校验</p>
+<p>onWillPop 决定 Form 所在路由是否可以直接返回，通常用于拦截返回按钮</p>
+<p>onChanged： Form 任意一个子 FormField 内容发生改变时触发回调</p>
+<ul>
+<li>FormField</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> FormField(&#123;</span><br><span class="line">   ...</span><br><span class="line">   FormFieldSetter&lt;T&gt; onSaved, <span class="comment">//保存回调</span></span><br><span class="line">   FormFieldValidator&lt;T&gt;  validator, <span class="comment">//验证回调</span></span><br><span class="line">   T initialValue, <span class="comment">//初始值</span></span><br><span class="line">   <span class="built_in">bool</span> autovalidate = <span class="keyword">false</span>, <span class="comment">//是否自动校验。</span></span><br><span class="line"> &#125;)</span><br></pre></td></tr></table></figure>
+
+<p>Form 的子孙元素必须是 FormField 类型</p>
+<p>为了使用方便，Flutter 提供了一个 TextFormField</p>
+<ul>
+<li>FormState</li>
+</ul>
+<p>FormState 为 Form 的State 类，可以通过 Form.of(context) 或 GlobalKey 获得，可以通过它来对 Form 的子孙 FormField 进行统一操作</p>
+<p>FormState.validate()：调用后，会调用 Form 子孙 FormField 的 validate 回调，有一个校验失败返回 false</p>
+<p>FormState.save()：会调用 Form 子孙 FormField 的 save 回调，用于保存表单内容</p>
+<p>FormState.reset()：会将子孙 FormField 的内容清空</p>
+<ul>
+<li>示例</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:flutter/material.dart&#x27;</span>;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">void</span> main() &#123;</span><br><span class="line">   runApp(MaterialApp(home: FormTestRoute()));</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">FormTestRoute</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">   <span class="meta">@override</span></span><br><span class="line">   _FormTestRouteState createState() =&gt; _FormTestRouteState();</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">_FormTestRouteState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">FormTestRoute</span>&gt; </span>&#123;</span><br><span class="line">   TextEditingController _unameController = TextEditingController();</span><br><span class="line">   TextEditingController _pwdController   = TextEditingController();</span><br><span class="line">   GlobalKey _formKey = GlobalKey&lt;FormState&gt;();</span><br><span class="line"> </span><br><span class="line">   <span class="meta">@override</span></span><br><span class="line">   <span class="keyword">void</span> initState() &#123;</span><br><span class="line">     <span class="keyword">super</span>.initState();</span><br><span class="line"> </span><br><span class="line">     _unameController.addListener(() &#123;</span><br><span class="line">       <span class="built_in">print</span>(_unameController.text);</span><br><span class="line">     &#125;);</span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="meta">@override</span></span><br><span class="line">   Widget build(BuildContext context) &#123;</span><br><span class="line">     <span class="keyword">return</span> Scaffold(</span><br><span class="line">       appBar: AppBar(</span><br><span class="line">         title: Text(<span class="string">&#x27;标题&#x27;</span>),</span><br><span class="line">       ),</span><br><span class="line">       body: Form(</span><br><span class="line">         key: _formKey,<span class="comment">//设置 globalkey</span></span><br><span class="line">         child: Column(</span><br><span class="line">           children: [</span><br><span class="line">             TextFormField(</span><br><span class="line">               autofocus: <span class="keyword">true</span>,</span><br><span class="line">               controller: _unameController,</span><br><span class="line">               decoration: InputDecoration(</span><br><span class="line">                 labelText: <span class="string">&#x27;用户名&#x27;</span>,</span><br><span class="line">                 hintText: <span class="string">&#x27;用户名或邮箱&#x27;</span>,</span><br><span class="line">                 prefixIcon: Icon(Icons.person),</span><br><span class="line">               ),</span><br><span class="line">               <span class="comment">//校验用户名</span></span><br><span class="line">               validator: (v)&#123;</span><br><span class="line">                 <span class="keyword">return</span> v!.trim().length &gt; <span class="number">0</span> ? <span class="keyword">null</span> : <span class="string">&#x27;用户名不能为空&#x27;</span>;</span><br><span class="line">               &#125;,</span><br><span class="line">             ),</span><br><span class="line">             TextFormField(</span><br><span class="line">               decoration: InputDecoration(</span><br><span class="line">                 labelText: <span class="string">&#x27;密码&#x27;</span>,</span><br><span class="line">                 hintText: <span class="string">&#x27;登录密码&#x27;</span>,</span><br><span class="line">                 prefixIcon: Icon(Icons.lock),</span><br><span class="line">               ),</span><br><span class="line">               obscureText: <span class="keyword">true</span>,</span><br><span class="line">               <span class="comment">//校验密码</span></span><br><span class="line">               validator: (v)&#123;</span><br><span class="line">                 <span class="keyword">return</span> v!.trim().length &gt; <span class="number">0</span> ? <span class="keyword">null</span> : <span class="string">&#x27;密码不能为空&#x27;</span>;</span><br><span class="line">               &#125;,</span><br><span class="line">             ),</span><br><span class="line">             Padding(</span><br><span class="line">                 padding: EdgeInsets.only(top: <span class="number">20</span>),</span><br><span class="line">                 child: Row(</span><br><span class="line">                   children: [</span><br><span class="line">                     Expanded(</span><br><span class="line">                         child: ElevatedButton(</span><br><span class="line">                           child: Padding(</span><br><span class="line">                             padding: EdgeInsets.all(<span class="number">16</span>),</span><br><span class="line">                             child: Text(<span class="string">&#x27;登录&#x27;</span>),</span><br><span class="line">                           ),</span><br><span class="line">                           onPressed: ()&#123;</span><br><span class="line">                             <span class="comment">// 通过_formKey.currentState 获取FormState后，</span></span><br><span class="line">                             <span class="comment">// 调用validate()方法校验用户名密码是否合法，校验</span></span><br><span class="line">                             <span class="comment">// 通过后再提交数据。</span></span><br><span class="line">                             <span class="keyword">if</span> ((_formKey.currentState <span class="keyword">as</span> FormState).validate()) &#123;</span><br><span class="line">                               <span class="built_in">print</span>(<span class="string">&#x27;通过校验&#x27;</span>);</span><br><span class="line">                             &#125;</span><br><span class="line">                           &#125;,</span><br><span class="line">                         ),</span><br><span class="line">                     ),</span><br><span class="line">                   ],</span><br><span class="line">                 ),</span><br><span class="line">             ),</span><br><span class="line">           ],</span><br><span class="line">         ),</span><br><span class="line">       ),</span><br><span class="line">     );</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%B8%89%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6/WeChat803de70354088ea04b9983c0a122d48b.png?lastModify=1642479994" alt="WeChat803de70354088ea04b9983c0a122d48b"></p>
+<p>此处登录按钮的 onPressed 方法不能通过 Form.of(context) 来获取，这边的context是 FormTestRoute 的context</p>
+<p>Form.of(context) 是根据所指定的 context 向根去查找，FormState 是在FormTestRoute的子树中所以不行 </p>
+<p>可以通过 Builder 来构建登录按钮，Builder 会将 Widget 节点的context 作为回调参数</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Expanded(</span><br><span class="line"> <span class="comment">// 通过Builder来获取ElevatedButton所在widget树的真正context(Element) </span></span><br><span class="line">  child:Builder(builder: (context)&#123;</span><br><span class="line">    <span class="keyword">return</span> ElevatedButton(</span><br><span class="line">      ...</span><br><span class="line">      onPressed: () &#123;</span><br><span class="line">        <span class="comment">//由于本widget也是Form的子代widget，所以可以通过下面方式获取FormState  </span></span><br><span class="line">        <span class="keyword">if</span>(Form.of(context).validate())&#123;</span><br><span class="line">          <span class="comment">//验证通过提交数据</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">    );</span><br><span class="line">  &#125;)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-6-进度指示器"><a href="#3-6-进度指示器" class="headerlink" title="3.6 进度指示器"></a>3.6 进度指示器</h4><ul>
+<li>LinearProgressIndicator</li>
+</ul>
+<p>线性条状进度条</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LinearProgressIndicator(&#123;</span><br><span class="line">  <span class="built_in">double</span> value,</span><br><span class="line">  Color backgroundColor,</span><br><span class="line">  Animation&lt;Color&gt; valueColor,</span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>value：当前进度，取值 [0,1]，value 为 null 会执行一个循环动画，不为 null 时为一个具体进度的进度条</p>
+<p>valueColor：进度条颜色，类型 <code>Animation&lt;Color&gt;</code>，允许对进度条颜色指定动画，如果使用固定颜色使用 AlwaysStoppedAnimation 来指定</p>
+<ul>
+<li>CircularProgressIndicator</li>
+</ul>
+<p>圆形进度条</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> CircularProgressIndicator(&#123;</span><br><span class="line">  <span class="built_in">double</span> value,</span><br><span class="line">  Color backgroundColor,</span><br><span class="line">  Animation&lt;Color&gt; valueColor,</span><br><span class="line">  <span class="keyword">this</span>.strokeWidth = <span class="number">4.0</span>,</span><br><span class="line">  ...   </span><br><span class="line">&#125;) </span><br></pre></td></tr></table></figure>
+
+<p>strokeWidth 圆形进度条的粗细</p>
+<ul>
+<li>示例</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">LinearProgressIndicator(</span><br><span class="line">  backgroundColor: Colors.grey[<span class="number">200</span>],</span><br><span class="line">  valueColor: AlwaysStoppedAnimation(Colors.blue),</span><br><span class="line">  value: <span class="number">.5</span>,</span><br><span class="line">),</span><br><span class="line">CircularProgressIndicator(</span><br><span class="line">  backgroundColor: Colors.grey[<span class="number">200</span>],</span><br><span class="line">  valueColor: AlwaysStoppedAnimation(Colors.blue),</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自定义尺寸</li>
+</ul>
+<p>CircularProgressIndicator 和 LinearProgressIndicator 都是取父容器的尺寸作为绘制边界的，可以通过尺寸限制 Widget，如 ConstrainedBox、SizedBox</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 线性进度条高度指定为3</span></span><br><span class="line">SizedBox(</span><br><span class="line">  height: <span class="number">3</span>,</span><br><span class="line">  child: LinearProgressIndicator(</span><br><span class="line">    backgroundColor: Colors.grey[<span class="number">200</span>],</span><br><span class="line">    valueColor: AlwaysStoppedAnimation(Colors.blue),</span><br><span class="line">    value: <span class="number">.5</span>,</span><br><span class="line">  ),</span><br><span class="line">),</span><br><span class="line"><span class="comment">// 圆形进度条直径指定为100</span></span><br><span class="line">SizedBox(</span><br><span class="line">  height: <span class="number">100</span>,</span><br><span class="line">  width: <span class="number">100</span>,</span><br><span class="line">  child: CircularProgressIndicator(</span><br><span class="line">    backgroundColor: Colors.grey[<span class="number">200</span>],</span><br><span class="line">    valueColor: AlwaysStoppedAnimation(Colors.blue),</span><br><span class="line">    value: <span class="number">.7</span>,</span><br><span class="line">  ),</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>进度色动画</p>
+</li>
+<li><p>自定义进度指示器样式</p>
+</li>
+</ul>
+<p>可以通过 CustomPainter Widge 来自定义绘制逻辑</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E4%BA%8C%EF%BC%9A%E7%AC%AC%E4%B8%80%E4%B8%AAFlutter%E5%BA%94%E7%94%A8/" rel="prev" title="《Flutter实战第二版》二：第一个Flutter应用">
+                  <i class="fa fa-chevron-left"></i> 《Flutter实战第二版》二：第一个Flutter应用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E5%9B%9B%EF%BC%9A%E5%B8%83%E5%B1%80%E7%B1%BB%E7%BB%84%E4%BB%B6/" rel="next" title="">
+                   <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
