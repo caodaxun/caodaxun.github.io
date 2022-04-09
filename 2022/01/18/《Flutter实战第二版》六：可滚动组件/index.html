@@ -46,7 +46,7 @@
 <meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E5%85%AD%EF%BC%9A%E5%8F%AF%E6%BB%9A%E5%8A%A8%E7%BB%84%E4%BB%B6/《Flutter实战第二版》六：可滚动组件/combine-twolist.74a615bf.gif">
 <meta property="og:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E5%85%AD%EF%BC%9A%E5%8F%AF%E6%BB%9A%E5%8A%A8%E7%BB%84%E4%BB%B6/《Flutter实战第二版》六：可滚动组件/WeChata2a92923087dac38a2ad6c5e16f9cfb4.png">
 <meta property="article:published_time" content="2022-01-18T04:18:31.000Z">
-<meta property="article:modified_time" content="2022-03-02T08:38:49.947Z">
+<meta property="article:modified_time" content="2022-04-07T08:44:26.197Z">
 <meta property="article:author" content="daxun">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2022/01/18/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E5%85%AD%EF%BC%9A%E5%8F%AF%E6%BB%9A%E5%8A%A8%E7%BB%84%E4%BB%B6/《Flutter实战第二版》六：可滚动组件/WeChat6f1348f5e3cb71768b5c796b10ce1e55.png">
@@ -326,7 +326,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-03-02 16:38:49" itemprop="dateModified" datetime="2022-03-02T16:38:49+08:00">2022-03-02</time>
+        <time title="修改时间：2022-04-07 16:44:26" itemprop="dateModified" datetime="2022-04-07T16:44:26+08:00">2022-04-07</time>
       </span>
 
   
@@ -379,6 +379,7 @@
 <ul>
 <li>Scrollbar</li>
 </ul>
+<p>滚动条，如果要给滚动组件添加滚动条，只需将 Scrollbar 作为可滚动组件的任意一个父级组件即可</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Scrollbar(</span><br><span class="line">  child: SingleChildScrollView(</span><br><span class="line">    ...</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
 <h4 id="6-2-SingleChildScrollView"><a href="#6-2-SingleChildScrollView" class="headerlink" title="6.2 SingleChildScrollView"></a>6.2 SingleChildScrollView</h4><p>SingleChildScrollView 类似 Android 中的 ScrollView</p>
@@ -409,6 +410,7 @@
 <ul>
 <li>例子</li>
 </ul>
+<p>itemCount 列表项数量，为null则为无限列表</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ListView.builder(</span><br><span class="line">  itemCount: <span class="number">100</span>,</span><br><span class="line">  itemExtent: <span class="number">50.0</span>, <span class="comment">//强制高度为50.0</span></span><br><span class="line">  itemBuilder: (BuildContext context, <span class="built_in">int</span> index) &#123;</span><br><span class="line">    <span class="keyword">return</span> ListTile(title: Text(<span class="string">&quot;<span class="subst">$index</span>&quot;</span>));</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
 <img src="《Flutter实战第二版》六：可滚动组件/WeChatd89bad409c79874b042dc4ffbed29249.png" alt="WeChatd89bad409c79874b042dc4ffbed29249" style="zoom:80%;" />
@@ -547,7 +549,7 @@
 <img src="《Flutter实战第二版》六：可滚动组件/WeChat6ff7e4dc572a88cb6f32c91d7b3a5956.png" alt="WeChat6ff7e4dc572a88cb6f32c91d7b3a5956" style="zoom:80%;" />
 
 <h5 id="6-7-2-页面缓存"><a href="#6-7-2-页面缓存" class="headerlink" title="6.7.2 页面缓存"></a>6.7.2 页面缓存</h5><p>上面每当页面切换时都会重新触发 Page 页的 build</p>
-<p>allowImplicitScrolling 设置为 true，前后各缓存一个页面宽度 (这属性不知道在哪设置)</p>
+<p>allowImplicitScrolling 设置为 true，前后各缓存一个页面宽度</p>
 <h4 id="6-8-可滚动组件子项缓存-KeepAlive"><a href="#6-8-可滚动组件子项缓存-KeepAlive" class="headerlink" title="6.8 可滚动组件子项缓存 KeepAlive"></a>6.8 可滚动组件子项缓存 KeepAlive</h4><p>ListView 有一个 addAutomaticKeepAlives 属性如果为 true，则 ListView 会为每一个列表项添加一个 AutomaticKeeyAlive 父组件</p>
 <h5 id="6-8-1-AutomaticKeeyAlive"><a href="#6-8-1-AutomaticKeeyAlive" class="headerlink" title="6.8.1 AutomaticKeeyAlive"></a>6.8.1 AutomaticKeeyAlive</h5><p>AutomaticKeeyAlive 组件的主要作用是将列表项的 RenderObject 的 keepAlive 按需自动标记为 true 或 false</p>
 <p>将列表组件的 Viewport 区域 + cacheExtent（预渲染区域）称为加载区域</p>
@@ -703,7 +705,8 @@
 <li>SliverPersistentHeader</li>
 </ul>
 <p>SliverPersistentHeader 的功能是当滑动到 CustomScrollView 的顶部时，可以将组件固定在顶部</p>
-<h4 id="6-11-自定义-Sliver"><a href="#6-11-自定义-Sliver" class="headerlink" title="6.11 自定义 Sliver"></a>6.11 自定义 Sliver</h4><h4 id="6-12-嵌套可滚动组件-NestedScrollView"><a href="#6-12-嵌套可滚动组件-NestedScrollView" class="headerlink" title="6.12 嵌套可滚动组件 NestedScrollView"></a>6.12 嵌套可滚动组件 NestedScrollView</h4>
+<h4 id="6-11-自定义-Sliver"><a href="#6-11-自定义-Sliver" class="headerlink" title="6.11 自定义 Sliver"></a>6.11 自定义 Sliver</h4><h4 id="6-12-嵌套可滚动组件-NestedScrollView"><a href="#6-12-嵌套可滚动组件-NestedScrollView" class="headerlink" title="6.12 嵌套可滚动组件 NestedScrollView"></a>6.12 嵌套可滚动组件 NestedScrollView</h4><p>CustomScrollView 只能组合 Sliver，如果有孩子也是可滚动组件（通过SliverToBoxAdapter嵌入）且他们滑动方向一致时便不能正常工作，解决这个问题 NestedScrollView</p>
+
     </div>
 
     
