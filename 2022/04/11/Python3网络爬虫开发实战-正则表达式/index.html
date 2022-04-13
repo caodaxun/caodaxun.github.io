@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="正则表达式测试工具 http:&#x2F;&#x2F;tool.oschina.net&#x2F;regex&#x2F; 常用匹配规则    \w 匹配字母、数字、下划线,等价于[a-zA-Z0-9_]    \W 匹配不是字母、数字、下划线的其他字符   \s 匹配任意空白字符,等价于(\t\n\r\f)   \S 匹配任意非空字符   \d 匹配数字,等价于[0-9]   \D 匹配不是数字的字符   \A 匹配字符串开头   \Z">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python3网络爬虫开发实战-正则表达式">
+<meta property="og:url" content="http://example.com/2022/04/11/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="正则表达式测试工具 http:&#x2F;&#x2F;tool.oschina.net&#x2F;regex&#x2F; 常用匹配规则    \w 匹配字母、数字、下划线,等价于[a-zA-Z0-9_]    \W 匹配不是字母、数字、下划线的其他字符   \s 匹配任意空白字符,等价于(\t\n\r\f)   \S 匹配任意非空字符   \d 匹配数字,等价于[0-9]   \D 匹配不是数字的字符   \A 匹配字符串开头   \Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-11T08:34:28.000Z">
+<meta property="article:modified_time" content="2022-04-13T13:08:56.543Z">
+<meta property="article:author" content="daxun">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/04/11/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python3网络爬虫开发实战-正则表达式 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#match-%E4%BB%8E%E5%BC%80%E5%A4%B4%E5%8C%B9%E9%85%8D"><span class="nav-number">1.</span> <span class="nav-text">match 从开头匹配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E7%9B%AE%E6%A0%87-group-x"><span class="nav-number">2.</span> <span class="nav-text">匹配目标 group(x)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E5%8C%B9%E9%85%8D"><span class="nav-number">3.</span> <span class="nav-text">通用匹配 .*</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B4%AA%E5%A9%AA%E4%B8%8E%E9%9D%9E%E8%B4%AA%E5%A9%AA"><span class="nav-number">4.</span> <span class="nav-text">.* 贪婪与非贪婪</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E9%A5%B0%E7%AC%A6-%E4%BE%8B%E5%A6%82-re-S"><span class="nav-number">5.</span> <span class="nav-text">修饰符 例如 re.S</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BD%AC%E4%B9%89%E5%8C%B9%E9%85%8D"><span class="nav-number">6.</span> <span class="nav-text">转义匹配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Search-%E6%89%AB%E6%8F%8F%E6%95%B4%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D"><span class="nav-number">7.</span> <span class="nav-text">Search 扫描整个字符串匹配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#findall-%E5%8C%B9%E9%85%8D%E8%BF%94%E5%9B%9E%E6%89%80%E6%9C%89"><span class="nav-number">8.</span> <span class="nav-text">findall 匹配返回所有</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sub-%E4%BF%AE%E6%94%B9%E6%96%87%E6%9C%AC"><span class="nav-number">9.</span> <span class="nav-text">sub 修改文本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#compile"><span class="nav-number">10.</span> <span class="nav-text">compile</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/11/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python3网络爬虫开发实战-正则表达式
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-11 16:34:28" itemprop="dateCreated datePublished" datetime="2022-04-11T16:34:28+08:00">2022-04-11</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-04-13 21:08:56" itemprop="dateModified" datetime="2022-04-13T21:08:56+08:00">2022-04-13</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>正则表达式测试工具 <a target="_blank" rel="noopener" href="http://tool.oschina.net/regex/">http://tool.oschina.net/regex/</a></p>
+<p>常用匹配规则</p>
+<table>
+<thead>
+<tr>
+<th align="left">\w</th>
+<th align="left">匹配字母、数字、下划线,等价于[a-zA-Z0-9_]</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">\W</td>
+<td align="left">匹配不是字母、数字、下划线的其他字符</td>
+</tr>
+<tr>
+<td align="left">\s</td>
+<td align="left">匹配任意空白字符,等价于(\t\n\r\f)</td>
+</tr>
+<tr>
+<td align="left">\S</td>
+<td align="left">匹配任意非空字符</td>
+</tr>
+<tr>
+<td align="left">\d</td>
+<td align="left">匹配数字,等价于[0-9]</td>
+</tr>
+<tr>
+<td align="left">\D</td>
+<td align="left">匹配不是数字的字符</td>
+</tr>
+<tr>
+<td align="left">\A</td>
+<td align="left">匹配字符串开头</td>
+</tr>
+<tr>
+<td align="left">\Z</td>
+<td align="left">匹配字符串结尾的,如果存在换行,只匹配到换行前的结束字符串</td>
+</tr>
+<tr>
+<td align="left">\z</td>
+<td align="left">匹配字符串结尾的,如果存在换行,匹配到换行符\n</td>
+</tr>
+<tr>
+<td align="left">\G</td>
+<td align="left">最好完成匹配的位置</td>
+</tr>
+<tr>
+<td align="left">\n</td>
+<td align="left">匹配一个换行符</td>
+</tr>
+<tr>
+<td align="left">\t</td>
+<td align="left">匹配一个制表符(tab)</td>
+</tr>
+<tr>
+<td align="left">^</td>
+<td align="left">匹配一行字符串的开头</td>
+</tr>
+<tr>
+<td align="left">$</td>
+<td align="left">匹配一行字符串的结尾</td>
+</tr>
+<tr>
+<td align="left">.</td>
+<td align="left">匹配任意字符,除了换行符.当re.DOTALL标记被指定时,这可以匹配包括换行符在内的任字符</td>
+</tr>
+<tr>
+<td align="left">[…]</td>
+<td align="left">用来表示一组字符,比如[abc]表示匹配a或b或c,[a-z],[0-9]</td>
+</tr>
+<tr>
+<td align="left">[^…]</td>
+<td align="left">匹配不在[]里面的字符,比如[^abc]匹配除a,b,c以外的字符</td>
+</tr>
+<tr>
+<td align="left">*</td>
+<td align="left">匹配0个或多个字符</td>
+</tr>
+<tr>
+<td align="left">+</td>
+<td align="left">匹配1个或多个字符</td>
+</tr>
+<tr>
+<td align="left">?</td>
+<td align="left">匹配0个或1个前面的正则表达式片段,(.*?)表示尽可能少地匹配字符</td>
+</tr>
+<tr>
+<td align="left">{n}</td>
+<td align="left">匹配前面表达式n次, 如\d{5}表示匹配5个数字</td>
+</tr>
+<tr>
+<td align="left">{n,m}</td>
+<td align="left">匹配前面的表达式n到m次,贪婪模式</td>
+</tr>
+<tr>
+<td align="left">a|b</td>
+<td align="left">匹配a或者b</td>
+</tr>
+<tr>
+<td align="left">(…)</td>
+<td align="left">匹配括号里的表达式,也可以表示一个组</td>
+</tr>
+</tbody></table>
+<h5 id="match-从开头匹配"><a href="#match-从开头匹配" class="headerlink" title="match 从开头匹配"></a>match 从开头匹配</h5><p>match() 方法可以得到匹配到的字符串内容</p>
+<p>传入匹配字符串及正则表达式就可以检测这个正则表达式是否匹配字符串</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">content = <span class="string">&#x27;Hello 123 4567 World_This is a Regex Demo&#x27;</span></span><br><span class="line">print(<span class="built_in">len</span>(content))</span><br><span class="line">result = re.match(<span class="string">&#x27;^Hello\s\d\d\d\s\d&#123;4&#125;\s\w&#123;10&#125;&#x27;</span>, content)</span><br><span class="line">print(result)</span><br><span class="line">print(result.group())</span><br><span class="line">print(result.span())</span><br><span class="line"><span class="comment"># 结果</span></span><br><span class="line"><span class="comment">#41</span></span><br><span class="line"><span class="comment">#&lt;re.Match object; span=(0, 25), match=&#x27;Hello 123 4567 World_This&#x27;&gt;</span></span><br><span class="line"><span class="comment">#Hello 123 4567 World_This</span></span><br><span class="line"><span class="comment">#(0, 25)</span></span><br></pre></td></tr></table></figure>
+
+<p>^ 匹配字符串开头；\s 匹配空白字符串；\d 匹配数字，3个\d 匹配123；\d{4}，{4}代表匹配前面规则4次，4个数字；\w{10} 匹配 10 个字母数字及下划线</p>
+<p>group() 方法输出匹配内容，span() 方法输出匹配的范围</p>
+<h5 id="匹配目标-group-x"><a href="#匹配目标-group-x" class="headerlink" title="匹配目标 group(x)"></a>匹配目标 group(x)</h5><p>用 match() 方法可以得到匹配到的字符串内容，如果要从字符串中提取一部分内容。</p>
+<p>使用 （） 括号将想提取的字符串括起来，调用 group() 方法提取结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">content = <span class="string">&#x27;Hello 1234567 World This is a Regex Demo&#x27;</span></span><br><span class="line">result = re.match(<span class="string">&#x27;^Hello\s(\d+)\sWorld&#x27;</span>, content)</span><br><span class="line">print(result)</span><br><span class="line">print(result.group(<span class="number">1</span>))</span><br><span class="line">print(result.span())</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;re.Match <span class="built_in">object</span>; span=(<span class="number">0</span>, <span class="number">19</span>), match=<span class="string">&#x27;Hello 1234567 World&#x27;</span>&gt;</span><br><span class="line"><span class="number">1234567</span></span><br><span class="line">(<span class="number">0</span>, <span class="number">19</span>)</span><br></pre></td></tr></table></figure>
+
+<p>想将字符串中的 1234567 提取出来，可以将数字部分的正则表达式用括号 （\d+）括起来，然后调用 group(1) 获取匹配结果，如果后面还有（）内容，依次用 group(2) 获取</p>
+<p>span 输出匹配范围</p>
+<h5 id="通用匹配"><a href="#通用匹配" class="headerlink" title="通用匹配 .*"></a>通用匹配 .*</h5><p>点可以匹配任意字符（除换行符），星代表匹配前面的字符无限次，组合在一起</p>
+<p>.* 匹配任意字符</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result = re.match(<span class="string">&#x27;^Hello.*Demo$&#x27;</span>, content)</span><br><span class="line">print(result.group())</span><br></pre></td></tr></table></figure>
+
+<p>中间部分省略，最后加一个结尾字符串</p>
+<p>group() 输出匹配的全部字符串</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello <span class="number">123</span> <span class="number">4567</span> World This <span class="keyword">is</span> a Regex Demo</span><br></pre></td></tr></table></figure>
+
+<h5 id="贪婪与非贪婪"><a href="#贪婪与非贪婪" class="headerlink" title=".* 贪婪与非贪婪"></a>.* 贪婪与非贪婪</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line">content = <span class="string">&#x27;Hello 1234567 World This is a Regex Demo&#x27;</span></span><br><span class="line">result = re.match(<span class="string">&#x27;^He.*(\d+).*Demo$&#x27;</span>, content)</span><br><span class="line">print(result.group(<span class="number">1</span>))</span><br><span class="line"><span class="comment">#结果 7</span></span><br></pre></td></tr></table></figure>
+
+<p>依然想匹配中间数字，数字两边比较乱，省略都写成 <code> .*</code>，结果打印只有 7</p>
+<p>贪婪匹配下 .* 会匹配尽可能多的字符，.*  后面\d+至少一个数字，没有指明具体多少个数字，.*  会尽可能匹配多的字符，123456 也被前面匹配了，给 \d+ 就留下一个数字7匹配，得到的内容就是 7 </p>
+<p>非贪婪匹配，尽可能匹配少的字符，<code>.*?</code> 来代替 <code>.*</code> ，最后得到结果 1234567</p>
+<p>所以做匹配的时候，字符串中间尽可能使用非贪婪匹配</p>
+<h5 id="修饰符-例如-re-S"><a href="#修饰符-例如-re-S" class="headerlink" title="修饰符 例如 re.S"></a>修饰符 例如 re.S</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">content = <span class="string">&#x27;&#x27;&#x27;Hello 1234567 World_This</span></span><br><span class="line"><span class="string">is a Regex Demo</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">result = re.match(<span class="string">&#x27;^He.*?(\d+).*?Demo$&#x27;</span>, content)</span><br><span class="line">print(result.group(<span class="number">1</span>))</span><br><span class="line"><span class="comment">#结果 报错了</span></span><br></pre></td></tr></table></figure>
+
+<p>修改在字符串中加了换行符，没有匹配到结果，又调用了 group 会报错</p>
+<p>因为点（.）匹配的是除换行符之外的任意字符，遇到换行符时，.*? 就不能匹配了，导致匹配失败，只需要加一个修饰符 re.S 修正</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = re.match(<span class="string">&#x27;^He.*?(\d+).*?Demo$&#x27;</span>, content, re.S)</span><br></pre></td></tr></table></figure>
+
+<p>re.S 使点（.）匹配包括换行在内的所有字符</p>
+<p>re.I 使匹配对大小写不敏感</p>
+<p>re.M 多行匹配，影响 ^ 和 $</p>
+<h5 id="转义匹配"><a href="#转义匹配" class="headerlink" title="转义匹配"></a>转义匹配</h5><p>正则匹配遇到特殊字符时，使用转义 \</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">content = <span class="string">&#x27;(百度)www.baidu.com&#x27;</span></span><br><span class="line">result = re.match(<span class="string">&#x27;\(百度\)www\.baidu\.com&#x27;</span>, content)</span><br></pre></td></tr></table></figure>
+
+<h5 id="Search-扫描整个字符串匹配"><a href="#Search-扫描整个字符串匹配" class="headerlink" title="Search 扫描整个字符串匹配"></a>Search 扫描整个字符串匹配</h5><p>match() 是从字符串开头开始匹配的，开头不匹配，那整个匹配就失败</p>
+<p>所以 match 适合用来检测某个字符串是否符合某个正则表达式的规则。</p>
+<p>Search() 匹配时会扫描整个字符串，返回一个成功匹配结果</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">html = &#x27;&#x27;&#x27;</span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;songs-list&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span> <span class="attr">class</span>=<span class="string">&quot;title&quot;</span>&gt;</span>经典老歌<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">&quot;introduction&quot;</span>&gt;</span>经典老歌列表<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">id</span>=<span class="string">&quot;list&quot;</span> <span class="attr">class</span>=<span class="string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;2&quot;</span>&gt;</span>一路上有你<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;7”&gt;</span></span></span><br><span class="line"><span class="tag"><span class="string">    &lt;a href=&quot;</span>/<span class="attr">2.mp3</span>&quot; <span class="attr">singer</span>=<span class="string">&quot;任贤齐&quot;</span>&gt;</span>沧海一卢笑<span class="tag">&lt;/<span class="name">a</span>&gt;</span> </span><br><span class="line">  <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;4&quot;</span> <span class="attr">class</span>=<span class="string">&quot;active&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/3.mp3&quot;</span> <span class="attr">singer</span>=<span class="string">&quot;齐秦&quot;</span>&gt;</span>往事随风<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;6&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/4.mp3&quot;</span> <span class="attr">singer</span>=<span class="string">&quot;beyond&quot;</span>&gt;</span>尤辉岁月<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span> </span><br><span class="line">  <span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;5&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/S.mp3&quot;</span> <span class="attr">singer</span>=<span class="string">&quot;陈慧琳&quot;</span>&gt;</span>记事本<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span> </span><br><span class="line">  <span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;5&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/6.mp3&quot;</span> <span class="attr">singer</span>=<span class="string">&quot;邓丽君&quot;</span>&gt;</span>但愿人长久<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span>&#x27;&#x27;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>尝试获取 class 为 active 的 li 节点内部超链接包含的歌手名（齐秦）和歌名（往事随风）</p>
+<p>此时需要提取第三个 li 节点下 a 节点的 singer 属性和文本</p>
+<p>正则表达式可以以 li 开头，寻找下一个标识符 active，中间部分用 .*<em>? 来匹配，接下来取 singer 属性值</em></p>
+<p> <code>singer=&quot;(.*?)&quot;</code>  需要提取部分用小括号括起来，用 group 提取，两侧的边界是双引号</p>
+<p>接下来匹配 a 节点文本，左边界是  <code>&gt;</code>  右边界是 <code>&lt;/a&gt;</code> 目标内容用 <code>.*?</code> 匹配</p>
+<p>正则表达式：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;li.*?active.*?singer=&quot;(.*?)&quot;&gt;(.*?)&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后再调用 search() 方法，就会搜索整个 html 文本找到符合正则表达式的第一个内容返回，由于代码有换行，需要加入 re.S 参数，匹配包括换行在内的所有参数，由于绝大多数 HTML 文本都带有换行符，所以尽量加上 re.S 参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = re.search(<span class="string">&#x27;&lt;li.*?active.*?singer=&quot;(.*?)&quot;&gt;(.*?)&lt;/a&gt;&#x27;</span>, html, re.S)</span><br><span class="line"><span class="keyword">if</span> result:</span><br><span class="line">	print(result.group(<span class="number">1</span>), result.group(<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<h5 id="findall-匹配返回所有"><a href="#findall-匹配返回所有" class="headerlink" title="findall 匹配返回所有"></a>findall 匹配返回所有</h5><p>search 返回匹配正则表达式第一个内容，想要匹配所有内容使用 findall() ，会搜索整个字符串，然后返回匹配正则表达式的所有内容</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">results = re.findall(<span class="string">&#x27;&lt;li.*?href=&quot;(.*?)&quot;.*?singer=&quot;(.*?)&quot;&gt;(.*?)&lt;/a&gt;&#x27;</span>, html, re.S)</span><br><span class="line">print(<span class="built_in">type</span>(results))</span><br><span class="line"><span class="keyword">for</span> result <span class="keyword">in</span> results:</span><br><span class="line">	print(result[<span class="number">0</span>], result[<span class="number">1</span>], result[<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+
+<p>返回的每个元素都是元组类型，用对应索引依次取出</p>
+<h5 id="sub-修改文本"><a href="#sub-修改文本" class="headerlink" title="sub 修改文本"></a>sub 修改文本</h5><p>修改文本，把一串字符串中的数字去掉</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">content = <span class="string">&#x27;54aKS4yrsoiRS4ix5L2g&#x27;</span></span><br><span class="line">content = re.sub(<span class="string">&#x27;\d+&#x27;</span>,<span class="string">&#x27;&#x27;</span>, content)</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数\d+匹配所有的数字，第二个参数为替换成的字符串，第三个参数是原字符串</p>
+<p>上面 html 中需要获取歌名，直接正则表达式提取比较麻烦</p>
+<p>借助 sub 方法将 a 节点去掉只留下文本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">html = re.sub(<span class="string">&#x27;&lt;a.*?&gt;|&lt;/a&gt;&#x27;</span>, <span class="string">&#x27;&#x27;</span>, html)</span><br><span class="line">print(html)</span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;songs-list&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span> <span class="attr">class</span>=<span class="string">&quot;title&quot;</span>&gt;</span>经典老歌<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">&quot;introduction&quot;</span>&gt;</span>经典老歌列表<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">id</span>=<span class="string">&quot;list&quot;</span> <span class="attr">class</span>=<span class="string">&quot;list-group&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;2&quot;</span>&gt;</span>一路上有你<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;7”&gt;</span></span></span><br><span class="line"><span class="tag"><span class="string">		沧海一卢笑 </span></span></span><br><span class="line"><span class="tag"><span class="string">	&lt;/li&gt;</span></span></span><br><span class="line"><span class="tag"><span class="string">	&lt;li data-view=&quot;</span><span class="attr">4</span>&quot; <span class="attr">class</span>=<span class="string">&quot;active&quot;</span>&gt;</span></span><br><span class="line">		往事随风</span><br><span class="line">	<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;6&quot;</span>&gt;</span>尤辉岁月<span class="tag">&lt;/<span class="name">li</span>&gt;</span> </span><br><span class="line">	<span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;5&quot;</span>&gt;</span>记事本<span class="tag">&lt;/<span class="name">li</span>&gt;</span> </span><br><span class="line">	<span class="tag">&lt;<span class="name">li</span> <span class="attr">data-view</span>=<span class="string">&quot;5&quot;</span>&gt;</span></span><br><span class="line">		但愿人长久</span><br><span class="line">	<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>再利用 findall 提取</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">results = re.findall(<span class="string">&#x27;&lt;li.*?&gt;(.*?)&lt;/li&gt;&#x27;</span>, html, re.S)</span><br><span class="line"><span class="keyword">for</span> result <span class="keyword">in</span> results:</span><br><span class="line">	print(result.strip())</span><br></pre></td></tr></table></figure>
+
+<p>strip 移除字符串首尾指定字符 strip() 去除首尾空格，strip(‘0’) 去除首尾字符 0</p>
+<h5 id="compile"><a href="#compile" class="headerlink" title="compile"></a>compile</h5><p>将正则字符串编译成正则表达式对象，以便在后面的匹配中复用</p>
+<p>想把3个日期中的时间去掉，没必要重复写3个同样的正则表达式</p>
+<p>通过 compile 编译成正则表达式对象，后面就不用重复写正则表达式，直接复用正则表达式对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">content1 &#x3D; &#39;2016-12-15 12:00&#39;</span><br><span class="line">content2 &#x3D; &#39;2016-12-17 12:55&#39;</span><br><span class="line">content3 &#x3D; &#39;2016-12-22 13:21&#39;</span><br><span class="line">pattern &#x3D; re.compile(&#39;\d&#123;2&#125;:\d&#123;2&#125;&#39;)</span><br><span class="line">result1 &#x3D; re.sub(pattern, &#39;&#39;, content1)</span><br><span class="line">result2 &#x3D; re.sub(pattern, &#39;&#39;, content2)</span><br><span class="line">result3 &#x3D; re.sub(pattern, &#39;&#39;, content3)</span><br><span class="line">print(result1, result2, result3)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/04/11/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" rel="prev" title="Python3网络爬虫开发实战-环境配置">
+                  <i class="fa fa-chevron-left"></i> Python3网络爬虫开发实战-环境配置
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/04/11/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E5%9F%BA%E6%9C%AC%E5%BA%93%E4%BD%BF%E7%94%A8/" rel="next" title="Python3网络爬虫开发实战-基本库使用">
+                  Python3网络爬虫开发实战-基本库使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

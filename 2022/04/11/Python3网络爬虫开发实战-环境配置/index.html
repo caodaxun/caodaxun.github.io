@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="Python IDEPyCharm配置 终端 which python3 查看 python3 路径 Preference-Project:pythonProject-PythonInterpreter Show All 添加 上面 python 路径 Python 版本1python 3.7.9      1.开发环境配置1.1 Python3的安装 Homebrew 安装  1brew ins">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python3网络爬虫开发实战-环境配置">
+<meta property="og:url" content="http://example.com/2022/04/11/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Python IDEPyCharm配置 终端 which python3 查看 python3 路径 Preference-Project:pythonProject-PythonInterpreter Show All 添加 上面 python 路径 Python 版本1python 3.7.9      1.开发环境配置1.1 Python3的安装 Homebrew 安装  1brew ins">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-11T08:33:25.000Z">
+<meta property="article:modified_time" content="2022-04-13T13:10:02.213Z">
+<meta property="article:author" content="daxun">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/04/11/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python3网络爬虫开发实战-环境配置 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Python-IDE"><span class="nav-number">1.</span> <span class="nav-text">Python IDE</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PyCharm"><span class="nav-number">1.1.</span> <span class="nav-text">PyCharm</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Python-%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">Python 版本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">1.开发环境配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-Python3%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-number">3.1.</span> <span class="nav-text">1.1 Python3的安装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2%E8%AF%B7%E6%B1%82%E5%BA%93%E5%AE%89%E8%A3%85"><span class="nav-number">3.2.</span> <span class="nav-text">1.2请求库安装</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-2-1-requests"><span class="nav-number">3.2.1.</span> <span class="nav-text">1.2.1 requests</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-2-2-Selenium"><span class="nav-number">3.2.2.</span> <span class="nav-text">1.2.2 Selenium</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-2-3-ChromeDriver"><span class="nav-number">3.2.3.</span> <span class="nav-text">1.2.3 ChromeDriver</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-2-4-GeckoDriver"><span class="nav-number">3.2.4.</span> <span class="nav-text">1.2.4 GeckoDriver</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-2-5-PhantomJS"><span class="nav-number">3.2.5.</span> <span class="nav-text">1.2.5 PhantomJS</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-2-6-aiohttp"><span class="nav-number">3.2.6.</span> <span class="nav-text">1.2.6 aiohttp</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-%E8%A7%A3%E6%9E%90%E5%BA%93%E5%AE%89%E8%A3%85"><span class="nav-number">3.3.</span> <span class="nav-text">1.3 解析库安装</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-3-1-lxml"><span class="nav-number">3.3.1.</span> <span class="nav-text">1.3.1 lxml</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-3-2-Beautiful-Soup"><span class="nav-number">3.3.2.</span> <span class="nav-text">1.3.2 Beautiful Soup</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-3-3-pyquery"><span class="nav-number">3.3.3.</span> <span class="nav-text">1.3.3 pyquery</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-3-4-tesserocr"><span class="nav-number">3.3.4.</span> <span class="nav-text">1.3.4 tesserocr</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-4-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E8%A3%85"><span class="nav-number">3.4.</span> <span class="nav-text">1.4 数据库安装</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-4-1-MySQL"><span class="nav-number">3.4.1.</span> <span class="nav-text">1.4.1 MySQL</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-4-2-MongoDB"><span class="nav-number">3.4.2.</span> <span class="nav-text">1.4.2 MongoDB</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-4-3-Redis"><span class="nav-number">3.4.3.</span> <span class="nav-text">1.4.3 Redis</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-5-Python-%E5%AD%98%E5%82%A8%E5%BA%93%E5%AE%89%E8%A3%85"><span class="nav-number">3.5.</span> <span class="nav-text">1.5 Python 存储库安装</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-5-1-PyMySQL"><span class="nav-number">3.5.1.</span> <span class="nav-text">1.5.1 PyMySQL</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-5-2-PyMongo"><span class="nav-number">3.5.2.</span> <span class="nav-text">1.5.2 PyMongo</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-5-3-redis-py"><span class="nav-number">3.5.3.</span> <span class="nav-text">1.5.3 redis-py</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-5-4-RedisDump"><span class="nav-number">3.5.4.</span> <span class="nav-text">1.5.4 RedisDump</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-6-Web-%E5%BA%93%E5%AE%89%E8%A3%85"><span class="nav-number">3.6.</span> <span class="nav-text">1.6 Web 库安装</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-6-1-Flask"><span class="nav-number">3.6.1.</span> <span class="nav-text">1.6.1 Flask</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-6-2-Tornado"><span class="nav-number">3.6.2.</span> <span class="nav-text">1.6.2 Tornado</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-7-APP-%E7%88%AC%E5%8F%96%E7%9B%B8%E5%85%B3%E5%BA%93%E5%AE%89%E8%A3%85"><span class="nav-number">3.7.</span> <span class="nav-text">1.7 APP 爬取相关库安装</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-7-1-Charles"><span class="nav-number">3.7.1.</span> <span class="nav-text">1.7.1 Charles</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-7-2-mitmproxy"><span class="nav-number">3.7.2.</span> <span class="nav-text">1.7.2 mitmproxy</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-7-3-Appium-%E5%AE%89%E8%A3%85"><span class="nav-number">3.7.3.</span> <span class="nav-text">1.7.3 Appium 安装</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#WebDriverAgent"><span class="nav-number">3.7.4.</span> <span class="nav-text">WebDriverAgent</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#libimobiledevice"><span class="nav-number">3.7.5.</span> <span class="nav-text">libimobiledevice</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-8-%E7%88%AC%E8%99%AB%E6%A1%86%E6%9E%B6%E5%AE%89%E8%A3%85"><span class="nav-number">3.8.</span> <span class="nav-text">1.8 爬虫框架安装</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-8-1-pyspider"><span class="nav-number">3.8.1.</span> <span class="nav-text">1.8.1 pyspider</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-8-2-Scrapy"><span class="nav-number">3.8.2.</span> <span class="nav-text">1.8.2 Scrapy</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-8-3-Scrapy-Splash"><span class="nav-number">3.8.3.</span> <span class="nav-text">1.8.3 Scrapy-Splash</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-8-4-Scrapy-Redis"><span class="nav-number">3.8.4.</span> <span class="nav-text">1.8.4 Scrapy-Redis</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-9-%E9%83%A8%E7%BD%B2%E7%9B%B8%E5%85%B3%E5%BA%93%E5%AE%89%E8%A3%85"><span class="nav-number">3.9.</span> <span class="nav-text">1.9 部署相关库安装</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-9-1-Docker"><span class="nav-number">3.9.1.</span> <span class="nav-text">1.9.1 Docker</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-9-2-Scrapyd"><span class="nav-number">3.9.2.</span> <span class="nav-text">1.9.2 Scrapyd</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-9-3-Scrapyd-Client"><span class="nav-number">3.9.3.</span> <span class="nav-text">1.9.3 Scrapyd-Client</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-9-4-Scrapyd-API-%E5%AE%89%E8%A3%85"><span class="nav-number">3.9.4.</span> <span class="nav-text">1.9.4 Scrapyd API 安装</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-9-5-Scrapyrt"><span class="nav-number">3.9.5.</span> <span class="nav-text">1.9.5 Scrapyrt</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-9-6-Gerapy"><span class="nav-number">3.9.6.</span> <span class="nav-text">1.9.6 Gerapy</span></a></li></ol></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/11/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python3网络爬虫开发实战-环境配置
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-11 16:33:25" itemprop="dateCreated datePublished" datetime="2022-04-11T16:33:25+08:00">2022-04-11</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-04-13 21:10:02" itemprop="dateModified" datetime="2022-04-13T21:10:02+08:00">2022-04-13</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="Python-IDE"><a href="#Python-IDE" class="headerlink" title="Python IDE"></a>Python IDE</h4><h5 id="PyCharm"><a href="#PyCharm" class="headerlink" title="PyCharm"></a>PyCharm</h5><p>配置</p>
+<p>终端 which python3 查看 python3 路径</p>
+<p>Preference-Project:pythonProject-PythonInterpreter</p>
+<p>Show All 添加 上面 python 路径</p>
+<h4 id="Python-版本"><a href="#Python-版本" class="headerlink" title="Python 版本"></a>Python 版本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python 3.7.9</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="1-开发环境配置"><a href="#1-开发环境配置" class="headerlink" title="1.开发环境配置"></a>1.开发环境配置</h4><h5 id="1-1-Python3的安装"><a href="#1-1-Python3的安装" class="headerlink" title="1.1 Python3的安装"></a>1.1 Python3的安装</h5><ol>
+<li>Homebrew 安装</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install python3</span><br></pre></td></tr></table></figure>
+
+<p>命令执行完后，Python3 和 pip3 均已成功安装</p>
+<ol start="2">
+<li>安装包安装</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.python.org/downloads/">官网 </a>下载安装包安装</p>
+<ol start="3">
+<li>Anaconda 安装</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/">镜像地址</a></p>
+<ul>
+<li>测试验证</li>
+</ul>
+<p>终端输入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Python3</span><br><span class="line">pip3 -V</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="1-2请求库安装"><a href="#1-2请求库安装" class="headerlink" title="1.2请求库安装"></a>1.2请求库安装</h5><h6 id="1-2-1-requests"><a href="#1-2-1-requests" class="headerlink" title="1.2.1 requests"></a>1.2.1 requests</h6><p>阻塞式 HTTP 请求，发出请求后，会一直等待服务器响应，响应后才会进行下一步处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install requests</span><br></pre></td></tr></table></figure>
+
+<p>验证安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python3</span><br><span class="line">&gt;&gt;&gt; import requests</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-2-2-Selenium"><a href="#1-2-2-Selenium" class="headerlink" title="1.2.2 Selenium"></a>1.2.2 Selenium</h6><p>自动化测试工具，可以驱动浏览器执行特定的动作，如点击、下拉</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install selenium</span><br></pre></td></tr></table></figure>
+
+<p>验证安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python3</span><br><span class="line">&gt;&gt;&gt; import selenium</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-2-3-ChromeDriver"><a href="#1-2-3-ChromeDriver" class="headerlink" title="1.2.3 ChromeDriver"></a>1.2.3 ChromeDriver</h6><p>Selenium 是一个自动化测试工具，需要配合浏览器使用</p>
+<p>安装 ChromeDriver 才能驱动 Chrome 浏览器完成相应操作</p>
+<p>查看 Chrome 版本号：帮助-关于 Google Chrome 版本 100.0.4896.75（正式版本） (x86_64)</p>
+<p>ChromeDriver <a target="_blank" rel="noopener" href="http://npm.taobao.org/mirrors/chromedriver/">下载地址</a> 选择 100.0.4896.60/chromedriver_mac64.zip  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv chromedriver &#x2F;usr&#x2F;local&#x2F;bin</span><br></pre></td></tr></table></figure>
+
+<p>验证安装： 终端输入 chromedriver 开启</p>
+<p>再程序中测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python3</span><br><span class="line">&gt;&gt;&gt; from selenium import webdriver</span><br><span class="line">&gt;&gt;&gt; browser &#x3D; webdriver.Chrome()</span><br></pre></td></tr></table></figure>
+
+<p>运行后，弹出一个空白 Chrome 浏览器，证明配置没问题</p>
+<h6 id="1-2-4-GeckoDriver"><a href="#1-2-4-GeckoDriver" class="headerlink" title="1.2.4 GeckoDriver"></a>1.2.4 GeckoDriver</h6><p> <a target="_blank" rel="noopener" href="https://github.com/mozilla/geckodriver/releases">下载地址</a>  geckodriver-v0.30.0-macos.tar.gz</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv geckodriver &#x2F;usr&#x2F;local&#x2F;bin</span><br></pre></td></tr></table></figure>
+
+<p>验证安装： 终端输入 geckodriver 开启</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python3</span><br><span class="line">&gt;&gt;&gt; from selenium import webdriver</span><br><span class="line">&gt;&gt;&gt; browser &#x3D; webdriver.Firefox()</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-2-5-PhantomJS"><a href="#1-2-5-PhantomJS" class="headerlink" title="1.2.5 PhantomJS"></a>1.2.5 PhantomJS</h6><p><del>无界面的、可脚本编程的 WebKit 浏览器引擎</del></p>
+<p><del>Selenium 支持 PhantomJS，这样运行的时候就不会再弹出一个浏览器了</del></p>
+<p><a target="_blank" rel="noopener" href="https://phantomjs.org/download.html">下载地址</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv phantomjs &#x2F;usr&#x2F;local&#x2F;bin</span><br></pre></td></tr></table></figure>
+
+<p><del>验证安装： 终端输入 phantomjs</del></p>
+<p><del>Selenium中使用，只需要将 Chrome 切换为 PhantomJS</del></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">from selenium import webdriver </span><br><span class="line">browser &#x3D; webdriver.PhantomJS() </span><br><span class="line">browser.get(&#39;https:&#x2F;&#x2F;www.baidu.com’) </span><br><span class="line">print(browser.current_url)</span><br></pre></td></tr></table></figure>
+
+<p>报错不支持了：<code>Selenium support for PhantomJS has been deprecated </code> </p>
+<p>使用无界面版本 <code>use headless versions of Chrome or Firefox instead</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">from selenium import webdriver</span><br><span class="line"># 创建chrome参数对象</span><br><span class="line">opt &#x3D; webdriver.ChromeOptions()</span><br><span class="line"># 把chrome设置成无界面模式，不论windows还是linux都可以，自动适配对应参数</span><br><span class="line">opt.set_headless()</span><br><span class="line"># 创建chrome无界面对象</span><br><span class="line">driver &#x3D; webdriver.Chrome(options&#x3D;opt)</span><br><span class="line"># 访问百度</span><br><span class="line">driver.get(&#39;https:&#x2F;&#x2F;baidu.com&#x2F;&#39;)</span><br><span class="line">#打印内容</span><br><span class="line">print(driver.page_source)</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-2-6-aiohttp"><a href="#1-2-6-aiohttp" class="headerlink" title="1.2.6 aiohttp"></a>1.2.6 aiohttp</h6><p>异步 Web 服务的库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install aiohttp</span><br></pre></td></tr></table></figure>
+
+<p>字符编码检测库 cchardet , 加速 DNS 的解析库  aiodns</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install cchardet aiodns</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-3-解析库安装"><a href="#1-3-解析库安装" class="headerlink" title="1.3 解析库安装"></a>1.3 解析库安装</h5><h6 id="1-3-1-lxml"><a href="#1-3-1-lxml" class="headerlink" title="1.3.1 lxml"></a>1.3.1 lxml</h6><p>Python 的一个解析库，支持 HTML 和 XML 的解析，支持 XPath 解析方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install lxml</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-3-2-Beautiful-Soup"><a href="#1-3-2-Beautiful-Soup" class="headerlink" title="1.3.2 Beautiful Soup"></a>1.3.2 Beautiful Soup</h6><p>Python 的一个 HTML 或 XML 的解析库</p>
+<p>Beautiful Soup 的 HTML 和 XML 解析器是依赖于 lxml 库的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install beautifulsoup4</span><br></pre></td></tr></table></figure>
+
+<p>验证安装：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ python3</span><br><span class="line">&gt;&gt;&gt; from bs4 import BeautifulSoup</span><br><span class="line">&gt;&gt;&gt; soup &#x3D; BeautifulSoup(&#39;&lt;p&gt;Hello&lt;&#x2F;p&gt;&#39;, &#39;lxml&#39;)</span><br><span class="line">&gt;&gt;&gt; print(soup.p.string)</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-3-3-pyquery"><a href="#1-3-3-pyquery" class="headerlink" title="1.3.3 pyquery"></a>1.3.3 pyquery</h6><p>网页解析工具，提供和 jQuery类型语法来解析 HTML 文档，支持 CSS 选择器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install pyquery</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-3-4-tesserocr"><a href="#1-3-4-tesserocr" class="headerlink" title="1.3.4 tesserocr"></a>1.3.4 tesserocr</h6><p>OCR 识别</p>
+<p>使用 Homebrew 安装 ImageMagick 和 tesseract 库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">brew install imagemagick</span><br><span class="line">brew install tesseract-lang</span><br><span class="line">pip3 install tesserocr pillow</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="http://my.cnki.net/elibregister/CheckCode.aspx">验证码测试连接</a></p>
+<p>使用命令行测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tesseract image.png result -1 eng &amp;&amp; cat result.txt</span><br></pre></td></tr></table></figure>
+
+<p>Python 代码测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ python3</span><br><span class="line">&gt;&gt;&gt; import tesserocr</span><br><span class="line">&gt;&gt;&gt; from PIL import Image</span><br><span class="line">&gt;&gt;&gt; image &#x3D; Image.open(&#39;&#x2F;Users&#x2F;midland_whk&#x2F;Downloads&#x2F;CheckCode.aspx.jpeg&#39;)</span><br><span class="line">&gt;&gt;&gt; print(tesserocr.image_to_text(image))</span><br><span class="line">或者</span><br><span class="line">&gt;&gt;&gt; print(tesserocr.file_to_text(&#39;image.png&#39;))</span><br></pre></td></tr></table></figure>
+
+<p>利用 Image 读取图片，再调用 tesserocr 的 image_to_text 将识别结果输出</p>
+<h5 id="1-4-数据库安装"><a href="#1-4-数据库安装" class="headerlink" title="1.4 数据库安装"></a>1.4 数据库安装</h5><h6 id="1-4-1-MySQL"><a href="#1-4-1-MySQL" class="headerlink" title="1.4.1 MySQL"></a>1.4.1 MySQL</h6><p>轻量级关系型数据库</p>
+<p><a target="_blank" rel="noopener" href="https://downloads.mysql.com/archives/community/">下载地址</a></p>
+<p>MySQL安装后 <code>open ~/.bash_profile</code><br>添加 <code>PATH=$PATH:/usr/local/mysql/bin</code><br>生效 <code>source ~/.bash_profile</code><br>终端登录mysql <code>mysql -uroot -p</code></p>
+<p>或者 Homebrew 方式安装 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install mysql</span><br></pre></td></tr></table></figure>
+
+<p>启动、停止、重启</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo mysql.server start </span><br><span class="line">sudo mysql.server stop </span><br><span class="line">sudo mysql.server restart</span><br><span class="line">sudo &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;support-files&#x2F;mysql.server stop</span><br><span class="line">sudo &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;support-files&#x2F;mysql.server restart</span><br></pre></td></tr></table></figure>
+
+<p>打开系统偏好设置-MySQL</p>
+<p>initialize Database 可以设置密码 8 位</p>
+<ul>
+<li>Navicat Premium </li>
+</ul>
+<p>数据库的可视化工具</p>
+<ul>
+<li>Navicat Premium 连接 MySQL 报错 2059</li>
+</ul>
+<p>原因：mysql8之前版本中加密规则为mysql_native_password，mysql8之后加密规则为caching_sha2_password，将mysql用户登录加密规则改为 mysql_native_password</p>
+<p>解决：</p>
+<p>1 登录数据库 mysql -uroot -p</p>
+<p>2 输入数据库密码登录</p>
+<p>3 输入 use mysql; 出现 Database changed</p>
+<p>4 输入 select host,user,plugin from user; 目的为了查看user的root 对应host是什么</p>
+<p>5 修改加密规则 ALTER USER ‘root’@’localhost’ IDENTIFIED WITH mysql_native_password BY ‘12345678’;</p>
+<p>6 查看修改结果 select host,user,plugin from user;</p>
+<h6 id="1-4-2-MongoDB"><a href="#1-4-2-MongoDB" class="headerlink" title="1.4.2 MongoDB"></a>1.4.2 MongoDB</h6><p>C++编写的非关系型数据库，内容存储形式类似 JSON 对象，字段值可以包含其它文档、数组及文档数组</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install mongodb <span class="comment">#失效了</span></span><br></pre></td></tr></table></figure>
+
+<p>直接下载社区版 <a target="_blank" rel="noopener" href="https://www.mongodb.com/try/download">https://www.mongodb.com/try/download</a></p>
+<p>下载完 mongodb-macos-x86_64-5.0.7 解压命名为 mongodb 放到 /usr/local/ 目录</p>
+<p>再把 MongoDB 的二进制命令文件目录添加到PATH</p>
+<p>export PATH=/usr/local/mongodb/bin:$PATH</p>
+<p>创建数据库存放路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p &#x2F;usr&#x2F;local&#x2F;var&#x2F;mongodb</span><br></pre></td></tr></table></figure>
+
+<p>日志文件路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p &#x2F;usr&#x2F;local&#x2F;var&#x2F;log&#x2F;mongodb</span><br></pre></td></tr></table></figure>
+
+<p>确保当前用户对上面目录读写权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo chown 用户 &#x2F;usr&#x2F;local&#x2F;var&#x2F;mongodb</span><br><span class="line">sudo chown 用户 &#x2F;usr&#x2F;local&#x2F;var&#x2F;log&#x2F;mongodb</span><br></pre></td></tr></table></figure>
+
+<p>后台启动mongodb</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#--dbpath 设置数据存放目录</span></span><br><span class="line"><span class="comment">#--logpath 设置日志存放目录</span></span><br><span class="line"><span class="comment">#--fork 在后台运行</span></span><br><span class="line">mongod --dbpath /usr/<span class="built_in">local</span>/var/mongodb --logpath /usr/<span class="built_in">local</span>/var/<span class="built_in">log</span>/mongodb/mongo.log --fork</span><br></pre></td></tr></table></figure>
+
+<p>如果不想后台运行，而是在控制台上查看运行过程可以直接设置配置文件启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongod --config &#x2F;usr&#x2F;local&#x2F;etc&#x2F;mongod.conf</span><br></pre></td></tr></table></figure>
+
+<p>查看是否启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep -v grep | grep mongod</span><br></pre></td></tr></table></figure>
+
+<p>启动后可以用mongodb命令打开一个终端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;usr&#x2F;local&#x2F;mongodb&#x2F;bin </span><br><span class="line">.&#x2F;mongo</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>启动、停止和重启 MongoDB</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">brew services start mongodb </span><br><span class="line">sudo mongod</span><br><span class="line">brew services stop mongodb </span><br><span class="line">brew services restart mongodb</span><br></pre></td></tr></table></figure>
+
+<p>可视化工具 RoboMongo/Robo 2T <a target="_blank" rel="noopener" href="https://robomongo.org/download">https://robomongo.org/download</a></p>
+<p>Studio 3T <a target="_blank" rel="noopener" href="https://studio3t.com/download">https://studio3t.com/download</a></p>
+<h6 id="1-4-3-Redis"><a href="#1-4-3-Redis" class="headerlink" title="1.4.3 Redis"></a>1.4.3 Redis</h6><p>基于内存的高效的非关系型数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install redis</span><br></pre></td></tr></table></figure>
+
+<p>启动 Redis 服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew services start redis</span><br><span class="line">redis-service &#x2F;usr&#x2F;local&#x2F;etc&#x2F;redis.conf</span><br></pre></td></tr></table></figure>
+
+<p>Mac 下 Redis 配置文件路径 /usr/local/tec/redis.conf 可以通过修改它来配置访问密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew services stop redis</span><br><span class="line">brew services restart redis</span><br></pre></td></tr></table></figure>
+
+<p>可以安装 Redis Destop Manager 可视化管理工具来管理 Redis</p>
+<h5 id="1-5-Python-存储库安装"><a href="#1-5-Python-存储库安装" class="headerlink" title="1.5 Python 存储库安装"></a>1.5 Python 存储库安装</h5><p>安装了存储数据的数据库，如果想要和 Python 交互的话，还需要安装一些 Python 存储库</p>
+<p>MySQL 需要安装 PyMySQL</p>
+<p>MongoDB 需要安装 PyMongo</p>
+<h6 id="1-5-1-PyMySQL"><a href="#1-5-1-PyMySQL" class="headerlink" title="1.5.1 PyMySQL"></a>1.5.1 PyMySQL</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install pymysql</span><br></pre></td></tr></table></figure>
+
+<p>验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import pymysql</span><br><span class="line">&gt;&gt;&gt; pymysql.VERSION</span><br><span class="line">(1, 0, 2, None)</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-5-2-PyMongo"><a href="#1-5-2-PyMongo" class="headerlink" title="1.5.2 PyMongo"></a>1.5.2 PyMongo</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install pymongo</span><br></pre></td></tr></table></figure>
+
+<p>验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import pymongo </span><br><span class="line">&gt;&gt;&gt; pymongo.version</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-5-3-redis-py"><a href="#1-5-3-redis-py" class="headerlink" title="1.5.3 redis-py"></a>1.5.3 redis-py</h6><p>Redis 使用 redis-py 库来与其交互</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install redis</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-5-4-RedisDump"><a href="#1-5-4-RedisDump" class="headerlink" title="1.5.4 RedisDump"></a>1.5.4 RedisDump</h6><p>RedisDump 一个用于 Redis 数据导入/导出的工具，基于 Ruby 实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install redis-dump</span><br></pre></td></tr></table></figure>
+
+<p>验证：安装成功后执行下面命令，成功调用则安装成功</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis dump </span><br><span class="line">redis-load</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-6-Web-库安装"><a href="#1-6-Web-库安装" class="headerlink" title="1.6 Web 库安装"></a>1.6 Web 库安装</h5><h6 id="1-6-1-Flask"><a href="#1-6-1-Flask" class="headerlink" title="1.6.1 Flask"></a>1.6.1 Flask</h6><p>轻量级的 Web 服务程序，主要用来做一些 API 服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install flask</span><br></pre></td></tr></table></figure>
+
+<p>验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask</span><br><span class="line">app &#x3D; Flask(__name__)</span><br><span class="line">@app.route(&quot;&#x2F;&quot;)</span><br><span class="line">def hello():</span><br><span class="line">    return &quot;hello world&quot;</span><br><span class="line"></span><br><span class="line">if __name__ &#x3D;&#x3D; &#39;__main__&#39;:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure>
+
+<p>运行后，系统会在 5000 端口开启 Web 服务</p>
+<p>直接访问 <a target="_blank" rel="noopener" href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a> 可以看到网页中显示 Hello World，一个最简单的 Flask 程序就运行成功了</p>
+<h6 id="1-6-2-Tornado"><a href="#1-6-2-Tornado" class="headerlink" title="1.6.2 Tornado"></a>1.6.2 Tornado</h6><p>支持异步的 Web 框架，通过使用非阻塞 I/O 流，可以支撑成千上万的开放连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install tornado</span><br></pre></td></tr></table></figure>
+
+<p>验证 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">import tornado.ioloop</span><br><span class="line">import tornado.web</span><br><span class="line"></span><br><span class="line">class MainHandler(tornado.web.RequestHandler):</span><br><span class="line">    def get(self):</span><br><span class="line">        self.write(&quot;hello world&quot;)</span><br><span class="line">def make_app():</span><br><span class="line">    return  tornado.web.Application([</span><br><span class="line">        (r&quot;&#x2F;&quot;, MainHandler)</span><br><span class="line">    ])</span><br><span class="line"></span><br><span class="line">if __name__ &#x3D;&#x3D; &#39;__main__&#39;:</span><br><span class="line">    app &#x3D; make_app()</span><br><span class="line">    app.listen(8888)</span><br><span class="line">    tornado.ioloop.IOLoop.current().start()</span><br></pre></td></tr></table></figure>
+
+<p>运行后，系统在 8888 端口运行了 Web 服务， 访问 <a href="http://127.0.0.8888/">http://127.0.0.8888/</a> 网页呈现 helloworld</p>
+<h5 id="1-7-APP-爬取相关库安装"><a href="#1-7-APP-爬取相关库安装" class="headerlink" title="1.7 APP 爬取相关库安装"></a>1.7 APP 爬取相关库安装</h5><h6 id="1-7-1-Charles"><a href="#1-7-1-Charles" class="headerlink" title="1.7.1 Charles"></a>1.7.1 Charles</h6><h6 id="1-7-2-mitmproxy"><a href="#1-7-2-mitmproxy" class="headerlink" title="1.7.2 mitmproxy"></a>1.7.2 mitmproxy</h6><p>支持 HTTP 和 HTTPS 的抓包程序，通过控制台的形式操作</p>
+<p>有两个关联组件</p>
+<p>mitmdump：是 mitmproxy 命令行接口，利用它对接 Python 脚本，实现监听后的处理</p>
+<p>mitmweb：一个 Web 程序，通过它以清楚观察到 mitmproxy 捕获请求</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install mitmproxy</span><br></pre></td></tr></table></figure>
+
+<p>完成安装，还附带安装了 mitmdump mitmweb 两个组件</p>
+<p>要捕获 https 请求需要证书配置</p>
+<p>mitmproxy 安装后会提供一套 CA 证书，运行 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mitmdump</span><br></pre></td></tr></table></figure>
+
+<p>在用户目录 .mitmproxy 目录里面找到 CA 证书</p>
+<p>配置：</p>
+<p>双击 mitmproxy-ca-cert.pem 弹出钥匙串管理，找到 mitmproxy 证书，打开设置，选始终信任</p>
+<p>将 mitmproxy-ca-cert.pem 隔空投送到手机设备，安装</p>
+<ul>
+<li>设置代理</li>
+</ul>
+<p>启动 mitmproxy，之后会在 8080 端口上运行一个代理服务，右下角显示当前正在监听的端口，或者启动 mitmdump，也会监听 8080 端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mitmproxy</span><br></pre></td></tr></table></figure>
+
+<p>手机设置代理 端口号设置 8080</p>
+<p>设置好之后，手机浏览请求，mitmproxy 页面便会呈现手机上的请求</p>
+<p>敲击回车可以查看详情，可以查看 Request、Response、Detail 点击 Tab 切换</p>
+<ul>
+<li>提供了命令行编辑功能：</li>
+</ul>
+<p>点击 e 进入编辑功能，跳转需要编辑哪部分内容，回车确定</p>
+<p>退出返回 q 或者 :q  : wq!</p>
+<p>敲击 a 保存修改，敲击 r 重新发起修改后的请求</p>
+<ul>
+<li>mitmdump</li>
+</ul>
+<p>可以命令行启动，并把截获的数据保存到文件中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mitmdump -w outfile</span><br></pre></td></tr></table></figure>
+
+<p>还可以指定一个脚本来处理截获的数据，使用 -s 参数，脚本需要放在当前命令执行的目录下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mitmdump -s script.py</span><br></pre></td></tr></table></figure>
+
+<p>脚本写入如下代码：定义了一个 request() 方法，参数为 flow，其实是一个 HTTPFlow 对象，通过 request 属性即可获取当前请求对象，然后打印输出请求头</p>
+<p>手机端访问 <a target="_blank" rel="noopener" href="http://httpbin.org/get">http://httpbin.org/get</a> 测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def request(flow):</span><br><span class="line">	flow.request.headers[&#39;User-Agent&#39;] &#x3D; &#39;MitmProxy&#39;</span><br><span class="line">	print(flow.request.headers)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>日志输出</li>
+</ul>
+<p>可以设定不同级别以不同颜色输出结果 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;python3</span><br><span class="line">from mitmproxy import ctx</span><br><span class="line">def request(flow):</span><br><span class="line">	flow.request.headers[&#39;User-Agent&#39;] &#x3D; &#39;MitmProxy&#39;</span><br><span class="line">	ctx.log.info(str(flow.request.headers))</span><br><span class="line">	ctx.log.warn(str(flow.request.headers))</span><br><span class="line">	ctx.log.error(str(flow.request.headers))</span><br><span class="line">	print(flow.request.headers)</span><br></pre></td></tr></table></figure>
+
+<p>这里调用了 ctx 模块，它有一个 log 功能</p>
+<ul>
+<li>请求</li>
+</ul>
+<p>还可输出其它内容 headers、cookies 等</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;python3</span><br><span class="line">from mitmproxy import ctx</span><br><span class="line">def request(flow):</span><br><span class="line">	request &#x3D; flow.request</span><br><span class="line">	info &#x3D; ctx.log.info</span><br><span class="line">	print(info(str(request.headers)))</span><br><span class="line">	print(info(str(request.cookies)))</span><br><span class="line">	print(info(str(request.host)))</span><br><span class="line">	print(info(str(request.method)))</span><br><span class="line">	print(info(str(request.port)))</span><br><span class="line">	print(info(str(request.scheme)))</span><br></pre></td></tr></table></figure>
+
+<p>可以对属性修改 ，修改脚本如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def request(flow):</span><br><span class="line">	url &#x3D; &#39;https:&#x2F;&#x2F;httpbin.org&#x2F;get&#39;</span><br><span class="line">	flow.request.url &#x3D; url</span><br></pre></td></tr></table></figure>
+
+<p>访问 <a target="_blank" rel="noopener" href="https://baidu.com/">https://baidu.com</a> 直接跳转到这里了 <a target="_blank" rel="noopener" href="https://httpbin.org/get">https://httpbin.org/get</a></p>
+<p>Request 还有很多属性 参考 <a target="_blank" rel="noopener" href="http://docs.mitmproxy.org/en/latest/scripting/api.html">http://docs.mitmproxy.org/en/latest/scripting/api.html</a></p>
+<ul>
+<li>响应</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">from mitmproxy import ctx</span><br><span class="line"></span><br><span class="line">def request(flow):</span><br><span class="line">	response &#x3D; flow.response</span><br><span class="line">	info &#x3D; ctx.log.info</span><br><span class="line">	info(str(response.status_code))</span><br><span class="line">	info(str(response.headers))</span><br><span class="line">	info(str(response.cookies))</span><br><span class="line">	info(str(response.text))</span><br></pre></td></tr></table></figure>
+
+<p>再访问 httpbin （报错了。。） </p>
+<ul>
+<li>mitmdump 爬 ‘得到’ APP 电子书信息</li>
+</ul>
+<h6 id="1-7-3-Appium-安装"><a href="#1-7-3-Appium-安装" class="headerlink" title="1.7.3 Appium 安装"></a>1.7.3 Appium 安装</h6><p>移动端的自动化测试工具</p>
+<p><a target="_blank" rel="noopener" href="http://appium.io/">下载链接</a> 直接安装</p>
+<p>或者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g appium</span><br></pre></td></tr></table></figure>
+
+<p>利用 WebDriver 来实现 APP 的自动化测试</p>
+<p>Appium 相当于一个服务器，可以向 Appium 发送一些操作指令，Appium 就会跟进不同指令对设备进行驱动</p>
+<p>点击 Start Server 按钮即可启动 Appium 的服务，相当于开启了一个 Appium 服务器。</p>
+<p>可以通过 Appium 内置驱动或 Python 代码向 Appium 的服务器发送一系列操作指令</p>
+<p>默认 Appium 运行后正在监听 4723 端口</p>
+<h6 id="WebDriverAgent"><a href="#WebDriverAgent" class="headerlink" title="WebDriverAgent"></a>WebDriverAgent</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;appium&#x2F;WebDriverAgent</span><br><span class="line">brew install Carthage</span><br><span class="line">.&#x2F;scripts&#x2F;bootstrap.sh</span><br></pre></td></tr></table></figure>
+
+<h6 id="libimobiledevice"><a href="#libimobiledevice" class="headerlink" title="libimobiledevice"></a>libimobiledevice</h6><p>使用原生协议与评估 iOS 设备进行通信的库，通过这个库 MacOS 能够获取到 iOS 设备信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install --HEAD libimobiledevice</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h5 id="1-8-爬虫框架安装"><a href="#1-8-爬虫框架安装" class="headerlink" title="1.8 爬虫框架安装"></a>1.8 爬虫框架安装</h5><h6 id="1-8-1-pyspider"><a href="#1-8-1-pyspider" class="headerlink" title="1.8.1 pyspider"></a>1.8.1 pyspider</h6><p>pyspider 是支持 JavaScript 渲染的，而这过程依赖 PhantomJS，所以还需要安装 PhantomJS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install pyspider</span><br></pre></td></tr></table></figure>
+
+<p>验证：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyspider all</span><br></pre></td></tr></table></figure>
+
+<p>这时 pyspider 的 Web 服务器会在本地 5000 端口运行，直接打开浏览器 <a target="_blank" rel="noopener" href="http://localhost:5000/">http://localhost:5000/</a> 即可进入 pyspider 的 WebUI 管理页面</p>
+<p>报错 ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">File &quot;&#x2F;Library&#x2F;Frameworks&#x2F;Python.framework&#x2F;Versions&#x2F;3.8&#x2F;lib&#x2F;python3.8&#x2F;site-packages&#x2F;pyspider&#x2F;run.py&quot;, line 231</span><br><span class="line">    async&#x3D;True, get_object&#x3D;False, no_input&#x3D;False):</span><br></pre></td></tr></table></figure>
+
+<p>修改文件 <code>/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/pyspider/run.py</code> </p>
+<p><code>pyspider/fetcher/tornado_fetcher.py</code></p>
+<p><code>pyspider/webui/app.py</code></p>
+<p>async 改成 async_mode</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip3 uninstall wsgidav</span><br><span class="line">pip3 install wsgidav&#x3D;&#x3D;2.4.1</span><br></pre></td></tr></table></figure>
+
+<p>报错： <code>ImportError: cannot import name DispatcherMiddleware</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip3 uninstall werkzeug</span><br><span class="line">pip3 install werkzeug&#x3D;&#x3D;0.16.0</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-8-2-Scrapy"><a href="#1-8-2-Scrapy" class="headerlink" title="1.8.2 Scrapy"></a>1.8.2 Scrapy</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install scrapy</span><br></pre></td></tr></table></figure>
+
+<p>验证： 命令行输入 scrapy</p>
+<h6 id="1-8-3-Scrapy-Splash"><a href="#1-8-3-Scrapy-Splash" class="headerlink" title="1.8.3 Scrapy-Splash"></a>1.8.3 Scrapy-Splash</h6><p>Scrapy-Splash 是一个 Scrapy 中支持 JavaScript 渲染的工具</p>
+<p>安装分两部分：</p>
+<ul>
+<li>Splash 服务安装</li>
+</ul>
+<p>通过 Docker安装，安装后会启动一个 Splash 服务，可以通过它的接口来实现 JavaScript 页面的加载</p>
+<p>安装 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 8050:8050 scrapinghub&#x2F;splash</span><br></pre></td></tr></table></figure>
+
+<p>Scrapy-Splash 会使用 Splash 的 HTTP API 进行页面渲染，安装 Splash 来提供渲染服务</p>
+<p>安装完成后 Splash 已经在 8050 上运行了， 打开 <a target="_blank" rel="noopener" href="http://localhost:8050/">http://localhost:8050</a> 即可看到 Splash 的主页</p>
+<p>也可以直接安装在远程服务器上，在服务器上以守护态运行 Splash 即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 8050:8050 scrapinghub&#x2F;splash</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>Scrapy-Splash 的 Python 库安装</li>
+</ul>
+<p>安装之后即可在 Scrapy 中使用 Splash 服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install scrapy-splash</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-8-4-Scrapy-Redis"><a href="#1-8-4-Scrapy-Redis" class="headerlink" title="1.8.4 Scrapy-Redis"></a>1.8.4 Scrapy-Redis</h6><p>Scrapy 的分布式扩展模块，有了它，可以方便实现 Scrapy 分布式爬虫的搭建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install scrapy-redis</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="1-9-部署相关库安装"><a href="#1-9-部署相关库安装" class="headerlink" title="1.9 部署相关库安装"></a>1.9 部署相关库安装</h5><p>如果想要大规模抓取数据，就会用到分布式爬虫，</p>
+<h6 id="1-9-1-Docker"><a href="#1-9-1-Docker" class="headerlink" title="1.9.1 Docker"></a>1.9.1 Docker</h6><p>安装 Docker for Mac，如果系统不满足要求可以安装 Docker Toolbox</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install --cask --appdir&#x3D;&#x2F;Applications docker</span><br></pre></td></tr></table></figure>
+
+<p>运行 Docker 后，菜单栏出现一个小鲸鱼图标，展开菜单点击 Start 即可启动，随后就可以在命令行下使用 Docker 命令了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run hello-world</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>镜像加速</li>
+</ul>
+<p>运行测试命令时，会发现它首先会下载一个 Hello World 的镜像，然后将其运行</p>
+<p>下载镜像有时候会非常慢，因为默认是从国外 Docker Hub 下载的，为了提高下载速度，可以使用国内镜像来加速</p>
+<p>推荐的 Docker 加速器有 <a target="_blank" rel="noopener" href="https://daocloud.io/mirror">DaoCloud</a> 和 <a target="_blank" rel="noopener" href="https://cr.console.aliyun.com/#/accelerator">阿里云</a> </p>
+<h6 id="1-9-2-Scrapyd"><a href="#1-9-2-Scrapyd" class="headerlink" title="1.9.2 Scrapyd"></a>1.9.2 Scrapyd</h6><p>用于部署和运行 Scrapy 项目的工具，有了它，可以将写好的 Scrapy 项目上传到云主机并通过 API 来控制它</p>
+<p>Scrapy 项目部署，基本上都使用 Linux 主机</p>
+<h6 id="1-9-3-Scrapyd-Client"><a href="#1-9-3-Scrapyd-Client" class="headerlink" title="1.9.3 Scrapyd-Client"></a>1.9.3 Scrapyd-Client</h6><h6 id="1-9-4-Scrapyd-API-安装"><a href="#1-9-4-Scrapyd-API-安装" class="headerlink" title="1.9.4 Scrapyd API 安装"></a>1.9.4 Scrapyd API 安装</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install python-scrapyd-api</span><br></pre></td></tr></table></figure>
+
+<h6 id="1-9-5-Scrapyrt"><a href="#1-9-5-Scrapyrt" class="headerlink" title="1.9.5 Scrapyrt"></a>1.9.5 Scrapyrt</h6><p>Scrapyrt 为 Scrapy 提供了一个调度的 HTTP接口，有了它，就不需要执行 Scrapy 命令，而是通过请求一个 HTTP 接口来调度 Scrapy 任务了</p>
+<p>Scrapyrt 比 Scrapyd 更轻量，如果不需要分布式多任务的话，可以简单使用 Scrapyrt 实现远程 Scrapy 任务的调度</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install scrapyrt</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="1-9-6-Gerapy"><a href="#1-9-6-Gerapy" class="headerlink" title="1.9.6 Gerapy"></a>1.9.6 Gerapy</h6><p>Scrapy 分布式管理模块</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/03/02/%E3%80%8AFlutter%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E7%89%88%E3%80%8B%E5%8D%81%E4%B8%89%EF%BC%9A%E5%9B%BD%E9%99%85%E5%8C%96/" rel="prev" title="《Flutter实战第二版》十三：国际化">
+                  <i class="fa fa-chevron-left"></i> 《Flutter实战第二版》十三：国际化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/04/11/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" rel="next" title="Python3网络爬虫开发实战-正则表达式">
+                  Python3网络爬虫开发实战-正则表达式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
