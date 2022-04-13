@@ -32,7 +32,7 @@
 <meta property="og:description" content="配置基础r&#39;&#39;  表示 &#39;&#39;  内部的字符串不转义 12&gt;&gt;&gt; print(r&#39;\\\t\\&#39;)\\\t\\  多行输出 123print(&#39;&#39;&#39;line1line2line3&#39;&#39;&#39;)  输入 让用户输入并存放到一个变量里 1234567&gt;&gt;&gt; name &#x3D;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-02T06:22:40.000Z">
-<meta property="article:modified_time" content="2021-03-25T04:38:12.496Z">
+<meta property="article:modified_time" content="2022-04-11T02:32:21.076Z">
 <meta property="article:author" content="daxun">
 <meta name="twitter:card" content="summary">
 
@@ -212,7 +212,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <section class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80"><span class="nav-number">2.</span> <span class="nav-text">基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">格式化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#list-%E5%88%97%E8%A1%A8"><span class="nav-number">2.2.</span> <span class="nav-text">list 列表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#tuple-%E5%85%83%E7%BB%84"><span class="nav-number">2.3.</span> <span class="nav-text">tuple 元组</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="nav-number">2.4.</span> <span class="nav-text">条件判断</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF"><span class="nav-number">2.5.</span> <span class="nav-text">循环</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dict"><span class="nav-number">2.6.</span> <span class="nav-text">dict</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#set-%E9%9B%86%E5%90%88"><span class="nav-number">2.7.</span> <span class="nav-text">set 集合</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">定义函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AA%E5%80%BC"><span class="nav-number">3.2.</span> <span class="nav-text">返回多个值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E5%8F%82%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">默认参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0"><span class="nav-number">3.4.</span> <span class="nav-text">可变参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%82%E6%95%B0"><span class="nav-number">3.5.</span> <span class="nav-text">关键字参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%82%E6%95%B0"><span class="nav-number">3.6.</span> <span class="nav-text">命名关键字参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E7%BB%84%E5%90%88"><span class="nav-number">3.7.</span> <span class="nav-text">参数组合</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">高级特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%87%E7%89%87"><span class="nav-number">4.1.</span> <span class="nav-text">切片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3"><span class="nav-number">4.2.</span> <span class="nav-text">迭代</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E7%94%9F%E6%88%90"><span class="nav-number">4.3.</span> <span class="nav-text">列表生成</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%99%A8-generator"><span class="nav-number">4.4.</span> <span class="nav-text">生成器 generator</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">4.5.</span> <span class="nav-text">迭代器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E5%8F%98%E6%88%90"><span class="nav-number">4.6.</span> <span class="nav-text">函数式变成</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97"><span class="nav-number">4.7.</span> <span class="nav-text">模块</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#logging"><span class="nav-number">4.8.</span> <span class="nav-text">logging</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">面向对象编程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B1%BB%E5%92%8C%E5%AE%9E%E4%BE%8B"><span class="nav-number">5.1.</span> <span class="nav-text">类和实例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E9%99%90%E5%88%B6"><span class="nav-number">5.2.</span> <span class="nav-text">访问限制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B"><span class="nav-number">6.</span> <span class="nav-text">面向对象高级编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E3%80%81%E8%B0%83%E8%AF%95%E5%92%8C%E6%B5%8B%E8%AF%95"><span class="nav-number">7.</span> <span class="nav-text">错误、调试和测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">8.</span> <span class="nav-text">正则表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E7%9B%AE%E6%A0%87"><span class="nav-number">8.1.</span> <span class="nav-text">匹配目标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E5%8C%B9%E9%85%8D"><span class="nav-number">8.2.</span> <span class="nav-text">通用匹配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B4%AA%E5%A9%AA%E4%B8%8E%E9%9D%9E%E8%B4%AA%E5%A9%AA"><span class="nav-number">8.3.</span> <span class="nav-text">贪婪与非贪婪</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E9%A5%B0%E7%AC%A6"><span class="nav-number">8.4.</span> <span class="nav-text">修饰符</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E9%A5%B0%E7%AC%A6-1"><span class="nav-number">8.5.</span> <span class="nav-text">修饰符</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Search"><span class="nav-number">8.6.</span> <span class="nav-text">Search</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#findall"><span class="nav-number">8.7.</span> <span class="nav-text">findall</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sub"><span class="nav-number">8.8.</span> <span class="nav-text">sub</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#compile"><span class="nav-number">8.9.</span> <span class="nav-text">compile</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">9.</span> <span class="nav-text">其他</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80"><span class="nav-number">2.</span> <span class="nav-text">基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">格式化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#list-%E5%88%97%E8%A1%A8"><span class="nav-number">2.2.</span> <span class="nav-text">list 列表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#tuple-%E5%85%83%E7%BB%84"><span class="nav-number">2.3.</span> <span class="nav-text">tuple 元组</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="nav-number">2.4.</span> <span class="nav-text">条件判断</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF"><span class="nav-number">2.5.</span> <span class="nav-text">循环</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dict"><span class="nav-number">2.6.</span> <span class="nav-text">dict</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#set-%E9%9B%86%E5%90%88"><span class="nav-number">2.7.</span> <span class="nav-text">set 集合</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">定义函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E5%A4%9A%E4%B8%AA%E5%80%BC"><span class="nav-number">3.2.</span> <span class="nav-text">返回多个值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E5%8F%82%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">默认参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0"><span class="nav-number">3.4.</span> <span class="nav-text">可变参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%82%E6%95%B0"><span class="nav-number">3.5.</span> <span class="nav-text">关键字参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%82%E6%95%B0"><span class="nav-number">3.6.</span> <span class="nav-text">命名关键字参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E7%BB%84%E5%90%88"><span class="nav-number">3.7.</span> <span class="nav-text">参数组合</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">高级特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%87%E7%89%87"><span class="nav-number">4.1.</span> <span class="nav-text">切片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3"><span class="nav-number">4.2.</span> <span class="nav-text">迭代</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E7%94%9F%E6%88%90"><span class="nav-number">4.3.</span> <span class="nav-text">列表生成</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%99%A8-generator"><span class="nav-number">4.4.</span> <span class="nav-text">生成器 generator</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">4.5.</span> <span class="nav-text">迭代器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E5%8F%98%E6%88%90"><span class="nav-number">4.6.</span> <span class="nav-text">函数式变成</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97"><span class="nav-number">4.7.</span> <span class="nav-text">模块</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#logging"><span class="nav-number">4.8.</span> <span class="nav-text">logging</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">面向对象编程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B1%BB%E5%92%8C%E5%AE%9E%E4%BE%8B"><span class="nav-number">5.1.</span> <span class="nav-text">类和实例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E9%99%90%E5%88%B6"><span class="nav-number">5.2.</span> <span class="nav-text">访问限制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B"><span class="nav-number">6.</span> <span class="nav-text">面向对象高级编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E3%80%81%E8%B0%83%E8%AF%95%E5%92%8C%E6%B5%8B%E8%AF%95"><span class="nav-number">7.</span> <span class="nav-text">错误、调试和测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">8.</span> <span class="nav-text">其他</span></a></li></ol></div>
         </section>
         <!--/noindex-->
 
@@ -239,7 +239,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -311,7 +311,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-25 12:38:12" itemprop="dateModified" datetime="2021-03-25T12:38:12+08:00">2021-03-25</time>
+        <time title="修改时间：2022-04-11 10:32:21" itemprop="dateModified" datetime="2022-04-11T10:32:21+08:00">2022-04-11</time>
       </span>
 
   
@@ -567,173 +567,6 @@
 
 
 
-<h4 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h4><p><a target="_blank" rel="noopener" href="https://tool.oschina.net/regex">正则表达式测试工具</a></p>
-<table>
-<thead>
-<tr>
-<th align="left">\w</th>
-<th align="left">匹配字母、数字、下划线,等价于[a-zA-Z0-9_]</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">\W</td>
-<td align="left">匹配不是字母、数字、下划线的其他字符</td>
-</tr>
-<tr>
-<td align="left">\s</td>
-<td align="left">匹配任意空白字符,等价于(\t\n\r\f)</td>
-</tr>
-<tr>
-<td align="left">\S</td>
-<td align="left">匹配任意非空字符</td>
-</tr>
-<tr>
-<td align="left">\d</td>
-<td align="left">匹配数字,等价于[0-9]</td>
-</tr>
-<tr>
-<td align="left">\D</td>
-<td align="left">匹配不是数字的字符</td>
-</tr>
-<tr>
-<td align="left">\A</td>
-<td align="left">匹配字符串开头</td>
-</tr>
-<tr>
-<td align="left">\Z</td>
-<td align="left">匹配字符串结尾的,如果存在换行,只匹配到换行前的结束字符串</td>
-</tr>
-<tr>
-<td align="left">\z</td>
-<td align="left">匹配字符串结尾的,如果存在换行,匹配到换行符\n</td>
-</tr>
-<tr>
-<td align="left">\G</td>
-<td align="left">最好完成匹配的位置</td>
-</tr>
-<tr>
-<td align="left">\n</td>
-<td align="left">匹配一个换行符</td>
-</tr>
-<tr>
-<td align="left">\t</td>
-<td align="left">匹配一个制表符(tab)</td>
-</tr>
-<tr>
-<td align="left">^</td>
-<td align="left">匹配一行字符串的开头</td>
-</tr>
-<tr>
-<td align="left">$</td>
-<td align="left">匹配一行字符串的结尾</td>
-</tr>
-<tr>
-<td align="left">.</td>
-<td align="left">匹配任意字符,除了换行符.当re.DOTALL标记被指定时,这可以匹配包括换行符在内的任字符</td>
-</tr>
-<tr>
-<td align="left">[…]</td>
-<td align="left">用来表示一组字符,比如[abc]表示匹配a或b或c,[a-z],[0-9]</td>
-</tr>
-<tr>
-<td align="left">[^…]</td>
-<td align="left">匹配不在[]里面的字符,比如[^abc]匹配除a,b,c以外的字符</td>
-</tr>
-<tr>
-<td align="left">*</td>
-<td align="left">匹配0个或多个字符</td>
-</tr>
-<tr>
-<td align="left">+</td>
-<td align="left">匹配1个或多个字符</td>
-</tr>
-<tr>
-<td align="left">?</td>
-<td align="left">匹配0个或1个前面的正则表达式片段,(.*?)表示尽可能少地匹配字符</td>
-</tr>
-<tr>
-<td align="left">{n}</td>
-<td align="left">精确匹配前面n个前面的表达式,如\d{5}表示匹配5个数字</td>
-</tr>
-<tr>
-<td align="left">{n,m}</td>
-<td align="left">匹配前面的表达式n到m次,贪婪模式</td>
-</tr>
-<tr>
-<td align="left">a|b</td>
-<td align="left">匹配a或者b</td>
-</tr>
-<tr>
-<td align="left">(…)</td>
-<td align="left">匹配括号里的表达式,也可以表示一个组</td>
-</tr>
-</tbody></table>
-<h5 id="匹配目标"><a href="#匹配目标" class="headerlink" title="匹配目标"></a>匹配目标</h5><p>使用 （） 括号将想提取的字符串括起来，调用 group() 方法提取结果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">content &#x3D; &#39;Hello 1234567 World This is a Regex Demo&#39;</span><br><span class="line">result &#x3D; re.match(&#39;^Hello\s(\d+)\sWorld&#39;, content)</span><br><span class="line">print(result)</span><br><span class="line">print(result.group(1))</span><br><span class="line">print(result.span())</span><br></pre></td></tr></table></figure>
-
-<p>结果：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;re.Match object; span&#x3D;(0, 19), match&#x3D;&#39;Hello 1234567 World&#39;&gt;</span><br><span class="line">1234567</span><br><span class="line">(0, 19)</span><br></pre></td></tr></table></figure>
-
-<p>想将字符串中的 1234567 提取出来，可以将数字部分的正则表达式用 （）括起来，然后调用 group(1) 获取匹配结果，如果后面还有（）内容，依次用 group(2) 获取</p>
-<p>span 输出匹配范围</p>
-<h5 id="通用匹配"><a href="#通用匹配" class="headerlink" title="通用匹配"></a>通用匹配</h5><p>.* 匹配任意字符</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result &#x3D; re.match(&#39;^Hello.*Demo$&#39;, content)</span><br><span class="line">print(result.group())</span><br></pre></td></tr></table></figure>
-
-<p>中间部分省略，最后加一个结尾字符串</p>
-<p>group() 输出匹配的全部字符串</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello 123 4567 World This is a Regex Demo</span><br></pre></td></tr></table></figure>
-
-<h5 id="贪婪与非贪婪"><a href="#贪婪与非贪婪" class="headerlink" title="贪婪与非贪婪"></a>贪婪与非贪婪</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">content &#x3D; &#39;Hello 1234567 World This is a Regex Demo&#39;</span><br><span class="line">result &#x3D; re.match(&#39;^He.*(\d+).*Demo$&#39;, content)</span><br><span class="line">print(result.group(1))</span><br></pre></td></tr></table></figure>
-
-<p>依然想匹配中间数字，数字两边比较乱，省略都写成 <code> .*</code>，结果打印只有 7</p>
-<p>贪婪匹配 .* 会匹配尽可能多的字符，123456 也被前面匹配了，最后得到内容只有 7</p>
-<p>非贪婪匹配，尽可能匹配少的字符，<code>.*?</code> 来代替 <code>.*</code> ，最后得到结果 1234567</p>
-<h5 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">content &#x3D; &#39;&#39;&#39;Hello 1234567 World This </span><br><span class="line">is a Regex Demo&#39;&#39;&#39;</span><br><span class="line">result &#x3D; re.match(&#39;^He.*?(\d+).*?Demo$&#39;, content)</span><br><span class="line">print(result.group(1))</span><br></pre></td></tr></table></figure>
-
-<p>修改在字符串中加了换行符，没有匹配到结果，又调用了 group 会报错</p>
-<p>因为匹配的是除换行符之外的任意字符，遇到换行符时，.* 就不能匹配了，导致匹配失败，只需要加一个修饰符 re.S 修正</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result &#x3D; re.match(&#39;^He.*?(\d+).*?Demo$&#39;, content, re.S)</span><br></pre></td></tr></table></figure>
-
-<p>re.S 使匹配包括换行在内的所有字符</p>
-<p>re.I 使匹配对大小写不敏感</p>
-<h5 id="修饰符-1"><a href="#修饰符-1" class="headerlink" title="修饰符"></a>修饰符</h5><p>正则匹配遇到特殊字符时，使用转义 \</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">content &#x3D; &#39;(百度)www.baidu.com&#39;</span><br><span class="line">result &#x3D; re.match(&#39;\(百度\)www\.baidu\.com&#39;, content)</span><br></pre></td></tr></table></figure>
-
-<h5 id="Search"><a href="#Search" class="headerlink" title="Search"></a>Search</h5><p>match() 是从字符串开头开始匹配的，开头不匹配就会失效</p>
-<p>Search() 匹配时会扫描整个字符串，返回一个成功匹配结果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">html &#x3D; &#39;&#39;&#39;</span><br><span class="line">&lt;div id&#x3D;&quot;songs-list&quot;&gt;</span><br><span class="line">&lt;h2 class&#x3D;&quot;title&quot;&gt;经典老歌&lt;&#x2F;h2&gt;</span><br><span class="line">&lt;p class&#x3D;&quot;introduction&quot;&gt;经典老歌列表</span><br><span class="line">&lt;ul id&#x3D;&quot;list&quot; class&#x3D;&quot;list-group&quot;&gt;</span><br><span class="line">	&lt;li data-view&#x3D;&quot;2&quot;&gt;一路上有你&lt;&#x2F;li&gt;</span><br><span class="line">	&lt;li data-view&#x3D;&quot;7”&gt;</span><br><span class="line">		&lt;a href&#x3D;&quot;&#x2F;2.mp3&quot; singer&#x3D;&quot;任贤齐&quot;&gt;沧海一卢笑&lt;&#x2F;a&gt; </span><br><span class="line">	&lt;&#x2F;li&gt;</span><br><span class="line">	&lt;li data-view&#x3D;&quot;4&quot; class&#x3D;&quot;active&quot;&gt;</span><br><span class="line">		&lt;a href&#x3D;&quot;&#x2F;3.mp3&quot; singer&#x3D;&quot;齐秦&quot;&gt;往事随风&lt;&#x2F;a&gt;</span><br><span class="line">	&lt;&#x2F;li&gt;</span><br><span class="line">	&lt;li data-view&#x3D;&quot;6&quot;&gt;&lt;a href&#x3D;&quot;&#x2F;4.mp3&quot; singer&#x3D;&quot;beyond&quot;&gt;尤辉岁月&lt;&#x2F;a&gt;&lt;&#x2F;li&gt; </span><br><span class="line">	&lt;li data-view&#x3D;&quot;5&quot;&gt;&lt;a href&#x3D;&quot;&#x2F;S.mp3&quot; singer&#x3D;&quot;陈慧琳&quot;&gt;记事本&lt;&#x2F;a&gt;&lt;&#x2F;li&gt; </span><br><span class="line">	&lt;li data-view&#x3D;&quot;5&quot;&gt;</span><br><span class="line">		&lt;a href&#x3D;&quot;&#x2F;6.mp3&quot; singer&#x3D;&quot;邓丽君&quot;&gt;但愿人长久&lt;&#x2F;a&gt;</span><br><span class="line">	&lt;&#x2F;li&gt;</span><br><span class="line">&lt;&#x2F;ul&gt;</span><br><span class="line">&lt;&#x2F;div&gt;&#39;&#39;&#39;</span><br></pre></td></tr></table></figure>
-
-<p>尝试获取 class 为 active 的 li 节点内部超链接包含的歌手名和歌名</p>
-<p>此时需要提取第三个 li 节点下 a 节点的 singer 属性和文本</p>
-<p>正则表达式可以以 li 开头，寻找下一个标识符 active，中间部分用 .<em>? 来匹配，接下来取 singer 属性值</em></p>
-<p> <code>singer=&quot;(.*?)&quot;</code>  需要提取部分用小括号括起来，用 group 提取，两侧的便捷是双引号</p>
-<p>接下来匹配 a 节点文本，左边界是  <code>&gt;</code>  右边界是 <code>&lt;/a&gt;</code> 目标内容用 <code>.*?</code> 匹配</p>
-<p><code>&lt;li.*?active.*?singer=&quot;(.*?)&quot;&gt;(.*?)&lt;/a&gt;</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result &#x3D; re.search(&#39;&lt;li.*?active.*?singer&#x3D;&quot;(.*?)&quot;&gt;(.*?)&lt;&#x2F;a&gt;&#39;, html, re.S)</span><br><span class="line">if result:</span><br><span class="line">	print(result.group(1), result.group(2))</span><br></pre></td></tr></table></figure>
-
-<h5 id="findall"><a href="#findall" class="headerlink" title="findall"></a>findall</h5><p>search 返回匹配正则表达式第一个内容，想要匹配所有内容使用 findall() ，会搜索整个字符串</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">results &#x3D; re.findall(&#39;&lt;li.*?href&#x3D;&quot;(.*?)&quot;.*?singer&#x3D;&quot;(.*?)&quot;&gt;(.*?)&lt;&#x2F;a&gt;&#39;, html, re.S)</span><br><span class="line">print(type(results))</span><br><span class="line">for result in results:</span><br><span class="line">print(result[0], result[1], result[2])</span><br></pre></td></tr></table></figure>
-
-<p>返回的每个元素都是元组类型，用对应索引依次取出</p>
-<h5 id="sub"><a href="#sub" class="headerlink" title="sub"></a>sub</h5><p>修改文本，把一串字符串中的数字去掉</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">content &#x3D; &#39;54aKS4yrsoiRS4ix5L2g&#39;</span><br><span class="line">content &#x3D; re.sub(&#39;\d+&#39;,&#39;&#39;, content)</span><br></pre></td></tr></table></figure>
-
-<p>上面 html 中需要获取歌名，直接正则表达式提取比较麻烦</p>
-<p>借助 sub 方法将 a 节点去掉只留下文本</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">html &#x3D; re.sub(&#39;&lt;a.*?&gt;|&lt;&#x2F;a&gt;&#39;, &#39;&#39;, html)</span><br></pre></td></tr></table></figure>
-
-<p>结果</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;songs-list&quot;&gt;</span><br><span class="line">&lt;h2 class&#x3D;&quot;title&quot;&gt;经典老歌&lt;&#x2F;h2&gt;</span><br><span class="line">&lt;p class&#x3D;&quot;introduction&quot;&gt;经典老歌列表</span><br><span class="line">&lt;ul id&#x3D;&quot;list&quot; class&#x3D;&quot;list-group&quot;&gt;</span><br><span class="line">	&lt;li data-view&#x3D;&quot;2&quot;&gt;一路上有你&lt;&#x2F;li&gt;</span><br><span class="line">	&lt;li data-view&#x3D;&quot;7”&gt;</span><br><span class="line">		沧海一卢笑 </span><br><span class="line">	&lt;&#x2F;li&gt;</span><br><span class="line">	&lt;li data-view&#x3D;&quot;4&quot; class&#x3D;&quot;active&quot;&gt;</span><br><span class="line">		往事随风</span><br><span class="line">	&lt;&#x2F;li&gt;</span><br><span class="line">	&lt;li data-view&#x3D;&quot;6&quot;&gt;尤辉岁月&lt;&#x2F;li&gt; </span><br><span class="line">	&lt;li data-view&#x3D;&quot;5&quot;&gt;记事本&lt;&#x2F;li&gt; </span><br><span class="line">	&lt;li data-view&#x3D;&quot;5&quot;&gt;</span><br><span class="line">		但愿人长久</span><br><span class="line">	&lt;&#x2F;li&gt;</span><br><span class="line">&lt;&#x2F;ul&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
-
-<p>再利用 findall 提取</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">results &#x3D; re.findall(&#39;&lt;li.*?&gt;(.*?)&lt;&#x2F;li&gt;&#39;, html, re.S)</span><br><span class="line">for result in results:</span><br><span class="line">	print(result.strip())</span><br></pre></td></tr></table></figure>
-
-<p>strip 移除字符串首尾指定字符 strip() 去除首尾空格，strip(‘0’) 去除首尾字符 0</p>
-<h5 id="compile"><a href="#compile" class="headerlink" title="compile"></a>compile</h5><p>将正则字符串编译成正则表达式对象，以便在后面的匹配中复用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">content1 &#x3D; &#39;2016-12-15 12:00&#39;</span><br><span class="line">content2 &#x3D; &#39;2016-12-17 12:55&#39;</span><br><span class="line">content3 &#x3D; &#39;2016-12-22 13:21&#39;</span><br><span class="line">pattern &#x3D; re.compile(&#39;\d&#123;2&#125;:\d&#123;2&#125;&#39;)</span><br><span class="line">result1 &#x3D; re.sub(pattern, &#39;&#39;, content1)</span><br><span class="line">result2 &#x3D; re.sub(pattern, &#39;&#39;, content2)</span><br><span class="line">result3 &#x3D; re.sub(pattern, &#39;&#39;, content3)</span><br><span class="line">print(result1, result2, result3)</span><br></pre></td></tr></table></figure>
-
-<p>通过 compile 编译成正则表达式对象，后面就不用重复写正则表达式</p>
-<hr>
 <h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4>
     </div>
 
