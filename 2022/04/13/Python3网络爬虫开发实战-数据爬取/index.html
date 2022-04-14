@@ -32,7 +32,7 @@
 <meta property="og:description" content="6. Ajax 数据爬取有些网页原始的 HTML 文档不会包含任何数据，数据都是通过 Ajax 统一加载后再呈现出来。 遇到这种页面，直接利用 requests 等库来抓取原始页面，是无法获取到有效数据的 Ajax 是利用 JavaScript 在保证页面不被刷新、页面链接不改变的情况下与服务器交换数据并更新部分网页的技术 例子：如微博页面，分页加载微博内容，这个过程就是 Ajax 加载的过程，页">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-04-13T09:40:19.000Z">
-<meta property="article:modified_time" content="2022-04-13T13:08:29.363Z">
+<meta property="article:modified_time" content="2022-04-14T02:38:12.062Z">
 <meta property="article:author" content="daxun">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
@@ -227,7 +227,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -304,10 +304,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-04-13 17:40:19 / 修改时间：21:08:29" itemprop="dateCreated datePublished" datetime="2022-04-13T17:40:19+08:00">2022-04-13</time>
+      <time title="创建时间：2022-04-13 17:40:19" itemprop="dateCreated datePublished" datetime="2022-04-13T17:40:19+08:00">2022-04-13</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-04-14 10:38:12" itemprop="dateModified" datetime="2022-04-14T10:38:12+08:00">2022-04-14</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -362,16 +368,6 @@
 
 
 <h5 id="6-4-分析-Ajax-爬取今日头条街拍美图"><a href="#6-4-分析-Ajax-爬取今日头条街拍美图" class="headerlink" title="6.4 分析 Ajax 爬取今日头条街拍美图"></a>6.4 分析 Ajax 爬取今日头条街拍美图</h5><p>链接有变动，查看最新代码 <a target="_blank" rel="noopener" href="https://github.com/Python3WebSpider/Jiepai">https://github.com/Python3WebSpider/Jiepai</a></p>
-<p>根据item的title来创建文件夹，然后请求图片链接，获取图片的二进制数据，以二进制形式写入文件，图片的名称可以使用其内容的MD5值，这样可以去除重复</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> hashlib <span class="keyword">import</span> md5</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">save_image</span>(<span class="params">item</span>):</span></span><br><span class="line">  <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(item.get(<span class="string">&#x27;title&#x27;</span>)):</span><br><span class="line">      os.mkdir(item.get(<span class="string">&#x27;title&#x27;</span>))</span><br><span class="line">  <span class="keyword">try</span>:</span><br><span class="line">      response = requests.get(<span class="string">&#x27;image&#x27;</span>)</span><br><span class="line">      <span class="keyword">if</span> response.status_code == <span class="number">200</span>:</span><br><span class="line">          file_path = <span class="string">&#x27;&#123;0&#125;/&#123;1&#125;.&#123;2&#125;&#x27;</span>.<span class="built_in">format</span>(item.get(<span class="string">&#x27;title&#x27;</span>), md5(response.content).hexdigest(), <span class="string">&#x27;jpg&#x27;</span>)</span><br><span class="line">          <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(file_path):</span><br><span class="line">              <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                  f.write(response.content)</span><br><span class="line">          <span class="keyword">else</span>:</span><br><span class="line">              print(<span class="string">&#x27;Already Download&#x27;</span>, file_path)</span><br><span class="line">  <span class="keyword">except</span> requests.ConnectionError:</span><br><span class="line">      print(<span class="string">&#x27;Failed to save image&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>利用多线程的线程池，调用其 map() 方法实现多线程下载</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing.pool <span class="keyword">import</span> Pool</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>(<span class="params">offset</span>):</span></span><br><span class="line">  print(<span class="string">&quot;xx&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">  pool = Pool()</span><br><span class="line">  GROUP_START = <span class="number">1</span></span><br><span class="line">  GROUP_END = <span class="number">20</span></span><br><span class="line">  groups = ([x * <span class="number">20</span> <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(GROUP_START, GROUP_END + <span class="number">1</span>)])</span><br><span class="line">  pool.<span class="built_in">map</span>(main,groups)</span><br><span class="line">  pool.close()</span><br><span class="line">  pool.join()</span><br></pre></td></tr></table></figure>
-
-
-
 <h4 id="7-动态渲染页面爬取"><a href="#7-动态渲染页面爬取" class="headerlink" title="7. 动态渲染页面爬取"></a>7. 动态渲染页面爬取</h4><p>Python 提供了许多模拟浏览器运行的库，如  Selenium、Splash、PyV8、Ghost 等</p>
 <p>有些 Ajax 接口含有很多加密参数，难以直接找出其规律，也很难直接分析 Ajax 来抓取，可以使用模拟浏览器运行的方式来实现，不用管 Ajax 接口到底有哪些参数</p>
 <h5 id="7-1-Selenium-的使用"><a href="#7-1-Selenium-的使用" class="headerlink" title="7.1 Selenium 的使用"></a>7.1 Selenium 的使用</h5><p>Selenium 是一个自动化测试工具，利用它可以驱动浏览器执行特定的动作，如点击、下拉，同时还可以获取浏览器当前呈现页面的源码，做到可见即可爬</p>
@@ -635,6 +631,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2022/04/14/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E7%88%AC%E5%8F%96%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E8%A1%97%E6%8B%8D/" rel="next" title="Python3网络爬虫开发实战-爬取今日头条街拍">
+                  Python3网络爬虫开发实战-爬取今日头条街拍 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
