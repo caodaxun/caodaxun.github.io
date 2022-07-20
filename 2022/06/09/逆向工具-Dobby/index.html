@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="Inline Hook修改函数的前 N 字节内存，使其跳转到自己编写的函数，这样原函数的逻辑就被新函数接管了，同时还应该保存原函数的前 N 个字节，以便在需要时能正确恢复原来的汇编代码从而执行原始逻辑 DobbyDobby（原名 HookZz）https:&#x2F;&#x2F;github.com&#x2F;jmpews&#x2F;Dobby 编译 Xcode 工程1git clone https:&#x2F;&#x2F;github">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向工具-Dobby">
+<meta property="og:url" content="http://example.com/2022/06/09/%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7-Dobby/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Inline Hook修改函数的前 N 字节内存，使其跳转到自己编写的函数，这样原函数的逻辑就被新函数接管了，同时还应该保存原函数的前 N 个字节，以便在需要时能正确恢复原来的汇编代码从而执行原始逻辑 DobbyDobby（原名 HookZz）https:&#x2F;&#x2F;github.com&#x2F;jmpews&#x2F;Dobby 编译 Xcode 工程1git clone https:&#x2F;&#x2F;github">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/06/09/%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7-Dobby/逆向工具-Dobby/WeChat646a5d4c48c7a119b2d324b20ff968a3.png">
+<meta property="og:image" content="http://example.com/%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7-Dobby/WeChatc1fcfbfb83d8dd9daed4ac78a60cadbd.png">
+<meta property="og:image" content="http://example.com/2022/06/09/%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7-Dobby/逆向工具-Dobby/WeChat511e8790f7c557a95e07f4c3227c5f93.png">
+<meta property="article:published_time" content="2022-06-09T02:52:34.000Z">
+<meta property="article:modified_time" content="2022-06-09T08:02:48.227Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/06/09/%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7-Dobby/逆向工具-Dobby/WeChat646a5d4c48c7a119b2d324b20ff968a3.png">
+
+
+<link rel="canonical" href="http://example.com/2022/06/09/%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7-Dobby/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>逆向工具-Dobby | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Inline-Hook"><span class="nav-number">1.</span> <span class="nav-text">Inline Hook</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dobby"><span class="nav-number">2.</span> <span class="nav-text">Dobby</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%96%E8%AF%91-Xcode-%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">编译 Xcode 工程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5-Framework"><span class="nav-number">2.2.</span> <span class="nav-text">导入 Framework</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Dobby-%E6%A0%B8%E5%BF%83%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">Dobby 核心函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Dobby-%E4%BD%BF%E7%94%A8"><span class="nav-number">2.4.</span> <span class="nav-text">Dobby 使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HOOK%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80"><span class="nav-number">2.5.</span> <span class="nav-text">HOOK函数地址</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/06/09/%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7-Dobby/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向工具-Dobby
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-06-09 10:52:34 / 修改时间：16:02:48" itemprop="dateCreated datePublished" datetime="2022-06-09T10:52:34+08:00">2022-06-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">逆向工具</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="Inline-Hook"><a href="#Inline-Hook" class="headerlink" title="Inline Hook"></a>Inline Hook</h4><p>修改函数的前 N 字节内存，使其跳转到自己编写的函数，这样原函数的逻辑就被新函数接管了，同时还应该保存原函数的前 N 个字节，以便在需要时能正确恢复原来的汇编代码从而执行原始逻辑</p>
+<h4 id="Dobby"><a href="#Dobby" class="headerlink" title="Dobby"></a>Dobby</h4><p>Dobby（原名 HookZz）<a target="_blank" rel="noopener" href="https://github.com/jmpews/Dobby">https://github.com/jmpews/Dobby</a></p>
+<h5 id="编译-Xcode-工程"><a href="#编译-Xcode-工程" class="headerlink" title="编译 Xcode 工程"></a>编译 Xcode 工程</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;jmpews&#x2F;Dobby.git --depth&#x3D;1</span><br></pre></td></tr></table></figure>
+
+<p>这是个跨平台的，需要将 cmake 将工程编译成为 Xcode 工程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd Dobby &amp;&amp; mkdir build_for_ios_arm64 &amp;&amp; cd build_for_ios_arm64</span><br><span class="line">cmake .. -G Xcode \</span><br><span class="line">-DCMAKE_TOOLCHAIN_FILE&#x3D;cmake&#x2F;ios.toolchain.cmake \</span><br><span class="line">-DPLATFORM&#x3D;OS64 -DARCHS&#x3D;&quot;arm64&quot; -DCMAKE_SYSTEM_PROCESSOR&#x3D;arm64 \</span><br><span class="line">-DENABLE_BITCODE&#x3D;0 -DENABLE_ARC&#x3D;0 -DENABLE_VISIBILITY&#x3D;1 -DDEPLOYMENT_TARGET&#x3D;9.3 \</span><br><span class="line">-DDynamicBinaryInstrument&#x3D;ON -DNearBranch&#x3D;ON -DPlugin.SymbolResolver&#x3D;ON -DPlugin.Darwin.HideLibrary&#x3D;ON -DPlugin.Darwin.ObjectiveC&#x3D;ON</span><br><span class="line"></span><br><span class="line">#github 上是下面的</span><br><span class="line">cd Dobby &amp;&amp; mkdir build_for_ios &amp;&amp; cd build_for_ios</span><br><span class="line">cmake .. -G Xcode -DCMAKE_SYSTEM_NAME&#x3D;iOS -DCMAKE_OSX_ARCHITECTURES&#x3D;arm64 -DCMAKE_SYSTEM_PROCESSOR&#x3D;arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET&#x3D;9.3</span><br></pre></td></tr></table></figure>
+
+<p>cmake 编译后生成一个 Xcode 工程</p>
+<img src="逆向工具-Dobby/WeChat646a5d4c48c7a119b2d324b20ff968a3.png" alt="WeChat646a5d4c48c7a119b2d324b20ff968a3" style="zoom:80%;" />
+
+<p>编译 DobbyX.framework</p>
+<p><img src="/%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7-Dobby/WeChatc1fcfbfb83d8dd9daed4ac78a60cadbd.png" alt="WeChatc1fcfbfb83d8dd9daed4ac78a60cadbd"></p>
+<h5 id="导入-Framework"><a href="#导入-Framework" class="headerlink" title="导入 Framework"></a>导入 Framework</h5><p>创建测试工程 testDobby，将 DobbyX.framework 拖入工程</p>
+<p>运行后报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dyld: Library not loaded: @rpath&#x2F;DobbyX.framework&#x2F;DobbyX</span><br><span class="line">  Referenced from: &#x2F;private&#x2F;var&#x2F;containers&#x2F;Bundle&#x2F;Application&#x2F;B6A97E11-656E-461B-93B0-A1D72E9313AB&#x2F;testDobby.app&#x2F;testDobby</span><br><span class="line">  Reason: image not found</span><br><span class="line">dyld: launch, loading dependent libraries</span><br><span class="line">DYLD_LIBRARY_PATH&#x3D;&#x2F;usr&#x2F;lib&#x2F;system&#x2F;introspection</span><br><span class="line">DYLD_INSERT_LIBRARIES&#x3D;&#x2F;Developer&#x2F;usr&#x2F;lib&#x2F;libBacktraceRecording.dylib:&#x2F;Developer&#x2F;usr&#x2F;lib&#x2F;libMainThreadChecker.dylib:&#x2F;Developer&#x2F;Library&#x2F;PrivateFrameworks&#x2F;DTDDISupport.framework&#x2F;libViewDebuggerSupport.dylib</span><br></pre></td></tr></table></figure>
+
+<p>将 Framework 首次拖入工程，Xcode 不会自动帮你拷贝，运行时会发现 Framework 没有打包进入 APP 包，造成 DYLD 加载时找不到库报错 </p>
+<p>TARGETS testDobby - Build Phases，点击 + 选择 New Copy Files Phase</p>
+<p>Copy Files 中，Destination 选择 Frameworks</p>
+<img src="逆向工具-Dobby/WeChat511e8790f7c557a95e07f4c3227c5f93.png" alt="WeChat511e8790f7c557a95e07f4c3227c5f93" style="zoom:80%;" />
+
+<p>运行后提示 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[*] &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">[*] Dobby</span><br><span class="line">[*] &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">[*] dobby in debug log mode, disable with cmake flag &quot;-DDOBBY_DEBUG&#x3D;OFF&quot;</span><br></pre></td></tr></table></figure>
+
+<h5 id="Dobby-核心函数"><a href="#Dobby-核心函数" class="headerlink" title="Dobby 核心函数"></a>Dobby 核心函数</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">DobbyHook</span><span class="params">(<span class="keyword">void</span> *address, <span class="keyword">void</span> *replace_call, <span class="keyword">void</span> **origin_call)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#address：需要 Hook 的函数地址</span></span><br><span class="line">#replace_all：新函数地址</span><br><span class="line">#origin_call：保留原始函数的指针的地址</span><br></pre></td></tr></table></figure>
+
+<h5 id="Dobby-使用"><a href="#Dobby-使用" class="headerlink" title="Dobby 使用"></a>Dobby 使用</h5><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;DobbyX/dobby.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ViewController</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//2.定义函数指针，用于保存被替换函数的地址</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> (*sum_p)(<span class="keyword">int</span> a, <span class="keyword">int</span> b);</span><br><span class="line"></span><br><span class="line"><span class="comment">//1.定义将要被 HOOK 的函数</span></span><br><span class="line"><span class="keyword">int</span> sum(<span class="keyword">int</span> a, <span class="keyword">int</span> b) &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//3.定义新函数，用此函数替换将要HOOK的函数</span></span><br><span class="line"><span class="keyword">int</span> mySum(<span class="keyword">int</span> a, <span class="keyword">int</span> b) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;Sum: %d, 🍺🍺&quot;</span>, sum_p(a, b)); <span class="comment">//调用原函数</span></span><br><span class="line">    <span class="keyword">return</span> a - b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">  	<span class="comment">//4.调用DobbyHook进行函数的HOOK</span></span><br><span class="line">    DobbyHook(sum, mySum, (<span class="keyword">void</span> *)&amp;sum_p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)touchesBegan:(<span class="built_in">NSSet</span>&lt;<span class="built_in">UITouch</span> *&gt; *)touches withEvent:(<span class="built_in">UIEvent</span> *)event &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;Sum: %d&quot;</span>, sum(<span class="number">10</span>, <span class="number">20</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#sum函数HOOK成功，先输出原始函数的执行结果，再输出替换函数的执行结果</span><br><span class="line">Sum: 30, 🍺🍺</span><br><span class="line">Sum: -10</span><br></pre></td></tr></table></figure>
+
+<h5 id="HOOK函数地址"><a href="#HOOK函数地址" class="headerlink" title="HOOK函数地址"></a>HOOK函数地址</h5><p>逆向开发中，应用会剥离符号表，我们无法获得符号名称，所有 HOOK 的一定是地址</p>
+<p>应用每次启动时，ASLR 偏移地址都不一样，所以不能直接 HOOK 地址</p>
+<p>先找到函数在 MachO 中的偏移地址，加上 PAGEZERO 的 0x100000000，再加上本次启动的 ASLR 偏移地址</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;Inject.h&quot;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;DobbyX/dobby.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;mach-o/dyld.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Inject</span></span></span><br><span class="line"><span class="comment">//0x5F04 MachO上函数偏移地址</span></span><br><span class="line"><span class="keyword">static</span> uintptr_t sumP = <span class="number">0x5F04</span> + <span class="number">0x100000000</span>;</span><br><span class="line"></span><br><span class="line">+(<span class="keyword">void</span>)load&#123;</span><br><span class="line">   sumP += _dyld_get_image_vmaddr_slide(<span class="number">0</span>); <span class="comment">//+ASLR偏移地址</span></span><br><span class="line">   DobbyHook((<span class="keyword">void</span> *)sumP, mySum, (<span class="keyword">void</span> *)&amp;sum_p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> (*sum_p)(<span class="keyword">int</span> a,<span class="keyword">int</span> b);</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> mySum(<span class="keyword">int</span> a,<span class="keyword">int</span> b) &#123;</span><br><span class="line">   <span class="built_in">NSLog</span>(<span class="string">@&quot;Sum：%d，🍺🍺🍺🍺🍺&quot;</span>,sum_p(a,b));</span><br><span class="line">   <span class="keyword">return</span> a - b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/05/30/iOS%E5%BA%94%E7%94%A8%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%89%E5%85%A8%E4%B9%8B%E9%81%93/" rel="prev" title="iOS应用逆向与安全之道">
+                  <i class="fa fa-chevron-left"></i> iOS应用逆向与安全之道
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/06/13/%E9%80%86%E5%90%91-%E6%B1%87%E7%BC%96/" rel="next" title="逆向-汇编">
+                  逆向-汇编 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

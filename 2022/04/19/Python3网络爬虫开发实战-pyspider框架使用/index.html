@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="pyspider 官方文档 http:&#x2F;&#x2F;docs.pyspider.org&#x2F; 基本功能提供方便易用的WebUI系统，可视化编写和调试爬虫 提供爬取进度监控、爬取结果查看、爬虫项目管理等功能 支持多种后端数据库，如MySQL、MongoDB、Redis、SQLite 支持多种消息队列，如RabbitMQ、Beanstalk、Redis、Kombu 提供优先级控制、失败重试、定时抓取等功能 对接了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python3网络爬虫开发实战-pyspider框架使用">
+<meta property="og:url" content="http://example.com/2022/04/19/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="pyspider 官方文档 http:&#x2F;&#x2F;docs.pyspider.org&#x2F; 基本功能提供方便易用的WebUI系统，可视化编写和调试爬虫 提供爬取进度监控、爬取结果查看、爬虫项目管理等功能 支持多种后端数据库，如MySQL、MongoDB、Redis、SQLite 支持多种消息队列，如RabbitMQ、Beanstalk、Redis、Kombu 提供优先级控制、失败重试、定时抓取等功能 对接了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/WeChataffa8b62cf8bf792b16728f4f46c0065.png">
+<meta property="og:image" content="http://example.com/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/WeChat941a660af574ca4e9a6f69c141140d7c.png">
+<meta property="og:image" content="http://example.com/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/WeChat3425c6583da1e0405c27d3f40dce8510.png">
+<meta property="og:image" content="http://example.com/2022/04/19/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/Python3网络爬虫开发实战-pyspider框架使用/WeChata1afccc130dc604431124e411f736a1b.png">
+<meta property="og:image" content="http://example.com/2022/04/19/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/Python3网络爬虫开发实战-pyspider框架使用/WeChat71c9e7d7b2716e5c496dc2dde6ef328a.png">
+<meta property="og:image" content="http://example.com/2022/04/19/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/Python3网络爬虫开发实战-pyspider框架使用/WeChat75fbf9e380178eca4d6202777db75bb0.png">
+<meta property="og:image" content="http://example.com/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/WeChatab3cfe3bff369db2397e97e00e3ec0af.png">
+<meta property="article:published_time" content="2022-04-19T06:16:09.000Z">
+<meta property="article:modified_time" content="2022-04-19T09:56:05.646Z">
+<meta property="article:author" content="daxun">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/WeChataffa8b62cf8bf792b16728f4f46c0065.png">
+
+
+<link rel="canonical" href="http://example.com/2022/04/19/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python3网络爬虫开发实战-pyspider框架使用 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD"><span class="nav-number">1.</span> <span class="nav-text">基本功能</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#pyspider-%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">pyspider 架构</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-pyspider"><span class="nav-number">2.1.</span> <span class="nav-text">启动 pyspider</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="nav-number">2.2.</span> <span class="nav-text">创建项目</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%88%AC%E5%8F%96%E9%A6%96%E9%A1%B5"><span class="nav-number">2.3.</span> <span class="nav-text">爬取首页</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%88%AC%E5%8F%96%E8%AF%A6%E6%83%85%E9%A1%B5"><span class="nav-number">2.4.</span> <span class="nav-text">爬取详情页</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E7%88%AC%E8%99%AB"><span class="nav-number">2.5.</span> <span class="nav-text">启动爬虫</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pyspider%E7%94%A8%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">pyspider用法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#pyspider-all-%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">pyspider all 配置参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#crawl-%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">crawl 方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%8C%BA%E5%88%86"><span class="nav-number">4.</span> <span class="nav-text">任务区分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE"><span class="nav-number">5.</span> <span class="nav-text">全局配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E7%88%AC%E5%8F%96"><span class="nav-number">6.</span> <span class="nav-text">定时爬取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%8A%B6%E6%80%81"><span class="nav-number">7.</span> <span class="nav-text">项目状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%A1%B9%E7%9B%AE"><span class="nav-number">8.</span> <span class="nav-text">删除项目</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/19/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python3网络爬虫开发实战-pyspider框架使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-04-19 14:16:09 / 修改时间：17:56:05" itemprop="dateCreated datePublished" datetime="2022-04-19T14:16:09+08:00">2022-04-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>pyspider 官方文档 <a target="_blank" rel="noopener" href="http://docs.pyspider.org/">http://docs.pyspider.org/</a></p>
+<h4 id="基本功能"><a href="#基本功能" class="headerlink" title="基本功能"></a>基本功能</h4><p>提供方便易用的WebUI系统，可视化编写和调试爬虫</p>
+<p>提供爬取进度监控、爬取结果查看、爬虫项目管理等功能</p>
+<p>支持多种后端数据库，如MySQL、MongoDB、Redis、SQLite</p>
+<p>支持多种消息队列，如RabbitMQ、Beanstalk、Redis、Kombu</p>
+<p>提供优先级控制、失败重试、定时抓取等功能</p>
+<p>对接了 PhantomJS，可以抓取 JavaScript 渲染的页面</p>
+<p>支持单机和分布式部署，支持 Docker 部署</p>
+<p>pyspid 提供了 WebUI，爬虫的编写、调试都是在 WebUI 中进行的，如果要快速实现一个页面的抓取，使用pyspider</p>
+<h5 id="pyspider-架构"><a href="#pyspider-架构" class="headerlink" title="pyspider 架构"></a>pyspider 架构</h5><p><img src="/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/WeChataffa8b62cf8bf792b16728f4f46c0065.png" alt="WeChataffa8b62cf8bf792b16728f4f46c0065"></p>
+<p>每个 pyspider 项目对应一个 Python 脚本，脚本中定义了一个 Handler 类，它有一个 on_start() 方法，爬取首先调用 no_start() 方法生成最初的抓取任务，然后发送给 Scheduler 进行调度</p>
+<p>Scheduler 将抓取任务分发给 Fetcher 进行抓取，Fetcher 执行并得到响应，随后将响应发送给 Processer</p>
+<p>Processer 处理响应并提取出新的 URL 生成新的抓取任务，然后通过消息队列的方式通知 Scheduler 当前任务抓取执行情况，并将新生成的抓取任务发送给 Scheduler，如果生成了新的提取结果，则将其发送到结果队列等待 Result Worker 处理</p>
+<p>Scheduler 接收到新的抓取任务，然后查询数据库，判断其如果是新的抓取任务或者是需要重试的任务就继续进行调度，然后将其发送回 Fetcher 进行抓取</p>
+<p>不断重复以上工作，直到所有的任务都执行完毕，抓取结束</p>
+<p>抓取结束后，程序会回调 on_finished() 方法</p>
+<h4 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h4><h5 id="启动-pyspider"><a href="#启动-pyspider" class="headerlink" title="启动 pyspider"></a>启动 pyspider</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyspider all</span><br></pre></td></tr></table></figure>
+
+<p>这样可以启动 pyspider 的所有组件，最后一行输出提示 WebUI 运行在 5000 端口上，输入 <a target="_blank" rel="noopener" href="http://localhost:5000/">http://localhost:5000</a> 可以看到 pyspider 的 WebUI 页面，可以用它来管理项目、编写代码、在线调试、监控任务</p>
+<p><img src="/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/WeChat941a660af574ca4e9a6f69c141140d7c.png" alt="WeChat941a660af574ca4e9a6f69c141140d7c"></p>
+<h5 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h5><p>点击右边的 Create 按钮，弹出的浮窗输入项目名称和爬取的链接</p>
+<p>接下来就看到 pyspider 项目编辑和调试页面</p>
+<p><img src="/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/WeChat3425c6583da1e0405c27d3f40dce8510.png" alt="WeChat3425c6583da1e0405c27d3f40dce8510"></p>
+<p>左侧就是代码的调试页面，点击左侧右上角的 run 单步调试爬虫程序，左侧下半部分可以预览当前的爬取页面</p>
+<p>右侧是代码编辑页面，可以直接编辑代码和保存代码，不需要借助 IDE</p>
+<p>生成的代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspider.libs.base_handler <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Handler</span>(<span class="params">BaseHandler</span>):</span></span><br><span class="line">  crawl_config = &#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">  @every(minutes=24 * 60)</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">on_start</span>(<span class="params">self</span>):</span></span><br><span class="line">    	<span class="comment">#新建爬取请求</span></span><br><span class="line">      <span class="comment">#（爬取URL，指定爬取成功解析方法）</span></span><br><span class="line">      self.crawl(<span class="string">&#x27;http://travel.qunar.com/travelbook/list.htm&#x27;</span>, callback=self.index_page)</span><br><span class="line"></span><br><span class="line"><span class="meta">  @config(age=10 * 24 * 60 * 60)</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">index_page</span>(<span class="params">self, response</span>):</span></span><br><span class="line">      <span class="keyword">for</span> each <span class="keyword">in</span> response.doc(<span class="string">&#x27;a[href^=&quot;http&quot;]&#x27;</span>).items():</span><br><span class="line">          self.crawl(each.attr.href, callback=self.detail_page)</span><br><span class="line"></span><br><span class="line"><span class="meta">  @config(priority=2)</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">detail_page</span>(<span class="params">self, response</span>):</span></span><br><span class="line">      <span class="keyword">return</span> &#123;</span><br><span class="line">          <span class="string">&quot;url&quot;</span>: response.url,</span><br><span class="line">          <span class="string">&quot;title&quot;</span>: response.doc(<span class="string">&#x27;title&#x27;</span>).text(),</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Handler 就是 pyspider 爬虫的主类，可以在这里定义爬取、解析、存储的逻辑，整个爬虫的功能只需要一个 Handler 即可完成</p>
+<p>crawl_config：将项目所有爬取配置统一定义到这里，如 Headers、代理等，配置后全局生效</p>
+<p>on_start()：爬取入口，初始的爬取请求在这里产生，通过 crawl() 方法即可新建一个爬取请求，第一个参数爬取 URL，第二个参数 callback，指定爬取成功后哪个方法进行解析</p>
+<p>index_page()：接收 Response 参数，Response 对接了 pyquery，直接调用 doc() 方法传入相应的 CSS 选择器，就可以像 pyquery 一样解析此页面，上面代码默认 <code>a[href=^=&quot;http&quot;]</code> ，也就是说该方法解析了页面的所有链接，然后将链接遍历，再次调用 crawl() 方法生成新的爬取请求，同时指定 callback 为 detail_page 解析</p>
+<p>detail_page()：同样接收 Response 作为参数，抓取的就是详情页的信息，就不会生成新的请求，只对 Response 对象解析，解析后以字典形式返回，也可以进行后序处理，如保存到数据库</p>
+<h5 id="爬取首页"><a href="#爬取首页" class="headerlink" title="爬取首页"></a>爬取首页</h5><p>点击左栏右上角的 run 按钮，即可看到页面下方 follows 便会出现一个标注，其中包含数字 1，这代表有新的爬取请求产生</p>
+<img src="Python3网络爬虫开发实战-pyspider框架使用/WeChata1afccc130dc604431124e411f736a1b.png" alt="WeChata1afccc130dc604431124e411f736a1b" style="zoom:80%;" />
+
+<p>左栏左上角显示当前 run 的配置文件，callback 是 on_start，说明点击run 之后执行了 on_start 方法</p>
+<p>on_start() 方法中，我们利用 crawl() 方法生成一个爬取请求，那下方的 follows 上数字 1 就代表这一个爬取请求</p>
+<p>点击 follows 按钮，可以看到生成的爬取请求的链接，每个链接右侧有一个箭头按钮，点击该箭头可以对此链接进行爬取，也就是爬取攻略的首页内容</p>
+<p>再点击下方的 web 按钮，即可羽然当前爬取结果的页面</p>
+<p>点击 html 按钮可查看当前页面的源代码</p>
+<p>上面 index_page() 方法中提取了所有的链接并生成了新的爬取请求，只需要攻略详情页面的链接就够了，这里修改提取链接时的 CSS选择器，</p>
+<p>首页切换到 web 页面，找到攻略标题，点击下方 enable css selector helper，点击标题，可以看到标题外多了一个红框，上方出现了一个 CSS 选择器，这就是当前标题对应的 CSS 选择器</p>
+<img src="Python3网络爬虫开发实战-pyspider框架使用/WeChat71c9e7d7b2716e5c496dc2dde6ef328a.png" alt="WeChat71c9e7d7b2716e5c496dc2dde6ef328a" style="zoom:80%;" />
+
+<p>右侧代码选中要更改的区域，点击左栏上右箭头，上方出现的标题的 CSS选择器就会被替换到右侧的代码中</p>
+<p>替换 CSS 选择器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> each <span class="keyword">in</span> response.doc(<span class="string">&#x27;li &gt; .tit &gt; a&#x27;</span>).items():</span><br></pre></td></tr></table></figure>
+
+<p>重新点击左栏上右上角 run 按钮，即可重新执行 index_page() 方法。</p>
+<p>此时 follows 就变成了 10 个，也就是说现在提取的只有当前页面的 10 个攻略</p>
+<p>现在只有第一页的内容，还需要爬取后序页面，所以还需要一个爬取链接，即爬取下一页的攻略列表页面</p>
+<p>再利用 crawl() 方法添加下一页的爬取请求，在index_page() 方法里面添加代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index_page</span>(<span class="params">self, response</span>):</span></span><br><span class="line">  <span class="built_in">next</span> = response.doc(<span class="string">&#x27;.next&#x27;</span>).attr.href</span><br><span class="line">  self.crawl(<span class="built_in">next</span>, callback=self.index_page)</span><br><span class="line">  <span class="keyword">for</span> each <span class="keyword">in</span> response.doc(<span class="string">&#x27;li &gt; .tit &gt; a&#x27;</span>).items():</span><br><span class="line">      self.crawl(each.attr.href, callback=self.detail_page)</span><br></pre></td></tr></table></figure>
+
+<p>重新 run ，就可以看到 11 个爬取请求，follows 上显示 11</p>
+<h5 id="爬取详情页"><a href="#爬取详情页" class="headerlink" title="爬取详情页"></a>爬取详情页</h5><p>任意选取一个详情页进入，点击请求中任意一个右箭头，执行详情页的爬取</p>
+<img src="Python3网络爬虫开发实战-pyspider框架使用/WeChat75fbf9e380178eca4d6202777db75bb0.png" alt="WeChat75fbf9e380178eca4d6202777db75bb0" style="zoom:80%;" />
+
+<p>切换到 web 页面预览效果，页面下拉，看到一些图片显示加载中，再查看源码，没有看到 img 节点</p>
+<p>出现此现象的原因是 pyspider 默认发送 HTTP 请求，请求的 HTML 文档本身不包含 img 节点。但浏览器中我们看到了图片，这是因为这张图片是后期经过 JavaScript 出现的</p>
+<p>pyspider 内部对接了 PhantomJS，只需要修改一个参数即可，添加 fetch_type</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index_page</span>(<span class="params">self, response</span>):</span></span><br><span class="line">  <span class="built_in">next</span> = response.doc(<span class="string">&#x27;.next&#x27;</span>).attr.href</span><br><span class="line">  self.crawl(<span class="built_in">next</span>, callback=self.index_page)</span><br><span class="line">  <span class="keyword">for</span> each <span class="keyword">in</span> response.doc(<span class="string">&#x27;li &gt; .tit &gt; a&#x27;</span>).items():</span><br><span class="line">      self.crawl(each.attr.href, callback=self.detail_page, fetch_type=<span class="string">&#x27;js&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>图片被渲染出来了，这就是启用了 PhantomJS 渲染后的结果，最后将详情中的信息提取出来</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">detail_page</span>(<span class="params">self, response</span>):</span></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&#x27;url&#x27;</span>: response.url,</span><br><span class="line">        <span class="string">&#x27;title&#x27;</span>: response.doc(<span class="string">&#x27;#booktitle&#x27;</span>).text(),</span><br><span class="line">        <span class="string">&#x27;date&#x27;</span>: response.doc(<span class="string">&#x27;.when .data&#x27;</span>).text(),</span><br><span class="line">        <span class="string">&#x27;day&#x27;</span>: response.doc(<span class="string">&#x27;.howlong .data&#x27;</span>).text(),</span><br><span class="line">        <span class="string">&#x27;who&#x27;</span>: response.doc(<span class="string">&#x27;.who .data&#x27;</span>).text(),</span><br><span class="line">        <span class="string">&#x27;text&#x27;</span>: response.doc(<span class="string">&#x27;#b_panel_schedule&#x27;</span>).text(),</span><br><span class="line">        <span class="string">&#x27;image&#x27;</span>: response.doc(<span class="string">&#x27;.cover_img&#x27;</span>).attr.src,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>左栏中输出了最终构造的字典信息</p>
+<h5 id="启动爬虫"><a href="#启动爬虫" class="headerlink" title="启动爬虫"></a>启动爬虫</h5><p>返回爬虫主页面，将爬虫 status 设置成 DEBUG 或 RUNNING，点击右侧的 Run 按钮即可开始爬取</p>
+<p><img src="/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-pyspider%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/WeChatab3cfe3bff369db2397e97e00e3ec0af.png" alt="WeChatab3cfe3bff369db2397e97e00e3ec0af"></p>
+<p>最左侧可以定义项目的分组，方便管理</p>
+<p>rate/burst 代表当前的爬取速率，rate 代表1秒发出多少个请求，burst 相当于流量控制中的令牌桶算法的令牌数，rate 和 burst 设置越大，爬取速率越快</p>
+<p>process 中的 5m、1h、1d 指最近5分、1小时、1天内的请求情况，all 代表所有的请求情况</p>
+<p>蓝色代表等待被执行的请求，绿色代表请求成功的请求，黄色代表请求失败后等待重试的请求，红色代表失败次数过多而被忽略的请求，这样可以知道爬取的进度和请求情况</p>
+<p>点击 Active Tasks 可查看最近请求的详细情况</p>
+<p>点击 Results 可查看所有爬取结果</p>
+<h4 id="pyspider用法"><a href="#pyspider用法" class="headerlink" title="pyspider用法"></a>pyspider用法</h4><h5 id="pyspider-all-配置参数"><a href="#pyspider-all-配置参数" class="headerlink" title="pyspider all 配置参数"></a>pyspider all 配置参数</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">pyspider [OPTIONS] COMMAND [ARGA]</span><br><span class="line">#OPTIONS 可选参数</span><br><span class="line">-c, --config FILENAME 指定配置文件名称</span><br><span class="line">--logging-config TEXT 日志配置文件名称 默认 pyspider&#x2F;pyspider&#x2F;logging.conf</span><br><span class="line">--debug 开启调试模式</span><br><span class="line">--queue-maxsize INTEGER 队列的最大长度 </span><br><span class="line">--taskdb TEXT taskdb的数据库连接字符串 默认 sqlite</span><br><span class="line">--rojectdb TEXT projectdb的数据库连接字符串 默认 sqlite</span><br><span class="line">--resultdb TEXT resultdb的数据库连接字符串 默认 sqlite</span><br><span class="line">--message-queue TEXT 消息队列连接字符串 默认 multiprocessing.Queue</span><br><span class="line">--phantomjs-proxy TEXT PhantomJS使用的代理 ip:port 形式</span><br><span class="line">--data-path TEXT 数据库存放路径</span><br><span class="line">--version pyspider的版本</span><br><span class="line">--help 显示帮助信息</span><br></pre></td></tr></table></figure>
+
+<p>-c 可以指定配置文件名称是一个常用配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;taskdb&quot;: &quot;mysql+taskdb:&#x2F;&#x2F;username:password@host:port&#x2F;taskdb&quot;,</span><br><span class="line">	&quot;projectdb&quot;: &quot;mysql+projectdb:&#x2F;&#x2F;username:password@host:port&#x2F;projectdb&quot;,</span><br><span class="line">	&quot;resultdb&quot;: &quot;mysql+resultdb:&#x2F;&#x2F;username:password@host:port&#x2F;resultdb&quot;,</span><br><span class="line">	&quot;message_queue&quot;: &quot;amqp:&#x2F;&#x2F;username:password@host:port&#x2F;%2F&quot;,</span><br><span class="line">	&quot;webui&quot;:&#123;</span><br><span class="line">		&quot;username&quot;: &quot;some_name&quot;,</span><br><span class="line">		&quot;password&quot;: &quot;some_passwd&quot;,</span><br><span class="line">		&quot;need-auth&quot;: true</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果要配置 pyspider WebUI 的访问认证，可以新建一个pyspider.json</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">&quot;webui&quot;:&#123;</span><br><span class="line">		&quot;username&quot;: &quot;root&quot;,</span><br><span class="line">		&quot;password&quot;: &quot;123456&quot;,</span><br><span class="line">		&quot;need-auth&quot;: true</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样通过在启动时指定配置文件来配置 pyspider WebUI 的访问认证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyspider -c pyspider.json all</span><br></pre></td></tr></table></figure>
+
+<p>运行之后再打开 <a target="_blank" rel="noopener" href="http://localhost:5000/">http://localhost:5000</a></p>
+<p>也可以单独运行 pyspider 的某一个组件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#运行 Scheduler</span><br><span class="line">pyspider scheduler [OPTIONS]</span><br><span class="line">#运行 Fetcher</span><br><span class="line">pyspider fetcher [OPTIONS]</span><br><span class="line">#运行 Processor</span><br><span class="line">pyspider processor [OPTIONS]</span><br><span class="line">#运行 WebUI</span><br><span class="line">pyspider webui [OPTIONS]</span><br></pre></td></tr></table></figure>
+
+<p>如果想要改变 WebUI运行端口为 5001</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyspider webui --port 5001</span><br></pre></td></tr></table></figure>
+
+<p>或者配置到 JSON 文件中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;webui&quot;:&#123;&quot;port&quot;: 5001&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="crawl-方法"><a href="#crawl-方法" class="headerlink" title="crawl 方法"></a>crawl 方法</h5><p>callback 回调函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def on_start(self):</span><br><span class="line">	self.crawl(&#39;http:&#x2F;&#x2F;scrapy.org&#x2F;&#39;, callback&#x3D;self.index_page)</span><br></pre></td></tr></table></figure>
+
+<p>index_page 方法的第一个参数是响应对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def index_page(self, response):</span><br><span class="line">	pass</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>age</li>
+</ul>
+<p>任务有效时间，如果某个任务在有效时间内且已经被执行，则它不会重复执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def on_start(self):</span><br><span class="line">	self.crawl(&#39;http:&#x2F;&#x2F;www.example.org&#x2F;&#39;, callback&#x3D;self.callback,age&#x3D;10*24*60*60)</span><br><span class="line">或者</span><br><span class="line">@config(age&#x3D;10*24*60*60)</span><br><span class="line">def callback(self):</span><br><span class="line">	pass   </span><br><span class="line">默认有效期10天</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>priority</li>
+</ul>
+<p>爬取优先级，默认0，数值越大，对应的请求会优先被调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">def index_page(self):</span><br><span class="line">	self.crawl(&#39;http:&#x2F;&#x2F;www.example.org&#x2F;page.html&#39;, callback&#x3D;self.index_page)</span><br><span class="line">	self.crawl(&#39;http:&#x2F;&#x2F;www.example.org&#x2F;123.html&#39;, callback&#x3D;self.index_page,priority&#x3D;1)</span><br><span class="line">第二个链接先调用</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>exetime</li>
+</ul>
+<p>设置定时任务，值是时间戳，默认0，立即执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">improt time</span><br><span class="line">def on_start(self):</span><br><span class="line">	self.crawl(&#39;http:&#x2F;&#x2F;www.example.org&#x2F;&#39;, callback&#x3D;self.callback,exetime&#x3D;time.time()+30*60)</span><br></pre></td></tr></table></figure>
+
+<p>该任务30分钟后执行</p>
+<ul>
+<li>retries</li>
+</ul>
+<p>定义重试次数，默认 3</p>
+<ul>
+<li><p>itag</p>
+</li>
+<li><p>auto_recrawl</p>
+</li>
+<li><p>method</p>
+</li>
+<li><p>params</p>
+</li>
+<li><p>data</p>
+</li>
+<li><p>files</p>
+</li>
+<li><p>user_agent</p>
+</li>
+<li><p>headers</p>
+</li>
+<li><p>cookies</p>
+</li>
+<li><p>connect_timeout</p>
+</li>
+<li><p>timeout</p>
+</li>
+<li><p>allow_redirects</p>
+</li>
+<li><p>validate_cert</p>
+</li>
+<li><p>proxy</p>
+</li>
+<li><p>fetch_type</p>
+</li>
+<li><p>js_script</p>
+</li>
+<li><p>js_run_at</p>
+</li>
+<li><p>js_viewport_width/js_viewport_height</p>
+</li>
+<li><p>load_images</p>
+</li>
+<li><p>save</p>
+</li>
+<li><p>cancel</p>
+</li>
+<li><p>force_update</p>
+</li>
+</ul>
+<h4 id="任务区分"><a href="#任务区分" class="headerlink" title="任务区分"></a>任务区分</h4><p>pyspider 判断两个任务是否是重复是使用任务对应的 URL 的MD5值作为任务的唯一 ID，ID相同，两个任务就会被判定为相同，其中一个就不会爬取</p>
+<p>很多情况下请求的链接可能是同一个，但 POST 参数不同，这时可以重写 task_id() 方法，改变这个 ID 的计算方式来实现不同任务区分</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> pyspider.libs.utils <span class="keyword">import</span> md5string</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_taskid</span>(<span class="params">self, task</span>):</span></span><br><span class="line">  <span class="keyword">return</span> md5string(task[<span class="string">&#x27;url&#x27;</span>]+json.dumps(task[<span class="string">&#x27;fetch&#x27;</span>].get(<span class="string">&#x27;data&#x27;</span>, <span class="string">&#x27;&#x27;</span>)))</span><br></pre></td></tr></table></figure>
+
+<p>重写了 get_taskid 方法，利用 URL 和 POST 的参数来生成 ID</p>
+<h4 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h4><p>可以使用 craw_config 指定全局配置，配置中的参数会和 crawl() 方法创建任务时的参数合并，如要全局配置一个 Headers</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class Handler(BaseHandler):</span><br><span class="line">	crawl_config &#x3D; &#123;</span><br><span class="line">		&#39;headers&#39;: &#123;</span><br><span class="line">			&#39;User-Agent&#39;: &#39;GoogleBot&#39;,</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="定时爬取"><a href="#定时爬取" class="headerlink" title="定时爬取"></a>定时爬取</h4><p>可以通过 every 属性来设置爬取时间间隔</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@every(minutes=24*60)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_start</span>(<span class="params">self</span>):</span></span><br><span class="line">	<span class="keyword">for</span> url <span class="keyword">in</span> urllist:</span><br><span class="line">		self.crawl(url, callback=self.index_page)</span><br></pre></td></tr></table></figure>
+
+<p>设置了每天执行一次爬取</p>
+<p>上面提到了有效时间，有效时间内不会重复爬取，所以要把有效时间设置比重复时间更短，才可以实现定时爬取</p>
+<p>将 age 设置小于定时时间</p>
+<h4 id="项目状态"><a href="#项目状态" class="headerlink" title="项目状态"></a>项目状态</h4><p>TODO 刚被创建未实现状态</p>
+<p>STOP 想停止某项目抓取，可将项目设置 STOP</p>
+<p>CHECKING 正在运行的项目被修改后会变成 CHECKING 状态</p>
+<p>DEBUG/RUNNING 这两个状态对项目运行没影响，设置任意一个项目都可以运行，用第二个可以区分项目是否测试通过</p>
+<p>PAUSE 爬取过程中连续多次错误时，项目会自动设置为 PAUSE 状态，并等待一段时间后继续爬取</p>
+<h4 id="删除项目"><a href="#删除项目" class="headerlink" title="删除项目"></a>删除项目</h4><p>将项目设置为 STOP，将分组名称设置为 delete，等待24小时，项目会自动删除</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/04/18/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-App%E7%88%AC%E5%8F%96/" rel="prev" title="Python3网络爬虫开发实战-App爬取">
+                  <i class="fa fa-chevron-left"></i> Python3网络爬虫开发实战-App爬取
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/04/19/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Scrapy%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/" rel="next" title="Python3网络爬虫开发实战-Scrapy框架使用">
+                  Python3网络爬虫开发实战-Scrapy框架使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

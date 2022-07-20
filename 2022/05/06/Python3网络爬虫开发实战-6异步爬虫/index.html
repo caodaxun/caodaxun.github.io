@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="event_loop：事件循环，相当于一个无限循环，可以把一些函数注册到这个事件循环上，当满足发生条件的时候，就调用对应的处理方法 coroutine：协程，可以将协程对象注册到事件循环中，它会被事件循环调用。可以使用 async 关键字来定义一个方法，这个方法在调用时不会立即被执行，而是会返回一个协程对象 task：任务，这是对协程对象的进一步封装，包含协程对象的各个状态 future：代表将">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python3网络爬虫开发实战-6异步爬虫">
+<meta property="og:url" content="http://example.com/2022/05/06/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-6%E5%BC%82%E6%AD%A5%E7%88%AC%E8%99%AB/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="event_loop：事件循环，相当于一个无限循环，可以把一些函数注册到这个事件循环上，当满足发生条件的时候，就调用对应的处理方法 coroutine：协程，可以将协程对象注册到事件循环中，它会被事件循环调用。可以使用 async 关键字来定义一个方法，这个方法在调用时不会立即被执行，而是会返回一个协程对象 task：任务，这是对协程对象的进一步封装，包含协程对象的各个状态 future：代表将">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-06T14:57:27.000Z">
+<meta property="article:modified_time" content="2022-05-18T01:14:08.604Z">
+<meta property="article:author" content="daxun">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/05/06/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-6%E5%BC%82%E6%AD%A5%E7%88%AC%E8%99%AB/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python3网络爬虫开发实战-6异步爬虫 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%8D%8F%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">定义协程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%91%E5%AE%9A%E5%9B%9E%E8%B0%83"><span class="nav-number">2.</span> <span class="nav-text">绑定回调</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%8D%8F%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">多任务协程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%8F%E7%A8%8B%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">协程实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-aiohttp"><span class="nav-number">5.</span> <span class="nav-text">使用 aiohttp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#aiohttp-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">aiohttp 的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#URL-%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE"><span class="nav-number">6.1.</span> <span class="nav-text">URL 参数设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E8%AF%B7%E6%B1%82%E7%B1%BB%E5%9E%8B"><span class="nav-number">6.2.</span> <span class="nav-text">其它请求类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#POST-%E8%AF%B7%E6%B1%82"><span class="nav-number">6.3.</span> <span class="nav-text">POST 请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%93%8D%E5%BA%94"><span class="nav-number">6.4.</span> <span class="nav-text">响应</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E8%AE%BE%E7%BD%AE"><span class="nav-number">6.5.</span> <span class="nav-text">超时设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6"><span class="nav-number">6.6.</span> <span class="nav-text">并发限制</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/06/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-6%E5%BC%82%E6%AD%A5%E7%88%AC%E8%99%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python3网络爬虫开发实战-6异步爬虫
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-06 22:57:27" itemprop="dateCreated datePublished" datetime="2022-05-06T22:57:27+08:00">2022-05-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-05-18 09:14:08" itemprop="dateModified" datetime="2022-05-18T09:14:08+08:00">2022-05-18</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li>event_loop：事件循环，相当于一个无限循环，可以把一些函数注册到这个事件循环上，当满足发生条件的时候，就调用对应的处理方法</li>
+<li>coroutine：协程，可以将协程对象注册到事件循环中，它会被事件循环调用。可以使用 async 关键字来定义一个方法，这个方法在调用时不会立即被执行，而是会返回一个协程对象</li>
+<li>task：任务，这是对协程对象的进一步封装，包含协程对象的各个状态</li>
+<li>future：代表将来执行或者没有执行的任务的结果，实际上和 task 没有本质的区别</li>
+</ul>
+<h4 id="定义协程"><a href="#定义协程" class="headerlink" title="定义协程"></a>定义协程</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">execute</span>(<span class="params">x</span>):</span></span><br><span class="line">    print(<span class="string">&#x27;Number&#x27;</span>, x)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    print(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    coroutine = execute(<span class="number">1</span>)</span><br><span class="line">    print(<span class="string">&#x27;After calling execute&#x27;</span>)</span><br><span class="line">    loop = asyncio.get_event_loop()</span><br><span class="line">    loop.run_until_complete(coroutine)</span><br><span class="line">    print(<span class="string">&#x27;After calling loop&#x27;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">After calling execute</span></span><br><span class="line"><span class="string">Number 1</span></span><br><span class="line"><span class="string">After calling loop</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>引入 asyncio 包，这样才能使用 async 和 await 关键字</p>
+<p>直接调用 execute 方法并没有立即执行，而是返回一个协程对象</p>
+<p>之后调用 get_event_loop 方法创建一个事件循环 loop，调用 loop 对象的 run_until_complete 方法将协程对象注册到事件循环中，接着启动</p>
+<p>async 定义的方法会变成一个无法直接执行的协程对象，必须将此对象注册到事件循环中才可以执行</p>
+<p>前面提到 task 是对协程的进一步封装，比协程多了运行状态，如 running、finished，可以利用这些状态获取协程执行情况</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">coroutine = execute(<span class="number">1</span>)</span><br><span class="line">print(<span class="string">&#x27;After calling execute&#x27;</span>)</span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">task = loop.create_task(coroutine) <span class="comment">#将协程对象转化为task对象</span></span><br><span class="line">print(<span class="string">&#x27;Task:&#x27;</span>, task)</span><br><span class="line">loop.run_until_complete(task)</span><br><span class="line">print(<span class="string">&#x27;Task:&#x27;</span>, task)</span><br><span class="line">print(<span class="string">&#x27;After calling loop&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">After calling execute</span></span><br><span class="line"><span class="string">Task: &lt;Task pending name=&#x27;Task-1&#x27; coro=&lt;execute() running at xxx&gt;&gt;</span></span><br><span class="line"><span class="string">Number 1</span></span><br><span class="line"><span class="string">Task: &lt;Task finished name=&#x27;Task-1&#x27; coro=&lt;execute() done, defined at xxx&gt;</span></span><br><span class="line"><span class="string">After calling loop</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>定义 task 的另一种方式，直接调用 asyncio 包的 ensure_future 方法，返回也是 task 对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">task = asyncio.ensure_future(coroutine)</span><br><span class="line">loop.run_until_complete(task)</span><br></pre></td></tr></table></figure>
+
+<h4 id="绑定回调"><a href="#绑定回调" class="headerlink" title="绑定回调"></a>绑定回调</h4><p>为某个 task 对象绑定一个回调方法    </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span>():</span></span><br><span class="line">    url = <span class="string">&#x27;https://www.baidu.com&#x27;</span></span><br><span class="line">    status = requests.get(url)</span><br><span class="line">    <span class="keyword">return</span> status</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">callback</span>(<span class="params">task</span>):</span></span><br><span class="line">    print(<span class="string">&#x27;Status:&#x27;</span>, task.result())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    print(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    coroutine = request()</span><br><span class="line">    task = asyncio.ensure_future(coroutine)</span><br><span class="line">    task.add_done_callback(callback)</span><br><span class="line">    print(<span class="string">&#x27;Task:&#x27;</span>, task)</span><br><span class="line"></span><br><span class="line">    loop = asyncio.get_event_loop()</span><br><span class="line">    loop.run_until_complete(task)</span><br><span class="line">    print(<span class="string">&#x27;Task:&#x27;</span>, task)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Task: &lt;Task pending name=&#x27;Task-1&#x27; coro=&lt;request() running at xxx cb=[callback() xx&gt;</span></span><br><span class="line"><span class="string">Status: &lt;Response [200]&gt;</span></span><br><span class="line"><span class="string">Task: &lt;Task finished name=&#x27;Task-1&#x27; coro=&lt;request() done, defined at xx result=&lt;Response [200]&gt;&gt;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>task 执行完毕后，就可以调用 callback 方法了，同时 task 对象还会作为参数传递给 callback 方法，调用 task 对象的 result 方法就可以获取返回结果</p>
+<p>这里不使用回调方法，在 task 运行完毕后，也可直接调用 task.result() 方法获取结果</p>
+<h4 id="多任务协程"><a href="#多任务协程" class="headerlink" title="多任务协程"></a>多任务协程</h4><p>如果想执行多次请求，使用 asyncio 包中的 wait 方法执行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">tasks = [asyncio.ensure_future(request()) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>)]</span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">loop.run_until_complete(asyncio.wait(tasks))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> task <span class="keyword">in</span> tasks:</span><br><span class="line">    print(<span class="string">&#x27;Task Result:&#x27;</span>, task.result())</span><br><span class="line"><span class="comment">#5个任务被顺次执行</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="协程实现"><a href="#协程实现" class="headerlink" title="协程实现"></a>协程实现</h4><p>当遇到需要等待的情况时，程序可以暂时挂起，转而执行其他操作，从而避免因一直等待一个程序而耗费过多的时间，能够充分利用资源</p>
+<p>await 关键字，可以将耗时等待的操作挂起，让出控制权。如果协程在执行的时候遇到 wait，事件循环就会将协程挂起，转而执行别的协程，直到其它协程挂起或执行完毕</p>
+<p>await 后面的对象必须是如下格式之一：</p>
+<p>一个原生的协程对象；一个由 types.coroutine修饰的生成器，这个生成器可以返回协程对象；一个包含 <code>__await__</code> 方法的对象返回一个迭代器</p>
+<h4 id="使用-aiohttp"><a href="#使用-aiohttp" class="headerlink" title="使用 aiohttp"></a>使用 aiohttp</h4><p>aiohttp 是一个支持异步请求的库，和 asyncio 配合使用，可以非常方便的实现异步请求操作</p>
+<p>官方文档链接 <a target="_blank" rel="noopener" href="https://aiohttp.readthedocs.io/">https://aiohttp.readthedocs.io/</a> </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> aiohttp</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">url</span>):</span></span><br><span class="line">    session = aiohttp.ClientSession()</span><br><span class="line">    response = <span class="keyword">await</span> session.get(url)</span><br><span class="line">    <span class="keyword">await</span> response.text()</span><br><span class="line">    <span class="keyword">await</span> session.close()</span><br><span class="line">    <span class="keyword">return</span> response</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span>():</span></span><br><span class="line">    url = <span class="string">&#x27;https://www.baidu.com&#x27;</span></span><br><span class="line">    print(<span class="string">&#x27;waiting for&#x27;</span>, url)</span><br><span class="line">    response = <span class="keyword">await</span> get(url)</span><br><span class="line">    print(<span class="string">&#x27;get response from&#x27;</span>, url, <span class="string">&#x27;response:&#x27;</span>, response)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">  tasks = [asyncio.ensure_future(request()) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>)]</span><br><span class="line">  loop = asyncio.get_event_loop()</span><br><span class="line">  loop.run_until_complete(asyncio.wait(tasks))</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="aiohttp-的使用"><a href="#aiohttp-的使用" class="headerlink" title="aiohttp 的使用"></a>aiohttp 的使用</h4><p>aiohttp 是一个基于 asyncio 的异步 HTTP 网络模块，既提供了服务端，又提供了客户端。用服务端可以搭建一个支持异步处理的服务器，这个服务器就是用来处理请求并返回响应的，类似 Django、Flask、Tornado 等一些 Web 服务器。而客户端可以用来发起请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> aiohttp</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">fetch</span>(<span class="params">session, url</span>):</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> session.get(url) <span class="keyword">as</span> response:</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">await</span> response.text(), response.status</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiohttp.ClientSession() <span class="keyword">as</span> session:</span><br><span class="line">        html, status = <span class="keyword">await</span> fetch(session, <span class="string">&#x27;https://cuiqingcai.com&#x27;</span>)</span><br><span class="line">        print(<span class="string">f&#x27;html:<span class="subst">&#123;html[:<span class="number">100</span>]&#125;</span>...&#x27;</span>)</span><br><span class="line">        print(<span class="string">f&#x27;status: <span class="subst">&#123;status&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    loop = asyncio.get_event_loop()</span><br><span class="line">    loop.run_until_complete(main())</span><br></pre></td></tr></table></figure>
+
+<p>每个异步方法前都需要加 async 来修饰</p>
+<p>with as 前同样需要 async 来修饰，python 中，with as 语句用于声明一个上下文管理器，能够帮我们自动分配和释放资源，异步方法中，with as 前加 async 代表声明一个支持异步的上下文管理器</p>
+<p>对于一些返回协程的操作，前面需要加 await 来修饰。返回的是协程对象，前面就要加 await，response 调用 text 方法返回的是协程对象，前面需要加 awiat，而状态码返回的就是一个数值，不需要加 await，看对应返回类型决定加不加 await</p>
+<p>Python 3.7 后可以使用 <code>asyncio.run(main())</code> 代替最后的启动操作，不需要显式声明事件循环</p>
+<h5 id="URL-参数设置"><a href="#URL-参数设置" class="headerlink" title="URL 参数设置"></a>URL 参数设置</h5><p>参数设置借助 params 参数，传入字典</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    params = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;germey&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">25</span>&#125;</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiohttp.ClientSession() <span class="keyword">as</span> session:</span><br><span class="line">        <span class="keyword">async</span> <span class="keyword">with</span> session.get(<span class="string">&#x27;https://www.httpbin.org/get&#x27;</span>, params=params) <span class="keyword">as</span> response:</span><br><span class="line">            print(<span class="keyword">await</span> response.text())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    asyncio.get_event_loop().run_until_complete(main())</span><br></pre></td></tr></table></figure>
+
+<h5 id="其它请求类型"><a href="#其它请求类型" class="headerlink" title="其它请求类型"></a>其它请求类型</h5><p>aiohttp 还支持其它请求类型，POST、PUT、DELETE 等</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">session.post(<span class="string">&#x27;http://xxx&#x27;</span>, data=<span class="string">b&#x27;data&#x27;</span>)</span><br><span class="line">session.put(<span class="string">&#x27;http://xxx&#x27;</span>)</span><br><span class="line">session.delete(<span class="string">&#x27;http://xxx&#x27;</span>)</span><br><span class="line">session.options(<span class="string">&#x27;http://xxx&#x27;</span>)</span><br><span class="line">session.head(<span class="string">&#x27;http://xxx&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="POST-请求"><a href="#POST-请求" class="headerlink" title="POST 请求"></a>POST 请求</h5><p>对于 POST 表单提交 Content-Type 为 application/x-www-form-urlencoded</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">data = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;germey&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">25</span>&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="keyword">with</span> session.post(<span class="string">&#x27;https://www.httpbin.org/post&#x27;</span>, data=data) <span class="keyword">as</span> response:</span><br></pre></td></tr></table></figure>
+
+<p>对于 POST JSON，Content-Type 为 application/json</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">data = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;germey&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">25</span>&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="keyword">with</span> session.post(<span class="string">&#x27;https://www.httpbin.org/post&#x27;</span>, json=data) <span class="keyword">as</span> response:</span><br></pre></td></tr></table></figure>
+
+<h5 id="响应"><a href="#响应" class="headerlink" title="响应"></a>响应</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&#x27;status:&#x27;</span>, response.status)</span><br><span class="line">print(<span class="string">&#x27;headers:&#x27;</span>, response.headers)</span><br><span class="line">print(<span class="string">&#x27;body:&#x27;</span>, <span class="keyword">await</span> response.text())</span><br><span class="line">print(<span class="string">&#x27;bytes:&#x27;</span>, <span class="keyword">await</span> response.read())</span><br><span class="line">print(<span class="string">&#x27;json:&#x27;</span>, <span class="keyword">await</span> response.json())</span><br></pre></td></tr></table></figure>
+
+<p>返回的是一个协程对象需要加 await。具体查看 aiohttp 的 API</p>
+<p>链接 <a target="_blank" rel="noopener" href="https://docs.aiohttp.org/en/stable/client_reference.html">https://docs.aiohttp.org/en/stable/client_reference.html</a></p>
+<h5 id="超时设置"><a href="#超时设置" class="headerlink" title="超时设置"></a>超时设置</h5><p>借助 ClientTimeout 对象设置超时，例如设置 1 秒的超时时间</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    data = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;germey&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">25</span>&#125;</span><br><span class="line">    timeout = aiohttp.ClientTimeout(total=<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiohttp.ClientSession(timeout=timeout) <span class="keyword">as</span> session:</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<p>ClientTimeout 还有其他参数，connect、socket_connect 等</p>
+<p><a target="_blank" rel="noopener" href="https://docs.aiohttp.org/en/stable/client_quickstart.html#timeouts">https://docs.aiohttp.org/en/stable/client_quickstart.html#timeouts</a></p>
+<h5 id="并发限制"><a href="#并发限制" class="headerlink" title="并发限制"></a>并发限制</h5><p>asyncio 的 Semaphore 来控制并发量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">CONCURRENCY = <span class="number">5</span></span><br><span class="line">URL = <span class="string">&#x27;https://www.baidu.com&#x27;</span></span><br><span class="line"></span><br><span class="line">semaphore = asyncio.Semaphore(CONCURRENCY) <span class="comment">#创建信号量对象</span></span><br><span class="line">session = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">scripe_api</span>():</span></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> semaphore:</span><br><span class="line">        print(<span class="string">&#x27;scrapping:&#x27;</span>, URL)</span><br><span class="line">        <span class="keyword">async</span> <span class="keyword">with</span> session.get(URL) <span class="keyword">as</span> response:</span><br><span class="line">            <span class="keyword">await</span> asyncio.sleep(<span class="number">1</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">await</span> response.text()</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    <span class="keyword">global</span> session;</span><br><span class="line">    session = aiohttp.ClientSession()</span><br><span class="line">    scripe_index_tasks = [asyncio.ensure_future(scripe_api()) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000</span>)]</span><br><span class="line">    <span class="keyword">await</span> asyncio.gather(*scripe_index_tasks)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    asyncio.get_event_loop().run_until_complete(main())</span><br></pre></td></tr></table></figure>
+
+<p>创建信号量对象，使用：把 semaphore 直接放置在对应的爬取方法里，使用 async with 语句将 semaphore 作为上下文对象即可。这样信号量便可以控制进入爬取的最大协程数量</p>
+<p>main 方法里声明了 1000 个 task，传递给 gather 方法运行</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/04/28/Airtest/" rel="prev" title="Airtest">
+                  <i class="fa fa-chevron-left"></i> Airtest
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/05/20/ReactiveObjC/" rel="next" title="ReactiveObjC">
+                  ReactiveObjC <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="MonkeyDev安装  MonkeyDev插件库 WeChatPod    破解iOS微信骰子和猜拳 恢复符号表   安装确保 Theos 环境已配置好 执行命令安装 1sudo &#x2F;bin&#x2F;sh -c &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;AloneMonkey&#x2F;Mon">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向-MonkeyDev">
+<meta property="og:url" content="http://example.com/2022/07/08/%E9%80%86%E5%90%91-MonkeyDev/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="MonkeyDev安装  MonkeyDev插件库 WeChatPod    破解iOS微信骰子和猜拳 恢复符号表   安装确保 Theos 环境已配置好 执行命令安装 1sudo &#x2F;bin&#x2F;sh -c &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;AloneMonkey&#x2F;Mon">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-08T04:23:14.000Z">
+<meta property="article:modified_time" content="2022-07-14T04:40:22.013Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/07/08/%E9%80%86%E5%90%91-MonkeyDev/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>逆向-MonkeyDev | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Logos-Tweak"><span class="nav-number">2.</span> <span class="nav-text">Logos Tweak</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E8%B6%8A%E7%8B%B1APP%E9%9B%86%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">非越狱APP集成</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#MDConfig-plist"><span class="nav-number">3.1.</span> <span class="nav-text">MDConfig.plist</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B0%83%E8%AF%95"><span class="nav-number">3.2.</span> <span class="nav-text">调试</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CaptainHook-Tweak"><span class="nav-number">4.</span> <span class="nav-text">CaptainHook Tweak</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZKSwizzle"><span class="nav-number">5.</span> <span class="nav-text">ZKSwizzle</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Command-line-Took"><span class="nav-number">6.</span> <span class="nav-text">Command-line Took</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Logify"><span class="nav-number">7.</span> <span class="nav-text">Logify</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ANYMethodLog"><span class="nav-number">8.</span> <span class="nav-text">ANYMethodLog</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BigBang"><span class="nav-number">9.</span> <span class="nav-text">BigBang</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%A5%E9%94%99"><span class="nav-number">10.</span> <span class="nav-text">报错</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/07/08/%E9%80%86%E5%90%91-MonkeyDev/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向-MonkeyDev
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-08 12:23:14" itemprop="dateCreated datePublished" datetime="2022-07-08T12:23:14+08:00">2022-07-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-07-14 12:40:22" itemprop="dateModified" datetime="2022-07-14T12:40:22+08:00">2022-07-14</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://github.com/AloneMonkey/MonkeyDev/wiki/%E5%AE%89%E8%A3%85">MonkeyDev安装</a>  <a target="_blank" rel="noopener" href="https://github.com/AloneMonkey/MonkeyDevSpecs">MonkeyDev插件库</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/AloneMonkey/WeChatPod">WeChatPod</a>    <a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-265106.htm">破解iOS微信骰子和猜拳</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.imjun.net/posts/restore-symbol-of-iOS-app/">恢复符号表</a>  </p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>确保 Theos 环境已配置好</p>
+<p>执行命令安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo &#x2F;bin&#x2F;sh -c &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;AloneMonkey&#x2F;MonkeyDev&#x2F;master&#x2F;bin&#x2F;md-install)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>卸载</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo &#x2F;bin&#x2F;sh -c &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;AloneMonkey&#x2F;MonkeyDev&#x2F;master&#x2F;bin&#x2F;md-uninstall)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>更新</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo &#x2F;bin&#x2F;sh -c &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;AloneMonkey&#x2F;MonkeyDev&#x2F;master&#x2F;bin&#x2F;md-update)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>安装成功后 MonkeyDev 模板</p>
+<p>![图 1](逆向-MonkeyDev/图 1.png)</p>
+<h4 id="Logos-Tweak"><a href="#Logos-Tweak" class="headerlink" title="Logos Tweak"></a>Logos Tweak</h4><h5 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h5><p>Xcode 无法识别 .xm文件导致代码无法高亮，需要在Xcode界面右侧设置 Type 为 Objective-C++Source</p>
+<p>.xm 文件相当于 Theos 工程中的 Tweak.xm，直接写 Logos 语法即可，编译时会通过 logos.pl 转换成 .mm 文件</p>
+<p>目会自动链接 <code>CydiaSubstrate.framework</code> 无需再手动链接</p>
+<p>项目的一些配置在 Build Settings 列表下面 User-Defined</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MonkeyDevBuildPackageOnAnyBuild     每次build都生成deb包</span><br><span class="line">MonkeyDevCopyOnBuild    build的时将deb包拷贝到设备的&#x2F;var&#x2F;root&#x2F;MonkeyDevBuilds&#x2F;目录</span><br><span class="line">MonkeyDevDeviceIP       目标设备的ip地址，默认USB连接，localhost</span><br><span class="line">MonkeyDevDevicePort     目标设备的端口，默认22(做了端口映射填映射的端口)</span><br><span class="line">MonkeyDevDevicePassword   目标设备的ssh登录密码，默认为空使用免密码登录</span><br><span class="line">MonkeyDevInstallOnAnyBuild            每次build都将deb安装到设备</span><br><span class="line">MonkeyDevInstallOnProfiling             点击Profile才将deb安装到设备</span><br><span class="line">MonkeyDevKillProcessOnInstall         安装的时候杀掉指定的进程，填写进程名</span><br><span class="line">MonkeyDevClearUiCacheOnInstall    安装时 clear uicache</span><br><span class="line">MonkeyDevPath              MonkeyDev的安装路径，默认的，不用修改</span><br><span class="line">MonkeyDevTheosPath    theos的安装路径</span><br></pre></td></tr></table></figure>
+
+<p>Command + B 安装提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Showing Recent Messages</span><br><span class="line">An empty identity is not valid when signing a binary for the product type &#39;Dynamic Library&#39;</span><br></pre></td></tr></table></figure>
+
+<p>BuildSettings-User-Defined 添加 key CODE_SIGNING_ALLOWED NO</p>
+<ul>
+<li>Debug 模式安装</li>
+</ul>
+<p>Command+B自动安装到手机</p>
+<ul>
+<li>Release 模式安装</li>
+</ul>
+<p>Command+Shift+i，这种方式不会看到 Log</p>
+<ul>
+<li>查看 Log 输出</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ brew install libimobiledevice</span><br><span class="line">$ idevicesyslog | grep &#39;xxx&#39;</span><br></pre></td></tr></table></figure>
+
+<p>或者自带的 console.app 查看</p>
+<h4 id="非越狱APP集成"><a href="#非越狱APP集成" class="headerlink" title="非越狱APP集成"></a>非越狱APP集成</h4><p>创建 iOS 项目选择 MonkeyApp，越狱设备可以在 Target APP 填写目标 APP 的名字或 bundle id，工具将自动使用 frida-ios-dump 提取 ipa 文件（需要按 frida-ios-dump 的 README 配置好环境）</p>
+<p><code>/opt/MonkeyDev/bin/dump.py</code> 可以指定 ip、port 及 password</p>
+<p>创建项目名为 MonkeyApp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Config cycript的一些脚本下载以及methodtrace配置代码</span><br><span class="line">AntiAntiDebug 这里面是反反调试的代码</span><br><span class="line">fishhook 自动集成的fishhook模块</span><br></pre></td></tr></table></figure>
+
+<p>项目已自动集成了 RevealServer.framework 和 libcycript.dylib，如果选择 Release 编译是不会集成的</p>
+<h5 id="MDConfig-plist"><a href="#MDConfig-plist" class="headerlink" title="MDConfig.plist"></a>MDConfig.plist</h5><p><a target="_blank" rel="noopener" href="https://github.com/omxcodec/OCMethodTrace/blob/master/README.md">https://github.com/omxcodec/OCMethodTrace/blob/master/README.md</a></p>
+<ul>
+<li>class-dump</li>
+</ul>
+<p>工程集成了 class-dump 导出可执行文件 OC 头文件，build settings，MONKEYDEV_CLASS_DUMP YES</p>
+<ul>
+<li>增加自己的库 </li>
+</ul>
+<p>将需要注入的 dylib 或 framework 拷贝到 frameworks 目录下，静态库的话，直接添加，指定 search path，和正常开发没啥区别。</p>
+<p>动态库本身的 install_path，可以通过 install_name_tool -id 修改其为 @executable_path/Frameworks/xxx</p>
+<ul>
+<li><p>集成网络 cy 脚本</p>
+</li>
+<li><p>更改名字和bundleid</p>
+</li>
+</ul>
+<p>直接在Xcode进行设置，想使用原来的 bundleid 进行重签，设置 build settings， MONKEYDEV_DEFAULT_BUNDLEID 为 YES</p>
+<ul>
+<li>生成IPA</li>
+</ul>
+<p>运行之后在源代码 LatestBuild 目录 双击 createIPA.command</p>
+<ul>
+<li>支持 CocoaPods 集成第三方库</li>
+</ul>
+<p>需要设置 use_frameworks!  动态库方式，再执行 pod install</p>
+<h5 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h5><p>MonkeyApp运行后可以直接断点调试，但是每次修改调试都要重新运行安装，比较麻烦。</p>
+<p>Logos Tweak 也可以 Xcode 调试。重签安装被调试的应用</p>
+<p>Xcode - Debug - Attach to Process by PID or Name</p>
+<h4 id="CaptainHook-Tweak"><a href="#CaptainHook-Tweak" class="headerlink" title="CaptainHook Tweak"></a>CaptainHook Tweak</h4><p>Logos Tweak 和 CaptainHook Tweak 都支持通过 Cocoapods 的方式集成，记得以静态库的方式集成</p>
+<p>所以记得把 Podfile 中的 #use_frameworks! 注释掉，否则 Tweak 不生效</p>
+<p>CaptainHook 无须依赖 Cydia Substrate 框架，直接导入 CaptainHook.h 头文件后使用里面的宏来进行 Hook</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/rpetrich/CaptainHook/wiki">https://github.com/rpetrich/CaptainHook/wiki</a></p>
+<p>Hook OC 方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.CHDeclareClass声明一个类</span></span><br><span class="line"><span class="comment">//2.使用CHLoadClass()或者CHLoadLateClass()在 CHConstructor 中加载声明的类</span></span><br><span class="line"><span class="comment">//3.CHOptimizedMethod()来Hook目标函数</span></span><br><span class="line"><span class="comment">//4.CHHook()在CHConstructor中注册Hook</span></span><br><span class="line"><span class="comment">//5.CHSuper()调用Hook原函数逻辑</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&quot;CaptainHook/CaptainHook.h&quot;</span></span></span><br><span class="line"></span><br><span class="line">CHDeclareClass(XLMemberManager);<span class="comment">//1 声明类</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//3 hook目标函数</span></span><br><span class="line"><span class="comment">//-(void)loginByUserName:(id)arg1 password:(id)arg2 verifyCode:(id)arg3 verifyKey:(id)arg4 finishBlock:(CDUnknownBlockType)arg5;</span></span><br><span class="line">CHOptimizedMethod(<span class="number">5</span>, <span class="keyword">self</span>, <span class="keyword">void</span>, XLMemberManager, loginByUserName, <span class="keyword">id</span>, arg1, password, <span class="keyword">id</span>, arg2, verifyCode, <span class="keyword">id</span>, arg3, verifyKey, <span class="keyword">id</span>, arg4, finishBlock, <span class="keyword">id</span>, arg5) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;userName:%@ password:%@ verifyCode:%@ verifyKey:%@&quot;</span>, arg1, arg2, arg3, arg4);</span><br><span class="line">    <span class="comment">//5 调用原来方法</span></span><br><span class="line">    <span class="keyword">return</span> CHSuper(<span class="number">5</span>, XLMemberManager, loginByUserName, arg1, password, arg2, verifyCode, arg3, verifyKey, arg4, finishBlock, arg5);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CHConstructor &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;__inject success__&quot;</span>);</span><br><span class="line">        <span class="comment">//2 加载声明的类</span></span><br><span class="line">        CHLoadLateClass(XLMemberManager);</span><br><span class="line">        <span class="comment">//4 注册hook 5根参数</span></span><br><span class="line">        CHHook(<span class="number">5</span>, XLMemberManager, loginByUserName, password, verifyCode, verifyKey, finishBlock);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ZKSwizzle"><a href="#ZKSwizzle" class="headerlink" title="ZKSwizzle"></a>ZKSwizzle</h4><p><a target="_blank" rel="noopener" href="https://github.com/alexzielenski/ZKSwizzle">https://github.com/alexzielenski/ZKSwizzle</a></p>
+<p>语法接近 Theos</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#import &quot;ZKSwizzle&#x2F;ZKSwizzle.h&quot;</span><br><span class="line">hook(XLMemberManager);</span><br><span class="line">-(void)loginByUserName:(id)arg1 password:(id)arg2 verifyCode:(id)arg3 verifyKey:(id)arg4 finishBlock:(void(^__nullable)(void))arg5 &#123;</span><br><span class="line">  NSLog(@&quot;userName:%@ password:%@ verifyCode:%@ verifyKey:%@&quot;, arg1, arg2, arg3, arg4);</span><br><span class="line">  &#x2F;&#x2F;调用原方法</span><br><span class="line">  ZKOrig(void, arg1, arg2, arg3, arg4, arg5);</span><br><span class="line">&#125;</span><br><span class="line">ctor &#123;</span><br><span class="line">  NSLog(@&quot;__inject success__&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>finishBlock 的类型不能用 id 代替，改为 void(^__nullable)(void) 即可</p>
+<h4 id="Command-line-Took"><a href="#Command-line-Took" class="headerlink" title="Command-line Took"></a>Command-line Took</h4><h4 id="Logify"><a href="#Logify" class="headerlink" title="Logify"></a>Logify</h4><p>Theos 自带的工具</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ logify.pl xxx.h &gt; xxx.xm</span><br></pre></td></tr></table></figure>
+
+<h4 id="ANYMethodLog"><a href="#ANYMethodLog" class="headerlink" title="ANYMethodLog"></a>ANYMethodLog</h4><p>用途和 Logify 相似，可控度更高，只需要了解一个类</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* aClass 要打印的类</span></span><br><span class="line"><span class="comment">* condition 根据此 block 来决定是否追踪方法（sel 是方法名）</span></span><br><span class="line"><span class="comment">* before 方法调用前会调用该 block（target 是检测的对象，sel 是方法名，args 是参数列表，deep 是调用层级）</span></span><br><span class="line"><span class="comment">* after 法调用后会调用该 block（interval 是执行方法的耗时，retValue 是返回值）</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">+ (<span class="keyword">void</span>)logMethodWithClass:(Class)aClass</span><br><span class="line">                 condition:(<span class="built_in">BOOL</span>(^)(SEL sel)) condition</span><br><span class="line">                    before:(<span class="keyword">void</span>(^)(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="keyword">int</span> deep)) before</span><br><span class="line">                     after:(<span class="keyword">void</span>(^)(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="built_in">NSTimeInterval</span> interval, <span class="keyword">int</span> deep, <span class="keyword">id</span> retValue)) after;</span><br></pre></td></tr></table></figure>
+
+<p>放到 %ctor</p>
+<ol>
+<li>打印一个类定义的所有方法，包括公开方法和私有方法</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[ANYMethodLog logMethodWithClass:[<span class="built_in">UIViewController</span> <span class="keyword">class</span>] condition:^<span class="built_in">BOOL</span>(SEL sel) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;method:%@&quot;</span>, <span class="built_in">NSStringFromSelector</span>(sel));</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">&#125; before:<span class="literal">nil</span> after:<span class="literal">nil</span>];</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>打印运行过程中调用了哪些方法</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[ANYMethodLog logMethodWithClass:[<span class="built_in">UIViewController</span> <span class="keyword">class</span>] condition:^<span class="built_in">BOOL</span>(SEL sel) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125; before:^(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="keyword">int</span> deep) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;target:%@ sel:%@&quot;</span>, target, <span class="built_in">NSStringFromSelector</span>(sel));</span><br><span class="line">&#125; after:<span class="literal">nil</span>];</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>打印特定几个方法的调用顺序</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[ANYMethodLog logMethodWithClass:[<span class="built_in">UIViewController</span> <span class="keyword">class</span>] condition:^<span class="built_in">BOOL</span>(SEL sel) &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSArray</span> *whiteList = @[<span class="string">@&quot;loadView&quot;</span>, <span class="string">@&quot;viewWillAppear:&quot;</span>, <span class="string">@&quot;viewDidAppear:&quot;</span>, <span class="string">@&quot;viewWillDisappear:&quot;</span>, <span class="string">@&quot;viewDidDisappear:&quot;</span>, <span class="string">@&quot;viewWillLayoutSubviews&quot;</span>, <span class="string">@&quot;viewDidLayoutSubviews&quot;</span>];</span><br><span class="line">    <span class="keyword">return</span> [whiteList containsObject:<span class="built_in">NSStringFromSelector</span>(sel)];</span><br><span class="line">&#125; before:^(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="keyword">int</span> deep) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;target:%@ sel:%@&quot;</span>, target, <span class="built_in">NSStringFromSelector</span>(sel));</span><br><span class="line">&#125; after:<span class="literal">nil</span>];</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>打印调用方法的参数值</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[ANYMethodLog logMethodWithClass:<span class="built_in">NSClassFromString</span>(<span class="string">@&quot;UIViewController&quot;</span>) condition:^<span class="built_in">BOOL</span>(SEL sel) &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">NSStringFromSelector</span>(sel) isEqualToString:<span class="string">@&quot;viewWillAppear:&quot;</span>];</span><br><span class="line">&#125; before:^(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="keyword">int</span> deep) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;before target:%@ sel:%@ args:%@&quot;</span>, target, <span class="built_in">NSStringFromSelector</span>(sel), args);</span><br><span class="line">&#125; after:<span class="literal">nil</span>];</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>打印某个方法调用前后的变化</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[ANYMethodLog logMethodWithClass:<span class="built_in">NSClassFromString</span>(<span class="string">@&quot;ListController&quot;</span>) condition:^<span class="built_in">BOOL</span>(SEL sel) &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">NSStringFromSelector</span>(sel) isEqualToString:<span class="string">@&quot;changeBackground&quot;</span>];</span><br><span class="line">&#125; before:^(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="keyword">int</span> deep) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;before background color:%@&quot;</span>, [(ListController *)target view].backgroundColor);</span><br><span class="line">&#125; after:^(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="built_in">NSTimeInterval</span> interval, <span class="keyword">int</span> deep, <span class="keyword">id</span> retValue) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;after background color:%@&quot;</span>, [(ListController *)target view].backgroundColor);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li>打印某个方法调用的耗时</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[ANYMethodLog logMethodWithClass:<span class="built_in">NSClassFromString</span>(<span class="string">@&quot;ListController&quot;</span>) condition:^<span class="built_in">BOOL</span>(SEL sel) &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">NSStringFromSelector</span>(sel) isEqualToString:<span class="string">@&quot;changeBackground&quot;</span>];</span><br><span class="line">&#125; before:^(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="keyword">int</span> deep) &#123;</span><br><span class="line">&#125; after:^(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="built_in">NSTimeInterval</span> interval, <span class="keyword">int</span> deep, <span class="keyword">id</span> retValue) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;interval::%@&quot;</span>, [@(interval) stringValue]);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<ol start="7">
+<li>追踪方法调用顺序</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[ANYMethodLog logMethodWithClass:<span class="built_in">NSClassFromString</span>(<span class="string">@&quot;ListController&quot;</span>) condition:^<span class="built_in">BOOL</span>(SEL sel) &#123;</span><br><span class="line">    <span class="keyword">return</span>  <span class="literal">YES</span>;</span><br><span class="line">&#125; before:^(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="keyword">int</span> deep) &#123;</span><br><span class="line">    <span class="built_in">NSString</span> *selector = <span class="built_in">NSStringFromSelector</span>(sel);</span><br><span class="line">    <span class="built_in">NSArray</span> *selectorArrary = [selector componentsSeparatedByString:<span class="string">@&quot;:&quot;</span>];</span><br><span class="line">    selectorArrary = [selectorArrary filteredArrayUsingPredicate:[<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@&quot;length &gt; 0&quot;</span>]];</span><br><span class="line">    <span class="built_in">NSMutableString</span> *selectorString = [<span class="built_in">NSMutableString</span> new];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; selectorArrary.count; i++) &#123;</span><br><span class="line">        [selectorString appendFormat:<span class="string">@&quot;%@:%@ &quot;</span>, selectorArrary[i], args[i]];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">NSMutableString</span> *deepString = [<span class="built_in">NSMutableString</span> new];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; deep; i++) &#123;</span><br><span class="line">        [deepString appendString:<span class="string">@&quot;-&quot;</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%@[%@ %@]&quot;</span>, deepString , target, selectorString);</span><br><span class="line">&#125; after:^(<span class="keyword">id</span> target, SEL sel, <span class="built_in">NSArray</span> *args, <span class="built_in">NSTimeInterval</span> interval, <span class="keyword">int</span> deep, <span class="keyword">id</span> retValue) &#123;</span><br><span class="line">    <span class="built_in">NSMutableString</span> *deepString = [<span class="built_in">NSMutableString</span> new];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; deep; i++) &#123;</span><br><span class="line">        [deepString appendString:<span class="string">@&quot;-&quot;</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%@ret:%@&quot;</span>, deepString, retValue);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>实际使用时，需要在 Makefile加入 ANYMethodLog.m </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iThunderHelper_FILES &#x3D; Tweak.xm ANYMethodLog.m </span><br></pre></td></tr></table></figure>
+
+<h4 id="BigBang"><a href="#BigBang" class="headerlink" title="BigBang"></a>BigBang</h4><p>功能笔记专一，主要用来 Hook 某个类的所有方法，打印所有方法的执行顺序</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/codesourse/BigBang">https://github.com/codesourse/BigBang</a></p>
+<p>使用只需一个代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[BigBang hookClass:@&quot;XLMberManager&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>放在只会执行一次的函数里，避免多次 Hook，%ctor</p>
+<h4 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h4><ol>
+<li>安装插件后报错再安装报 dpkg 错误</li>
+</ol>
+<p>ssh 连接到设备 <code>ps -e | grep dpkg</code></p>
+<p>kill dpkg端口号</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/04/%E9%80%86%E5%90%91-Theos/" rel="prev" title="逆向-Theos">
+                  <i class="fa fa-chevron-left"></i> 逆向-Theos
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

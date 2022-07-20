@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="macOS 12$ iproxy 2222 22 #端口转发$ ssh -p 2222 root@localhost  iOS设备上，查找应用进程名称 12root# ps -e8082 ??   0:16.32 &#x2F;var&#x2F;containers&#x2F;Bundle&#x2F;Application&#x2F;XXXX&#x2F;XinHuaShe.app&#x2F;XinH">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向-Frida绕过iOS反调试">
+<meta property="og:url" content="http://example.com/2022/06/18/%E9%80%86%E5%90%91-Frida%E7%BB%95%E8%BF%87iOS%E5%8F%8D%E8%B0%83%E8%AF%95/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="macOS 12$ iproxy 2222 22 #端口转发$ ssh -p 2222 root@localhost  iOS设备上，查找应用进程名称 12root# ps -e8082 ??   0:16.32 &#x2F;var&#x2F;containers&#x2F;Bundle&#x2F;Application&#x2F;XXXX&#x2F;XinHuaShe.app&#x2F;XinH">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/06/18/%E9%80%86%E5%90%91-Frida%E7%BB%95%E8%BF%87iOS%E5%8F%8D%E8%B0%83%E8%AF%95/逆向-Frida绕过iOS反调试/图片%201.png">
+<meta property="article:published_time" content="2022-06-17T16:08:34.000Z">
+<meta property="article:modified_time" content="2022-06-18T07:43:34.317Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/06/18/%E9%80%86%E5%90%91-Frida%E7%BB%95%E8%BF%87iOS%E5%8F%8D%E8%B0%83%E8%AF%95/逆向-Frida绕过iOS反调试/图片%201.png">
+
+
+<link rel="canonical" href="http://example.com/2022/06/18/%E9%80%86%E5%90%91-Frida%E7%BB%95%E8%BF%87iOS%E5%8F%8D%E8%B0%83%E8%AF%95/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>逆向-Frida绕过iOS反调试 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/06/18/%E9%80%86%E5%90%91-Frida%E7%BB%95%E8%BF%87iOS%E5%8F%8D%E8%B0%83%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向-Frida绕过iOS反调试
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-06-18 00:08:34 / 修改时间：15:43:34" itemprop="dateCreated datePublished" datetime="2022-06-18T00:08:34+08:00">2022-06-18</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>macOS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ iproxy 2222 22 #端口转发</span><br><span class="line">$ ssh -p 2222 root@localhost</span><br></pre></td></tr></table></figure>
+
+<p>iOS设备上，查找应用进程名称</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root# ps -e</span><br><span class="line">8082 ??   0:16.32 &#x2F;var&#x2F;containers&#x2F;Bundle&#x2F;Application&#x2F;XXXX&#x2F;XinHuaShe.app&#x2F;XinHuaShe</span><br></pre></td></tr></table></figure>
+
+<p>启动 debugserver 附加到 XinHuaShe 进程，监听 1234 端口，等待电脑端 LLDB 接入</p>
+<p>debugserver 主机IP地址:端口号 -a 应用进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root# debugserver *:1234 -a XinHuaShe</span><br><span class="line">Attaching to process XinHuaShe...</span><br><span class="line">Segmentation fault: 11</span><br></pre></td></tr></table></figure>
+
+<p>提示 <code>Segmentation fault: 11</code> 了 ，APP 做了反调试的防护</p>
+<p>目前公开的反动态调试的防护就 ptrace</p>
+<p>启动 APP</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root# debugserver -x posix *:1234 &#x2F;var&#x2F;containers&#x2F;Bundle&#x2F;Application&#x2F;CB03D455-A7BC-4762-84C6-3FAE31A3C67C&#x2F;XinHuaShe.app&#x2F;XinHuaShe</span><br></pre></td></tr></table></figure>
+
+<p>电脑端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ iproxy 1234 1234</span><br><span class="line">$ lldb</span><br><span class="line">(lldb) process connect connect:&#x2F;&#x2F;localhost:1234 &#x2F;&#x2F;手机IP地址</span><br><span class="line">error: failed to get reply to handshake packet  &#x2F;&#x2F;报错了</span><br></pre></td></tr></table></figure>
+
+<p>修改启动debugserver</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root# debugserver -x posix localhost:1234 &#x2F;var&#x2F;containers&#x2F;Bundle&#x2F;Application&#x2F;CB03D455-A7BC-4762-84C6-3FAE31A3C67C&#x2F;XinHuaShe.app&#x2F;XinHuaShe</span><br></pre></td></tr></table></figure>
+
+<p>继续</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">$ lldb</span><br><span class="line">(lldb) process connect connect:&#x2F;&#x2F;localhost:1234 &#x2F;&#x2F;手机IP地址</span><br><span class="line"></span><br><span class="line">Process 9824 stopped</span><br><span class="line">* thread #1, stop reason &#x3D; signal SIGSTOP</span><br><span class="line">    frame #0: 0x0000000108c91000 dyld&#96; _dyld_start</span><br><span class="line">dyld&#96;_dyld_start:</span><br><span class="line">-&gt;  0x108c91000 &lt;+0&gt;:  mov    x28, sp</span><br><span class="line">    0x108c91004 &lt;+4&gt;:  and    sp, x28, #0xfffffffffffffff0</span><br><span class="line">    0x108c91008 &lt;+8&gt;:  mov    x0, #0x0</span><br><span class="line">    0x108c9100c &lt;+12&gt;: mov    x1, #0x0</span><br><span class="line">    0x108c91010 &lt;+16&gt;: stp    x1, x0, [sp, #-0x10]!</span><br><span class="line">    0x108c91014 &lt;+20&gt;: mov    x29, sp</span><br><span class="line">    0x108c91018 &lt;+24&gt;: sub    sp, sp, #0x10             ; &#x3D;0x10</span><br><span class="line">    0x108c9101c &lt;+28&gt;: ldr    x0, [x28]</span><br><span class="line">Target 0: (XinHuaShe) stopped.</span><br><span class="line"></span><br><span class="line">(lldb) c</span><br><span class="line">Process 9824 resuming</span><br><span class="line">Process 9824 exited with status &#x3D; 45 (0x0000002d) &#x2F;&#x2F;直接退出了</span><br><span class="line"></span><br><span class="line">(lldb) b ptrace &#x2F;&#x2F;给ptrace下断点</span><br><span class="line">Breakpoint 1: no locations (pending).</span><br><span class="line">WARNING:  Unable to resolve breakpoint to any actual locations.</span><br><span class="line">(lldb) c</span><br><span class="line">Process 9841 resuming</span><br><span class="line">1 location added to breakpoint 1</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;打印调用栈</span><br><span class="line">(lldb) bt</span><br><span class="line">error: invalid thread</span><br><span class="line">external version is 20200929_18:15:57_6075104</span><br><span class="line">Object_Creator constructor</span><br><span class="line">Process 9841 stopped</span><br><span class="line">* thread #1, queue &#x3D; &#39;com.apple.main-thread&#39;, stop reason &#x3D; breakpoint 1.1</span><br><span class="line">    frame #0: 0x00000001b02a33b0 libsystem_kernel.dylib&#96; __ptrace</span><br><span class="line">libsystem_kernel.dylib&#96;__ptrace:</span><br><span class="line">-&gt;  0x1b02a33b0 &lt;+0&gt;:  adrp   x9, 213850</span><br><span class="line">    0x1b02a33b4 &lt;+4&gt;:  add    x9, x9, #0x110            ; &#x3D;0x110</span><br><span class="line">    0x1b02a33b8 &lt;+8&gt;:  str    wzr, [x9]</span><br><span class="line">    0x1b02a33bc &lt;+12&gt;: mov    x16, #0x1a</span><br><span class="line">    0x1b02a33c0 &lt;+16&gt;: svc    #0x80</span><br><span class="line">    0x1b02a33c4 &lt;+20&gt;: b.lo   0x1b02a33e4               ; &lt;+52&gt;</span><br><span class="line">    0x1b02a33c8 &lt;+24&gt;: pacibsp</span><br><span class="line">    0x1b02a33cc &lt;+28&gt;: stp    x29, x30, [sp, #-0x10]!</span><br><span class="line">Target 0: (XinHuaShe) stopped.</span><br></pre></td></tr></table></figure>
+
+<p>x30 寄存器也叫 lr 寄存器，打印返回地址 p/x $lr</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p&#x2F;x $lr</span><br><span class="line">(unsigned long) $0 &#x3D; 0x00000001003139e0</span><br><span class="line">(lldb) image list -o -f</span><br><span class="line">[  0] 0x0000000000254000 &#x2F;private&#x2F;var&#x2F;containers&#x2F;Bundle&#x2F;Application&#x2F;CB03D455-A7BC-4762-84C6-3FAE31A3C67C&#x2F;XinHuaShe.app&#x2F;XinHuaShe(0x0000000100254000)</span><br></pre></td></tr></table></figure>
+
+<p>地址转换下  0x00000001003139e0 - 0x0000000000254000 = 0x1000BF9E0</p>
+<p>IDA 中查找 0x1000BF9E0 地址</p>
+<img src="逆向-Frida绕过iOS反调试/图片 1.png" alt="图片 1" style="zoom:100%;" />
+
+<p>这段代码的含义就明显了，动态调用 ptrace，达到反动态调试的目的</p>
+<p>这段函数位于 sub_1000BF9A0 内部</p>
+<p>定位到函数右键 Jump to xref</p>
+<p>看到 sub_1000BF9A0 的显示调用这地址 start+20</p>
+<p>![图片 2](逆向-Frida绕过iOS反调试/图片 2.png)</p>
+<p>双击 start+20 查看实现，它是 start 函数，在 start 函数中动态调用 ptrace 函数来达到反动态调试的目的</p>
+<ul>
+<li>去掉 sub_1000BF9A0</li>
+</ul>
+<ol>
+<li>可以用 tweak 的方式</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;substrate.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;mach-o/dyld.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> (*old_sub_ACF0)(<span class="keyword">void</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> new_sub_ACF0(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// old_sub_ACF0();</span></span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;iOSRE: anti-anti-debugging&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">%ctor &#123;</span><br><span class="line">  <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> _sub_ACF0 = (_dyld_get_image_vmaddr_slide(<span class="number">0</span>) + <span class="number">0xACF0</span>) | <span class="number">0x1</span>;</span><br><span class="line">    <span class="keyword">if</span> (_sub_ACF0) <span class="built_in">NSLog</span>(<span class="string">@&quot;iOSRE: Found sub_ACF0!&quot;</span>);</span><br><span class="line">    MSHookFunction((<span class="keyword">void</span> *)_sub_ACF0, (<span class="keyword">void</span> *)&amp;new_sub_ACF0, (<span class="keyword">void</span> **)&amp;old_sub_ACF0);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>使用 fishhook</li>
+<li>Frida replace 掉 sub_1000BF9A0 函数</li>
+</ol>
+<p>hook.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取函数地址</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">get_rva</span>(<span class="params"><span class="built_in">module</span>, offset</span>) </span>&#123;</span><br><span class="line">	<span class="comment">//获取基地址</span></span><br><span class="line">	<span class="keyword">var</span> base_addr = Module.findBaseAddress(<span class="built_in">module</span>)</span><br><span class="line">	<span class="comment">//函数地址 = 基地址+偏移地址</span></span><br><span class="line">	<span class="keyword">var</span> target_addr = base_addr.add(offset) </span><br><span class="line">	<span class="keyword">if</span> (Process.arch == <span class="string">&#x27;arm&#x27;</span>) &#123; <span class="comment">//如果是32位地址+1</span></span><br><span class="line">		<span class="keyword">return</span> target_addr.add(<span class="number">1</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> target_addr</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (ObjC.available) &#123; <span class="comment">//OC类加载完成</span></span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">&#x27;\n[*] Starting Hooking&#x27;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> target_addr = get_rva(<span class="string">&#x27;XinHuaShe&#x27;</span>, <span class="number">0xBF9A0</span>)</span><br><span class="line">	<span class="comment">//NativeCallback(func, returnType, argTypes[,abi])</span></span><br><span class="line">	<span class="comment">//或者不用参数</span></span><br><span class="line">	Interceptor.replace(ptr(target_addr), <span class="keyword">new</span> NativeCallback(<span class="function"><span class="keyword">function</span>(<span class="params">argc, argv</span>)</span>&#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">&#x27;hook sub_ptrace bypass&#x27;</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;, int, [int, int]))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>hook.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> frida</span><br><span class="line"><span class="keyword">import</span> codecs</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">bundle = <span class="string">&#x27;com.xinhuamm.d0001&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#sys.argv[1] 第一个参数 </span></span><br><span class="line"><span class="keyword">with</span> codecs.<span class="built_in">open</span>(sys.argv[<span class="number">1</span>], <span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    source = f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment">#f = open(sys.argv[1], &#x27;r&#x27;) #打开frida脚本</span></span><br><span class="line"><span class="comment">#source = f.read() #读取frida脚本</span></span><br><span class="line"></span><br><span class="line">device = frida.get_usb_device(<span class="number">1000</span>) <span class="comment">#连接usb设备 1000表示超时</span></span><br><span class="line">pid = device.spawn(bundle) <span class="comment">#启动指定bundleId的app</span></span><br><span class="line">session = device.attach(pid)  <span class="comment">#附加到app</span></span><br><span class="line">script = session.create_script(source) <span class="comment">#创建frida javaScript脚本</span></span><br><span class="line">script.load() <span class="comment">#load脚本到app进程中 这样即注入成功</span></span><br><span class="line">device.resume(pid) <span class="comment">#恢复app运行</span></span><br><span class="line">sys.stdin.read()<span class="comment">#读取打印日志</span></span><br></pre></td></tr></table></figure>
+
+<p>执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3.8 hook.py hook.js</span><br></pre></td></tr></table></figure>
+
+<p>报错 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Failed to spawn: the request to open &quot;com.xinhuamm.d0001&quot; failed.</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><a target="_blank" rel="noopener" href="https://la0s.github.io/2019/03/07/anti_ptrace/">Frida绕过iOS反调试</a></p>
+<p><a target="_blank" rel="noopener" href="https://iosre.com/t/7-2-0-ios/770">干掉高德地图反动态调试</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/06/17/%E9%80%86%E5%90%91-Frida-RPC%E8%B0%83%E7%94%A8/" rel="prev" title="逆向-Frida RPC调用">
+                  <i class="fa fa-chevron-left"></i> 逆向-Frida RPC调用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/06/20/%E9%80%86%E5%90%91-Frida%E8%AE%B0%E5%BD%95/" rel="next" title="逆向-Frida记录">
+                  逆向-Frida记录 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
