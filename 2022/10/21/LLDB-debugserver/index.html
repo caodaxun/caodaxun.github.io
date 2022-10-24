@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="debugserverLLDB 只能运行在 macOS 上，若要调试 iOS 应用，需要在设备上运行 debugserver  远程调试中，LLDB 可以看作客户端，安装在 macOS 上；debugserver 可以看作服务端，在 iOS 上运行，用于接受 LLDB 命令并执行，再把执行结果返回 LLDB iOS 设备上没有安装debugserver，设备连接xcode后，debugserver">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2022/10/21/LLDB-debugserver/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="debugserverLLDB 只能运行在 macOS 上，若要调试 iOS 应用，需要在设备上运行 debugserver  远程调试中，LLDB 可以看作客户端，安装在 macOS 上；debugserver 可以看作服务端，在 iOS 上运行，用于接受 LLDB 命令并执行，再把执行结果返回 LLDB iOS 设备上没有安装debugserver，设备连接xcode后，debugserver">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-21T07:26:13.000Z">
+<meta property="article:modified_time" content="2022-10-22T04:10:40.598Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/10/21/LLDB-debugserver/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#debugserver"><span class="nav-number">1.</span> <span class="nav-text">debugserver</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#debugserver-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">debugserver 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F1"><span class="nav-number">1.1.1.</span> <span class="nav-text">配置方式1</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F2"><span class="nav-number">1.1.2.</span> <span class="nav-text">配置方式2</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#debugserver-%E5%90%AF%E5%8A%A8"><span class="nav-number">1.2.</span> <span class="nav-text">debugserver 启动</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">启动进程</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%99%84%E5%8A%A0%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">附加进程</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#LLDB-%E8%BF%9E%E6%8E%A5-debugserver"><span class="nav-number">1.3.</span> <span class="nav-text">LLDB 连接 debugserver</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LLDB"><span class="nav-number">2.</span> <span class="nav-text">LLDB</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ASLR"><span class="nav-number">2.1.</span> <span class="nav-text">ASLR</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%AD%E7%82%B9"><span class="nav-number">2.2.</span> <span class="nav-text">断点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%99%E6%96%B9%E6%B3%95%E6%B7%BB%E5%8A%A0%E6%96%AD%E7%82%B9"><span class="nav-number">2.3.</span> <span class="nav-text">给方法添加断点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%95%E6%AD%A5%E6%89%A7%E8%A1%8C"><span class="nav-number">2.4.</span> <span class="nav-text">单步执行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E8%AF%BB%E5%8F%96%E4%BF%AE%E6%94%B9"><span class="nav-number">2.5.</span> <span class="nav-text">寄存器读取修改</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%89%93%E5%8D%B0%E6%93%8D%E4%BD%9C"><span class="nav-number">2.6.</span> <span class="nav-text">打印操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E8%AF%BB%E5%86%99"><span class="nav-number">2.7.</span> <span class="nav-text">内存读写</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%8D%E6%B1%87%E7%BC%96"><span class="nav-number">2.8.</span> <span class="nav-text">反汇编</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%A0%88"><span class="nav-number">2.9.</span> <span class="nav-text">调用栈</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE-C-%E5%87%BD%E6%95%B0"><span class="nav-number">2.10.</span> <span class="nav-text">查找 C 函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Chisel"><span class="nav-number">3.</span> <span class="nav-text">Chisel</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#pviews"><span class="nav-number">3.1.</span> <span class="nav-text">pviews</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pvc"><span class="nav-number">3.2.</span> <span class="nav-text">pvc</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fv-amp-fvc"><span class="nav-number">3.3.</span> <span class="nav-text">fv&amp;fvc</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#border-amp-unborder"><span class="nav-number">3.4.</span> <span class="nav-text">border&amp;unborder</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pinternals"><span class="nav-number">3.5.</span> <span class="nav-text">pinternals</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#presponder"><span class="nav-number">3.6.</span> <span class="nav-text">presponder</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#visualize"><span class="nav-number">3.7.</span> <span class="nav-text">visualize</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pclass"><span class="nav-number">3.8.</span> <span class="nav-text">pclass</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#hide-amp-show"><span class="nav-number">3.9.</span> <span class="nav-text">hide&amp;show</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pactions"><span class="nav-number">3.10.</span> <span class="nav-text">pactions</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#methods"><span class="nav-number">3.11.</span> <span class="nav-text">methods</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#search"><span class="nav-number">3.12.</span> <span class="nav-text">search</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#bmessage"><span class="nav-number">3.13.</span> <span class="nav-text">bmessage</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pdata"><span class="nav-number">3.14.</span> <span class="nav-text">pdata</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/21/LLDB-debugserver/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-21 15:26:13" itemprop="dateCreated datePublished" datetime="2022-10-21T15:26:13+08:00">2022-10-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-10-22 12:10:40" itemprop="dateModified" datetime="2022-10-22T12:10:40+08:00">2022-10-22</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="debugserver"><a href="#debugserver" class="headerlink" title="debugserver"></a>debugserver</h4><p>LLDB 只能运行在 macOS 上，若要调试 iOS 应用，需要在设备上运行 debugserver </p>
+<p>远程调试中，LLDB 可以看作客户端，安装在 macOS 上；debugserver 可以看作服务端，在 iOS 上运行，用于接受 LLDB 命令并执行，再把执行结果返回 LLDB</p>
+<p>iOS 设备上没有安装debugserver，设备连接xcode后，debugserver才会被 Xcode 安装到设备的 /Develope/usr/bin 目录下</p>
+<p>因为缺少task_for_pid 权限 通过 Xcode 安装的 debugserver 只能调试我们自己的App</p>
+<h5 id="debugserver-配置"><a href="#debugserver-配置" class="headerlink" title="debugserver 配置"></a>debugserver 配置</h5><h6 id="配置方式1"><a href="#配置方式1" class="headerlink" title="配置方式1"></a>配置方式1</h6><p>获取 debugserver，将设备上的 debugserver 拷贝到电脑上添加权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ iproxy 2222 22 #进行端口转发</span><br><span class="line">$ scp -P 2222 root@localhost:&#x2F;Developer&#x2F;usr&#x2F;bin&#x2F;debugserver ~&#x2F;Desktop</span><br></pre></td></tr></table></figure>
+
+<p>瘦身，只保留 arm64 平台</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lipo -info debugserver</span><br><span class="line">lipo -thin arm64 debugserver -output debugserver</span><br><span class="line">file debugserver</span><br></pre></td></tr></table></figure>
+
+<p>添加权限 task_for_pid 权限，才能调试其它APP，ldid 在 theos/bin 目录下，或者 brew install ldid</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ldid -e debugserver &#x2F;&#x2F; 查看 debugserver</span><br><span class="line">ldid -e debugserver &gt; entitlement.plist &#x2F;&#x2F;输出 entitlement.plist</span><br></pre></td></tr></table></figure>
+
+<p>打开 entitlement.plist 文件 添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">task_for_pid-allow  Boolean 1</span><br><span class="line">get-task-allow      Boolean 1</span><br></pre></td></tr></table></figure>
+
+<p>重签名 debugserver</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ldid -Sentitlement.plist debugserver &#x2F;&#x2F;重签名</span><br><span class="line">ldid -e debugserver &#x2F;&#x2F;再次查看 debugserver 内容</span><br></pre></td></tr></table></figure>
+
+<p>/Developer/usr/bin目录下的debugserver是只读的 所以将处理好的debugserver拷贝到/usr/bin目录下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp -P 2222 debugserver root@localhost:&#x2F;usr&#x2F;bin&#x2F;</span><br></pre></td></tr></table></figure>
+
+<h6 id="配置方式2"><a href="#配置方式2" class="headerlink" title="配置方式2"></a>配置方式2</h6><p>新建 ent.xml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ touch ent.xml</span><br></pre></td></tr></table></figure>
+
+<p>拷贝内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE plist PUBLIC &quot;-&#x2F;&#x2F;Apple&#x2F;&#x2F;DTD PLIST 1.0&#x2F;&#x2F;EN&quot; &quot;http:&#x2F;&#x2F;www.apple.com&#x2F;DTDs&#x2F;PropertyList-1.0.dtd&quot;&gt;</span><br><span class="line">&lt;plist version&#x3D;&quot;1.0&quot;&gt;</span><br><span class="line">&lt;dict&gt;</span><br><span class="line">        &lt;key&gt;com.apple.springboard.debugapplications&lt;&#x2F;key&gt;</span><br><span class="line">        &lt;true&#x2F;&gt;</span><br><span class="line">        &lt;key&gt;get-task-allow&lt;&#x2F;key&gt;</span><br><span class="line">        &lt;true&#x2F;&gt;</span><br><span class="line">        &lt;key&gt;task_for_pid-allow&lt;&#x2F;key&gt;</span><br><span class="line">        &lt;true&#x2F;&gt;</span><br><span class="line">        &lt;key&gt;run-unsigned-code&lt;&#x2F;key&gt;</span><br><span class="line">        &lt;true&#x2F;&gt;</span><br><span class="line">&lt;&#x2F;dict&gt;</span><br><span class="line">&lt;&#x2F;plist&gt;</span><br></pre></td></tr></table></figure>
+
+<p>再用 ent.xml 重签名 debugserver</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldid -Sent.xml debugserver</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>或者用 codesign 来签名</li>
+</ul>
+<p>新建 ent.plist ，内容是 ent.xml 的内容，再执行 codesign 命令签名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codesign -s - --entitlements ent.plist -f debugserver</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="debugserver-启动"><a href="#debugserver-启动" class="headerlink" title="debugserver 启动"></a>debugserver 启动</h5><p>ssh 连接上设备</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ iproxy 2222 22</span><br><span class="line">$ ssh -p 2222 root@localhost</span><br></pre></td></tr></table></figure>
+
+<p>iOS设备上，查找应用进程名称</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root# ps -e</span><br></pre></td></tr></table></figure>
+
+<p>debugserver 可以直接启动和附加进程 </p>
+<h6 id="启动进程"><a href="#启动进程" class="headerlink" title="启动进程"></a>启动进程</h6><p>启动WeChat进程，并开启1234端口号，等待所有IP地址的LLDB连接</p>
+<p>这里如果是iOS12以上系统IP地址只能设置成127.0.0.1，然后使用USB连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root# debugserver -x backboard *:1234 -a WeChat</span><br></pre></td></tr></table></figure>
+
+<h6 id="附加进程"><a href="#附加进程" class="headerlink" title="附加进程"></a>附加进程</h6><p>附加到WeChat进程，并开启1234端口号，等待所有IP地址的LLDB连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root# debugserver *:1234 -a WeChat</span><br></pre></td></tr></table></figure>
+
+<p>启动或附加进程后，iOS 设备就会等待 macOS 终端 LLDB 的接入</p>
+<h5 id="LLDB-连接-debugserver"><a href="#LLDB-连接-debugserver" class="headerlink" title="LLDB 连接 debugserver"></a>LLDB 连接 debugserver</h5><p>端口转发</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iproxy 1234 1234</span><br></pre></td></tr></table></figure>
+
+<p>LLDB 连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$lldb</span><br><span class="line">(lldb)process connect connect:127.0.0.1:1234</span><br><span class="line">或者</span><br><span class="line">(lldb)process connect connect:localhost:1234</span><br></pre></td></tr></table></figure>
+
+<p>就连接上 LLDB 调试了，APP 自动处于断点状态，c 继续</p>
+<h4 id="LLDB"><a href="#LLDB" class="headerlink" title="LLDB"></a>LLDB</h4><h5 id="ASLR"><a href="#ASLR" class="headerlink" title="ASLR"></a>ASLR</h5><p>获取 ASLR（地址空间布局随机化）偏移值，也叫模块基地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ image list -o -f</span><br></pre></td></tr></table></figure>
+
+<p>由于 ASLR 的存在，实际加载地址每次都会不同，这是 iOS 的一种保护机制</p>
+<p>函数实际内存地址 = ASLR 偏移量 + IDA 中显示的文件偏移</p>
+<h5 id="断点"><a href="#断点" class="headerlink" title="断点"></a>断点</h5><p>breakpoint 可以简写为 br，设置断点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) breakpoint set -a 0x10021d084</span><br><span class="line">(lldb) br s -a 0x10021d084  &#x2F;&#x2F;简写 br s</span><br><span class="line">(lldb) continue 					  &#x2F;&#x2F;继续执行，简写 c</span><br><span class="line">(lldb) br list						  &#x2F;&#x2F;列出所有断点</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>禁用/启用/删除断点</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) br disable 1 &#x2F;&#x2F;后面是断点序号</span><br><span class="line">(lldb) br enable  1</span><br><span class="line">(lldb) br delete  1</span><br><span class="line">(lldb) br delete    &#x2F;&#x2F;清空断点</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>断点上加命令</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) breakpoint command add 2(断点组号)</span><br><span class="line">&gt; po self</span><br><span class="line">&gt; p self.view</span><br><span class="line">&gt; DONE</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="给方法添加断点"><a href="#给方法添加断点" class="headerlink" title="给方法添加断点"></a>给方法添加断点</h5><p>-n 是 name 的缩写</p>
+<p>p 命令：p 是打印非对象的值，expression 的缩写，打印对象的话会打印对象的地址；如果打印非对象，会打印出基本变量类型的值；也可声明一个变量：p int $a = 10</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(lldb) br [ViewController viewDidLoad]   &#x2F;&#x2F;给类方法添加断点</span><br><span class="line">(lldb) b -[ViewController hankTest1:]</span><br><span class="line">(lldb) br NSLog													 &#x2F;&#x2F;给NSLog方法添加断点</span><br><span class="line">(lldb) br set -n &quot;[ViewController save:]&quot; -n &quot;[ViewCont roller pauseGame:]&quot;</span><br><span class="line">(lldb) br set --selector touchBegan:withEvent: &#x2F;&#x2F;方法断点</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;当前文件方法添加断点</span><br><span class="line">(lldb) set --file ViewController.m --selector touchBegan:withEvent:</span><br><span class="line">&#x2F;&#x2F;遍历查找带Game字段的方法打断点</span><br><span class="line">(lldb) br set -r Game:</span><br></pre></td></tr></table></figure>
+
+<h5 id="单步执行"><a href="#单步执行" class="headerlink" title="单步执行"></a>单步执行</h5><p>si 和 ni 是汇编级别的，s（进入子函数）和 n（单步往下走）是源码级别的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) nexti 		&#x2F;&#x2F;单步执行，简写 ni</span><br><span class="line">(lldb) setpi	  &#x2F;&#x2F;单步执行，遇到子函数进入，简写 si</span><br><span class="line">(lldb) finish   &#x2F;&#x2F;完成功能并退出子函数，</span><br><span class="line">(lldb) return   &#x2F;&#x2F;直接退出子函数，原始代码不会调用（如反-反调试中跳过检测函数）</span><br></pre></td></tr></table></figure>
+
+<h5 id="寄存器读取修改"><a href="#寄存器读取修改" class="headerlink" title="寄存器读取修改"></a>寄存器读取修改</h5><p>LLDB 中操作寄存器的命令 register</p>
+<p>读取寄存器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(lldb) register read $x0</span><br></pre></td></tr></table></figure>
+
+<p>修改寄存器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(lldb) register write $x4 1</span><br></pre></td></tr></table></figure>
+
+<h5 id="打印操作"><a href="#打印操作" class="headerlink" title="打印操作"></a>打印操作</h5><p>po 命令用于打印 Objective-C 对象，以对象格式打印结果</p>
+<p>p 命令输出原生类型（boolean、integer、float）等，可以指定输出格式</p>
+<p>expression、expr、e 后面可以执行一段代码</p>
+<p>print、prin、pri、p 是 expression –的缩写，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">(lldb) po $x0</span><br><span class="line">&lt;XLMemberManager:0x14f6a9f30&gt;</span><br><span class="line">(lldb) po [$0 config]  &#x2F;&#x2F;打印XLMemberManager类的config属性</span><br><span class="line">(lldb) x&#x2F;s $x1			   &#x2F;&#x2F;以字符串读取x1寄存器（打印方法名可以用这个） </span><br><span class="line">(lldb) p(char *)$x1</span><br><span class="line"></span><br><span class="line">(lldb) p self.models.lastObject &#x2F;&#x2F;拿到某个对象</span><br><span class="line">(Person*)$2&#x3D;0x324234</span><br><span class="line">(lldb) p (Person *)self.models.lastObject</span><br><span class="line">(lldb) p $2.name&#x3D;@&quot;hank&quot;			  &#x2F;&#x2F;赋值</span><br><span class="line"></span><br><span class="line">(lldb) p&#x2F;c $5					 &#x2F;&#x2F;字符打印</span><br><span class="line">(lldb) p&#x2F;x $x2				 &#x2F;&#x2F;16进制打印 </span><br><span class="line">(lldb) p&#x2F;d $x3				 &#x2F;&#x2F;十进制打印</span><br><span class="line">(lldb) p&#x2F;t $x4				 &#x2F;&#x2F;二进制打印</span><br></pre></td></tr></table></figure>
+
+<p>LLDB 上可以添加多行代码 alt + 回车</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p Person *p3 &#x3D; [[Person alloc] init];</span><br><span class="line">p3.age &#x3D; 10;</span><br><span class="line">p3.name &#x3D; @&quot;hank&quot;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="内存读写"><a href="#内存读写" class="headerlink" title="内存读写"></a>内存读写</h5><p>LLDB 操作内存命令 memory</p>
+<ul>
+<li>读取内存</li>
+</ul>
+<p>-c 指定要读取的字节</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) memory read $x0</span><br><span class="line">(lldb) memory read 0x0004f7c</span><br><span class="line">(lldb) memory read 0x0004f7c -c 100 </span><br><span class="line">(lldb) memory read 0x0004f7c 0x00004fcc &#x2F;&#x2F;按区间读取</span><br></pre></td></tr></table></figure>
+
+<p>如果被读取的数据超过 1024 字节，就会出现错误，加入 –force 参数即可解决</p>
+<ul>
+<li>保存数据</li>
+</ul>
+<p>读取的内存数据可以使用 -outfile 参数保存到文件；如果只需要保存原始字节，加入 –binary</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) memory read 0x0004f7c -c 1025 --force -outfile &#x2F;tmp&#x2F;1.txt</span><br><span class="line"></span><br><span class="line">(lldb) memory read 0x0004f7c -c 1025 --force --binary -outfile &#x2F;tmp&#x2F;1.bin</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改内存</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(lldb) memory write 0x0004f7c 0x24</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>内存监视</li>
+</ul>
+<p>包括访问（read）、写入（write）、读写（read_write）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) watchpoint set expression -w read -- 0x0004f7c</span><br><span class="line">(lldb) watchpoint set expression -w write -- 0x0004f7c</span><br><span class="line">(lldb) watchpoint set expression -w read_write -- 0x0004f7c</span><br><span class="line">(lldb) watchpoint modify -c &#39;*(char*)0x0004f7c &#x3D;&#x3D; 20&#39;  &#x2F;&#x2F;指定条件监视</span><br></pre></td></tr></table></figure>
+
+<p>和 br 断点一样，watchpoint 也有 disable/enable/delete 参数</p>
+<h5 id="反汇编"><a href="#反汇编" class="headerlink" title="反汇编"></a>反汇编</h5><p>disassemble 简写 dis，反汇编指定地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) dis -a 0x0004f7c   &#x2F;&#x2F;-a 是地址</span><br><span class="line">(lldb) dis -n NSLog			  &#x2F;&#x2F;-n 需要反汇编的函数名称</span><br><span class="line">(lldb) dis -c 10 			    &#x2F;&#x2F;需要显示的指令数，10条</span><br><span class="line">(lldb) dis -s 0x1000066f4 -e 0x100006718 &#x2F;&#x2F;-s起始地址，-e结束地址</span><br></pre></td></tr></table></figure>
+
+<h5 id="调用栈"><a href="#调用栈" class="headerlink" title="调用栈"></a>调用栈</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) bt</span><br><span class="line">(lldb) bt 2   &#x2F;&#x2F;打印2层调用栈</span><br><span class="line">frame #1 0x000001003a2260 ........</span><br></pre></td></tr></table></figure>
+
+<p>看到 frame，1 对应地址 0x000001003a2260，用这地址减去 ASLR 的偏移量即得到文件的偏移地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p&#x2F;x 0x000001003a2260 - ASLR偏移量</span><br></pre></td></tr></table></figure>
+
+<p>将得到的地址到 IDA 查看验证调用栈的正确性</p>
+<h5 id="查找-C-函数"><a href="#查找-C-函数" class="headerlink" title="查找 C 函数"></a>查找 C 函数</h5><p>利用 lookup 查找 C 函数地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(lldb) image lookup -r -n ptrace</span><br></pre></td></tr></table></figure>
+
+<p>有时候闪退的时候调用栈可以看到一些地址，用 lookup 查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(lldb) image lookup --address 0x0000000100000de0</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Chisel"><a href="#Chisel" class="headerlink" title="Chisel"></a>Chisel</h4><p>LLDB 命令插件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">brew install chisel</span><br><span class="line">安装完成提示</span><br><span class="line">&#x3D;&#x3D;&gt; Caveats</span><br><span class="line">Add the following line to ~&#x2F;.lldbinit to load chisel when Xcode launches:</span><br><span class="line">command script import &#x2F;usr&#x2F;local&#x2F;opt&#x2F;chisel&#x2F;libexec&#x2F;fblldb.py</span><br></pre></td></tr></table></figure>
+
+<p>还需要将 LLDB 和 chisel 关联起来，给 lldbinit 注入脚本，终端执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo command script import &#x2F;usr&#x2F;local&#x2F;opt&#x2F;chisel&#x2F;libexec&#x2F;fblldb.py &gt;&gt; ~&#x2F;.lldbinit</span><br></pre></td></tr></table></figure>
+
+<h5 id="pviews"><a href="#pviews" class="headerlink" title="pviews"></a>pviews</h5><p>查看 view 层级</p>
+<h5 id="pvc"><a href="#pvc" class="headerlink" title="pvc"></a>pvc</h5><p>打印 ViewController 层级</p>
+<h5 id="fv-amp-fvc"><a href="#fv-amp-fvc" class="headerlink" title="fv&amp;fvc"></a>fv&amp;fvc</h5><p>通过类名搜索当前内存中存在的 view 和 viewController 实例的命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(lldb) fv bar</span><br><span class="line">0x7fed1f413e50 CYLTabBar</span><br><span class="line">0x7fed1f4140a0 _UIBarBackground</span><br><span class="line"></span><br><span class="line">(lldb) fvc bar</span><br><span class="line">0x7fed1f880c00 CYLTabBarController</span><br></pre></td></tr></table></figure>
+
+<h5 id="border-amp-unborder"><a href="#border-amp-unborder" class="headerlink" title="border&amp;unborder"></a>border&amp;unborder</h5><p>添加/去除边框</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(lldb) border 0x79ec3140 -c green -w 2</span><br><span class="line">(lldb) unborder 0x148d0e180</span><br></pre></td></tr></table></figure>
+
+<h5 id="pinternals"><a href="#pinternals" class="headerlink" title="pinternals"></a>pinternals</h5><p>这个命令就是打印出来的一个控件（id）类型的内部结构</p>
+<h5 id="presponder"><a href="#presponder" class="headerlink" title="presponder"></a>presponder</h5><p>打印出一个集成于UIResponder控件的消息传递链</p>
+<h5 id="visualize"><a href="#visualize" class="headerlink" title="visualize"></a>visualize</h5><p>可以使用mac下的预览app打开我们的图片UIImage, CGImageRef格式的图片，甚至view和layer的图片 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(lldb) visualize 0x79ec3140&#x2F;&#x2F;或者变量名，此地址是id类型的</span><br></pre></td></tr></table></figure>
+
+<h5 id="pclass"><a href="#pclass" class="headerlink" title="pclass"></a>pclass</h5><p>打印出一个对象的继承关系</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">UIImageView</span><br><span class="line">	| UIView</span><br><span class="line">	|    | UIResponder</span><br><span class="line">	|    |    | NSObject</span><br></pre></td></tr></table></figure>
+
+<h5 id="hide-amp-show"><a href="#hide-amp-show" class="headerlink" title="hide&amp;show"></a>hide&amp;show</h5><p>显示隐藏对象</p>
+<h5 id="pactions"><a href="#pactions" class="headerlink" title="pactions"></a>pactions</h5><p>打印控件响应事件</p>
+<h5 id="methods"><a href="#methods" class="headerlink" title="methods"></a>methods</h5><p>临时查看某个类的所有方法和内存地址</p>
+<h5 id="search"><a href="#search" class="headerlink" title="search"></a>search</h5><p>类似 Cycript 中的 choose 功能，搜索某个实例对象</p>
+<h5 id="bmessage"><a href="#bmessage" class="headerlink" title="bmessage"></a>bmessage</h5><p>对方法名设置断点。</p>
+<h5 id="pdata"><a href="#pdata" class="headerlink" title="pdata"></a>pdata</h5><p>打印 NSData 数据</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/20/%E9%80%86%E5%90%91-%E5%B7%A5%E5%85%B7/" rel="prev" title="逆向-工具">
+                  <i class="fa fa-chevron-left"></i> 逆向-工具
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/23/%E9%80%86%E5%90%91-HOOK&%E6%B3%A8%E5%85%A5/" rel="next" title="逆向-HOOK&注入">
+                  逆向-HOOK&注入 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

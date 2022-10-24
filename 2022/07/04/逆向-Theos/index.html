@@ -24,12 +24,12 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="逆向工程之Theos Tweak Logos Theos 一个跨平台的越狱开发工具包 Theos 相当于对 Cydia Substrate 的封装，因而能实现对 Object-C 运行时的 Hook，也能实现对 C 语言函数的 Hook Theos 安装 安装 ldid  Theos 开发中，iOS 文件的签名由 ldid 工具来完成，ldid 取代了 Xcode 自带的 codesign 1$">
+  <meta name="description" content="逆向工程之Theos Tweak Logos Theos 一个跨平台的越狱开发工具包 Theos 相当于对 Cydia Substrate 的封装，因而能实现对 Object-C 运行时的 Hook，也能实现对 C 语言函数的 Hook Theos 安装安装 ldidTheos 开发中，iOS 文件的签名由 ldid 工具来完成，ldid 取代了 Xcode 自带的 codesign 1$ bre">
 <meta property="og:type" content="article">
 <meta property="og:title" content="逆向-Theos">
 <meta property="og:url" content="http://example.com/2022/07/04/%E9%80%86%E5%90%91-Theos/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="逆向工程之Theos Tweak Logos Theos 一个跨平台的越狱开发工具包 Theos 相当于对 Cydia Substrate 的封装，因而能实现对 Object-C 运行时的 Hook，也能实现对 C 语言函数的 Hook Theos 安装 安装 ldid  Theos 开发中，iOS 文件的签名由 ldid 工具来完成，ldid 取代了 Xcode 自带的 codesign 1$">
+<meta property="og:description" content="逆向工程之Theos Tweak Logos Theos 一个跨平台的越狱开发工具包 Theos 相当于对 Cydia Substrate 的封装，因而能实现对 Object-C 运行时的 Hook，也能实现对 C 语言函数的 Hook Theos 安装安装 ldidTheos 开发中，iOS 文件的签名由 ldid 工具来完成，ldid 取代了 Xcode 自带的 codesign 1$ bre">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/07/04/%E9%80%86%E5%90%91-Theos/逆向-Theos/图片%202.png">
 <meta property="og:image" content="http://example.com/2022/07/04/%E9%80%86%E5%90%91-Theos/逆向-Theos/图片%203.png">
@@ -37,7 +37,7 @@
 <meta property="og:image" content="http://example.com/2022/07/04/%E9%80%86%E5%90%91-Theos/逆向-Theos/图片%205.png">
 <meta property="og:image" content="http://example.com/2022/07/04/%E9%80%86%E5%90%91-Theos/逆向-Theos/图片%206.png">
 <meta property="article:published_time" content="2022-07-04T09:45:49.000Z">
-<meta property="article:modified_time" content="2022-07-14T06:26:00.573Z">
+<meta property="article:modified_time" content="2022-10-23T11:06:45.692Z">
 <meta property="article:author" content="daxun">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2022/07/04/%E9%80%86%E5%90%91-Theos/逆向-Theos/图片%202.png">
@@ -218,7 +218,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <section class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Theos-%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">Theos 安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97"><span class="nav-number">2.</span> <span class="nav-text">常用模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tweak%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91"><span class="nav-number">3.</span> <span class="nav-text">Tweak插件开发</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.</span> <span class="nav-text">目录结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E6%89%93%E5%8C%85%E5%AE%89%E8%A3%85"><span class="nav-number">3.2.</span> <span class="nav-text">编译打包安装</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Logos"><span class="nav-number">4.</span> <span class="nav-text">Logos</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Logos-Tip"><span class="nav-number">4.1.</span> <span class="nav-text">Logos Tip</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91"><span class="nav-number">5.</span> <span class="nav-text">命令行工具开发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91"><span class="nav-number">6.</span> <span class="nav-text">系统应用开发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E5%BC%80%E5%8F%91"><span class="nav-number">7.</span> <span class="nav-text">守护进程开发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E9%A1%B9"><span class="nav-number">8.</span> <span class="nav-text">增加系统设置项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">9.</span> <span class="nav-text">进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Notification%E9%80%9A%E4%BF%A1"><span class="nav-number">9.1.</span> <span class="nav-text">Notification通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#XPC%E9%80%9A%E4%BF%A1"><span class="nav-number">9.2.</span> <span class="nav-text">XPC通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RocketBootstrap%E9%80%9A%E4%BF%A1"><span class="nav-number">9.3.</span> <span class="nav-text">RocketBootstrap通信</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deb%E9%87%8D%E6%89%93%E5%8C%85"><span class="nav-number">10.</span> <span class="nav-text">deb重打包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E4%BF%AE%E6%94%B9"><span class="nav-number">11.</span> <span class="nav-text">报错修改</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Theos-%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">Theos 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-ldid"><span class="nav-number">1.1.</span> <span class="nav-text">安装 ldid</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-dpkg%EF%BC%8Cdpkg-deb"><span class="nav-number">1.2.</span> <span class="nav-text">安装 dpkg，dpkg-deb</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-theos"><span class="nav-number">1.3.</span> <span class="nav-text">安装 theos</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97"><span class="nav-number">2.</span> <span class="nav-text">常用模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tweak%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91"><span class="nav-number">3.</span> <span class="nav-text">Tweak插件开发</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Makefile"><span class="nav-number">3.1.</span> <span class="nav-text">Makefile</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Tweak-xm"><span class="nav-number">3.2.</span> <span class="nav-text">Tweak.xm</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#control"><span class="nav-number">3.3.</span> <span class="nav-text">control</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#iThunderHelper-plist"><span class="nav-number">3.4.</span> <span class="nav-text">iThunderHelper.plist</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E6%89%93%E5%8C%85%E5%AE%89%E8%A3%85"><span class="nav-number">3.5.</span> <span class="nav-text">编译打包安装</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Logos%E8%AF%AD%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">Logos语法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#hook"><span class="nav-number">4.1.</span> <span class="nav-text">%hook</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#log"><span class="nav-number">4.2.</span> <span class="nav-text">%log</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#orig"><span class="nav-number">4.3.</span> <span class="nav-text">%orig</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#group"><span class="nav-number">4.4.</span> <span class="nav-text">%group</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ctor"><span class="nav-number">4.5.</span> <span class="nav-text">%ctor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dtor"><span class="nav-number">4.6.</span> <span class="nav-text">%dtor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#new"><span class="nav-number">4.7.</span> <span class="nav-text">%new</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#c"><span class="nav-number">4.8.</span> <span class="nav-text">%c</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#property"><span class="nav-number">4.9.</span> <span class="nav-text">%property</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#subclass"><span class="nav-number">4.10.</span> <span class="nav-text">%subclass</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#hookf"><span class="nav-number">4.11.</span> <span class="nav-text">%hookf</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Logos-Tip"><span class="nav-number">5.</span> <span class="nav-text">Logos Tip</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E7%B1%BB%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F"><span class="nav-number">5.1.</span> <span class="nav-text">获取类成员变量</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7%E5%BC%80%E5%8F%91"><span class="nav-number">6.</span> <span class="nav-text">命令行工具开发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91"><span class="nav-number">7.</span> <span class="nav-text">系统应用开发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E5%BC%80%E5%8F%91"><span class="nav-number">8.</span> <span class="nav-text">守护进程开发</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E9%85%8D%E7%BD%AE"><span class="nav-number">8.1.</span> <span class="nav-text">守护进程配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2"><span class="nav-number">8.2.</span> <span class="nav-text">自动部署</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E9%A1%B9"><span class="nav-number">9.</span> <span class="nav-text">增加系统设置项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">10.</span> <span class="nav-text">进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Notification%E9%80%9A%E4%BF%A1"><span class="nav-number">10.1.</span> <span class="nav-text">Notification通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#XPC%E9%80%9A%E4%BF%A1"><span class="nav-number">10.2.</span> <span class="nav-text">XPC通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RocketBootstrap%E9%80%9A%E4%BF%A1"><span class="nav-number">10.3.</span> <span class="nav-text">RocketBootstrap通信</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deb%E9%87%8D%E6%89%93%E5%8C%85"><span class="nav-number">11.</span> <span class="nav-text">deb重打包</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-dpkg"><span class="nav-number">11.1.</span> <span class="nav-text">安装 dpkg</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%8C%85"><span class="nav-number">11.2.</span> <span class="nav-text">解包</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E4%BF%AE%E6%94%B9"><span class="nav-number">12.</span> <span class="nav-text">报错修改</span></a></li></ol></div>
         </section>
         <!--/noindex-->
 
@@ -232,7 +232,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -317,7 +317,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-07-14 14:26:00" itemprop="dateModified" datetime="2022-07-14T14:26:00+08:00">2022-07-14</time>
+        <time title="修改时间：2022-10-23 19:06:45" itemprop="dateModified" datetime="2022-10-23T19:06:45+08:00">2022-10-23</time>
       </span>
 
   
@@ -334,10 +334,7 @@
 <p><a target="_blank" rel="noopener" href="https://theos.dev/docs/logos">Tweak Logos</a></p>
 <p>Theos 一个跨平台的越狱开发工具包</p>
 <p>Theos 相当于对 Cydia Substrate 的封装，因而能实现对 Object-C 运行时的 Hook，也能实现对 C 语言函数的 Hook</p>
-<h4 id="Theos-安装"><a href="#Theos-安装" class="headerlink" title="Theos 安装"></a>Theos 安装</h4><ul>
-<li>安装 ldid</li>
-</ul>
-<p>Theos 开发中，iOS 文件的签名由 ldid 工具来完成，ldid 取代了 Xcode 自带的 codesign</p>
+<h4 id="Theos-安装"><a href="#Theos-安装" class="headerlink" title="Theos 安装"></a>Theos 安装</h4><h5 id="安装-ldid"><a href="#安装-ldid" class="headerlink" title="安装 ldid"></a>安装 ldid</h5><p>Theos 开发中，iOS 文件的签名由 ldid 工具来完成，ldid 取代了 Xcode 自带的 codesign</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew instll ldid</span><br></pre></td></tr></table></figure>
 
 <p>或者下载 <a target="_blank" rel="noopener" href="http://joedj.net/ldid">http://joedj.net/ldid</a> 放到 /opt/theos/bin 目录下，添加执行权限</p>
@@ -349,10 +346,7 @@
 <p>两种压缩模块，为了后面 <code>make package</code> 能顺利通过</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ brew install xz</span><br><span class="line">$ sudo cpan IO::Compress::Lzma</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>安装 dpkg，dpkg-deb</li>
-</ul>
-<p>可以使用 dpkg 制作 deb，Theos开发的插件都会以deb的格式进行发布</p>
+<h5 id="安装-dpkg，dpkg-deb"><a href="#安装-dpkg，dpkg-deb" class="headerlink" title="安装 dpkg，dpkg-deb"></a>安装 dpkg，dpkg-deb</h5><p>可以使用 dpkg 制作 deb，Theos开发的插件都会以deb的格式进行发布</p>
 <p>有了 dpkg-deb，Theos才能正确把工程打包成 deb 文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install dpkg</span><br><span class="line">brew install dpkg-deb</span><br></pre></td></tr></table></figure>
 
@@ -362,10 +356,7 @@
 <p>.bash_profile</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export THEOS&#x3D;&#x2F;opt&#x2F;theos</span><br><span class="line">export PATH&#x3D;$PATH:$THEOS&#x2F;bin</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>安装 theos</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo git clone --recursive https:&#x2F;&#x2F;github.com&#x2F;theos&#x2F;theos.git $THEOS</span><br></pre></td></tr></table></figure>
+<h5 id="安装-theos"><a href="#安装-theos" class="headerlink" title="安装 theos"></a>安装 theos</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo git clone --recursive https:&#x2F;&#x2F;github.com&#x2F;theos&#x2F;theos.git $THEOS</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>设置 $THEOS 用户组权限</li>
@@ -382,6 +373,7 @@
 <p>application：系统级应用模板</p>
 <p>xpc_service：XPC 服务模板</p>
 <h4 id="Tweak插件开发"><a href="#Tweak插件开发" class="headerlink" title="Tweak插件开发"></a>Tweak插件开发</h4><p>iOS 越狱平台下的插件称为 tweak。实质就是 iOS 平台的动态库 dylib，利用 Cydia Substrate 提供的组件进行加载，完成特定功能</p>
+<p>所有 Tweak 都保存在 /Library/MobileSubstrate/DynamicLibraries 目录，Tweak 后缀名为 .dylib</p>
 <p>终端输入 nic.pl，工程模板选择 [10.] iphone/tweak，创建一个 tweak 工程</p>
 <ul>
 <li>配置参数</li>
@@ -389,28 +381,18 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Project Name (required): 项目名称</span><br><span class="line">Package Name [com.yourcompany.langjitweak]: 包名</span><br><span class="line">Author&#x2F;Maintainer Name 作者名字，默认当前登录用户名</span><br><span class="line">[iphone&#x2F;tweak] MobileSubstrate Bundle filter: 注入应用的BundleID</span><br><span class="line">[iphone&#x2F;tweak] List of applications to terminate upon installation (space-separated, &#39;-&#39; for none) [SpringBoard]: 安装成功后需结束的进程，默认SpringBoard，不需要结束任务进程输入 -</span><br></pre></td></tr></table></figure>
 
 <p>为了方便修改，可以在生成的文件夹新建 Xcode 项目，将文件拖入 Xcode 项目编辑</p>
-<h5 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h5><p>![图片 1](逆向-Theos/图片 1.png)</p>
 <ul>
-<li>Makefile</li>
+<li>目录结构</li>
 </ul>
-<p>指定工程用到源文件、框架、库等信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">#引入Makefile的公共文件</span><br><span class="line">include $(THEOS)&#x2F;makefiles&#x2F;common.mk  </span><br><span class="line">#指定处理器架构 多个架构空格分开 最新的A12处理器设备还需要arm64e</span><br><span class="line">ARCHS&#x3D;arm64 arm64e</span><br><span class="line"></span><br><span class="line">#指定目标规范 A12处理器设备指定SDK版本必须大于10.1</span><br><span class="line">#指定目标平台为iOS，编译器为clang，使用10.2版本SDK编译该tweak，编译后的程序只能在8.0及以上系统运行</span><br><span class="line"></span><br><span class="line">TARGET &#x3D; iphone:clang:10.2:8.0</span><br><span class="line">#可以省略编译类型 SDK设置为latest</span><br><span class="line">TARGET &#x3D; iphone:latest:8.0</span><br><span class="line"></span><br><span class="line">#指定的项目名称</span><br><span class="line">TWEAK_NAME &#x3D; iThunderHelper		</span><br><span class="line">iThunderHelper_CFLAGS &#x3D; -fobjc-arc</span><br><span class="line"></span><br><span class="line">#tweak包含的源文件(头文件除外)多个文件空格分开</span><br><span class="line">#如 iThunderHelper_FILES &#x3D; Tweak.xm ANYMethodLog.m PYG.m</span><br><span class="line">iThunderHelper_FILES &#x3D; Tweak.xm				</span><br><span class="line"></span><br><span class="line">#根据不同工程类型指定.mk文件，tweak工程是tweak.mk 还可以填入 application.mk及tool.mk</span><br><span class="line">include $(THEOS_MAKE_PATH)&#x2F;tweak.mk</span><br><span class="line"></span><br><span class="line">#这里做了端口映射 需要iproxy 2222 22</span><br><span class="line">THEOS_DEVICE_IP &#x3D; localhost</span><br><span class="line">THEOS_DEVICE_PORT &#x3D; 2222  </span><br><span class="line">或者</span><br><span class="line">THEOS_DEVICE_IP &#x3D; IP地址 </span><br></pre></td></tr></table></figure>
+<p>![图片 1](逆向-Theos/图片 1.png)</p>
+<h5 id="Makefile"><a href="#Makefile" class="headerlink" title="Makefile"></a>Makefile</h5><p>指定工程用到源文件、框架、库等信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">#引入Makefile的公共文件</span><br><span class="line">include $(THEOS)&#x2F;makefiles&#x2F;common.mk  </span><br><span class="line">#指定处理器架构 多个架构空格分开 最新的A12处理器设备还需要arm64e</span><br><span class="line">ARCHS&#x3D;arm64 arm64e</span><br><span class="line"></span><br><span class="line">#指定目标规范 A12处理器设备指定SDK版本必须大于10.1</span><br><span class="line">#指定目标平台为iOS，编译器为clang，使用10.2版本SDK编译该tweak，编译后的程序只能在8.0及以上系统运行</span><br><span class="line"></span><br><span class="line">TARGET &#x3D; iphone:clang:10.2:8.0</span><br><span class="line">#可以省略编译类型 SDK设置为latest 指定Tweak支持的系统版本</span><br><span class="line">TARGET &#x3D; iphone:latest:8.0</span><br><span class="line"></span><br><span class="line">#指定的项目名称</span><br><span class="line">TWEAK_NAME &#x3D; iThunderHelper		</span><br><span class="line">iThunderHelper_CFLAGS &#x3D; -fobjc-arc</span><br><span class="line"></span><br><span class="line">#tweak包含的源文件(头文件除外)多个文件空格分开</span><br><span class="line">#如 iThunderHelper_FILES &#x3D; Tweak.xm ANYMethodLog.m PYG.m</span><br><span class="line">iThunderHelper_FILES &#x3D; Tweak.xm				</span><br><span class="line"></span><br><span class="line">#根据不同工程类型指定.mk文件，tweak工程是tweak.mk 还可以填入 application.mk及tool.mk</span><br><span class="line">include $(THEOS_MAKE_PATH)&#x2F;tweak.mk</span><br><span class="line"></span><br><span class="line">#导入Framework</span><br><span class="line">iThunderHelper_FRAMEWORKS &#x3D; UIKit</span><br><span class="line"></span><br><span class="line">#导入私有Framework</span><br><span class="line">iThunderHelper_PRIVATE_FRAMEWORKS &#x3D; ChatKit</span><br><span class="line"></span><br><span class="line">#链接动态库 libz.dylib和libsqlite.dylib</span><br><span class="line">iThunderHelper_LDFLAGS &#x3D; -lz -lsqlite</span><br><span class="line"></span><br><span class="line">iThunderHelper_LIBRARIES &#x3D; rocketbootstrap</span><br><span class="line"></span><br><span class="line">#这里做了端口映射 需要iproxy 2222 22</span><br><span class="line">THEOS_DEVICE_IP &#x3D; localhost</span><br><span class="line">THEOS_DEVICE_PORT &#x3D; 2222  </span><br><span class="line">或者</span><br><span class="line">THEOS_DEVICE_IP &#x3D; IP地址 </span><br><span class="line"></span><br><span class="line">#安装后执行的命令</span><br><span class="line">after-install::  </span><br><span class="line">	install.exec &quot;kill -9 MobileSMS&quot;</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li><p>Tweak.xm</p>
-<p>生成的默认源文件，后缀 .xm 表示支持 Logos 和 C/C++语法，如果后缀为 .x ，说明源文件支持 Logos和C语法</p>
-</li>
-<li><p>control</p>
-</li>
-</ul>
-<p>deb 包的必备文件，记录 deb 包管理系统所需的基本信息</p>
+<h5 id="Tweak-xm"><a href="#Tweak-xm" class="headerlink" title="Tweak.xm"></a>Tweak.xm</h5><p> 生成的默认源文件，后缀 .xm 表示支持 Logos 和 C/C++语法，如果后缀为 .x ，说明源文件支持 Logos和C语法</p>
+<h5 id="control"><a href="#control" class="headerlink" title="control"></a>control</h5><p>deb 包的必备文件，记录 deb 包管理系统所需的基本信息</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Package: com.ithunderhelper #deb包的唯一ID</span><br><span class="line">Name: ithunderhelper #描述tweak名字</span><br><span class="line"></span><br><span class="line">#deb包的依赖项，多个依赖逗号隔开，指定版本号则在后面用括号标注</span><br><span class="line"># Depends: mobilesubstrate, com.rpetrich.rocketbootstrap(&gt;&#x3D;1.0.2)</span><br><span class="line">Depends: mobilesubstrate </span><br><span class="line"></span><br><span class="line">Version: 0.0.1	#deb包当前版本</span><br><span class="line">Architecture: iphoneos-arm #描述deb包的架构，不可修改</span><br><span class="line">Description: An awesome MobileSubstrate tweak!  #对tweak的简要描述</span><br><span class="line">Maintainer: cao #deb包维护人员</span><br><span class="line">Author: cao  #描述tweak的开发者</span><br><span class="line">Section: Tweaks #deb包所属类别</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li><p>iThunderHelper.plist </p>
-<p>tweak的作用对象</p>
-</li>
-</ul>
+<h5 id="iThunderHelper-plist"><a href="#iThunderHelper-plist" class="headerlink" title="iThunderHelper.plist"></a>iThunderHelper.plist</h5><p> tweak的作用对象</p>
 <h5 id="编译打包安装"><a href="#编译打包安装" class="headerlink" title="编译打包安装"></a>编译打包安装</h5><ul>
 <li>编译</li>
 </ul>
@@ -444,28 +426,16 @@
 <p>通过Theos安装</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ make package install</span><br></pre></td></tr></table></figure>
 
-<h4 id="Logos"><a href="#Logos" class="headerlink" title="Logos"></a>Logos</h4><ul>
-<li>%hook</li>
-</ul>
-<p>指定需要hook的Class 以%end结尾</p>
+<h4 id="Logos语法"><a href="#Logos语法" class="headerlink" title="Logos语法"></a>Logos语法</h4><h5 id="hook"><a href="#hook" class="headerlink" title="%hook"></a>%hook</h5><p>指定需要hook的Class 以%end结尾</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%hook MainViewController</span><br><span class="line"><span class="comment">//hook的方法</span></span><br><span class="line">%end</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>%log</li>
-</ul>
-<p>打印类名、函数、参数等信息</p>
+<h5 id="log"><a href="#log" class="headerlink" title="%log"></a>%log</h5><p>打印类名、函数、参数等信息</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%log((<span class="built_in">NSString</span> *)<span class="string">@&quot;tutuTest&quot;</span>, (<span class="built_in">NSString</span> *)<span class="string">@&quot;Debug&quot;</span>);</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>%orig</li>
-</ul>
-<p>执行原始代码</p>
+<h5 id="orig"><a href="#orig" class="headerlink" title="%orig"></a>%orig</h5><p>执行原始代码</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//可以有返回值 </span></span><br><span class="line"><span class="keyword">id</span> value = %orig;</span><br><span class="line"><span class="comment">//调用原来方法 </span></span><br><span class="line"><span class="keyword">id</span> value = %orig(arg1);</span><br><span class="line"></span><br><span class="line"><span class="comment">//%orig还可以更改原始函数的参数  %orig(参数)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//将arg的参数修改为change arg2</span></span><br><span class="line">%orig(<span class="string">@&quot;change arg2&quot;</span>, arg2); </span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>%group  </li>
-</ul>
-<p>将hook分组，便于代码管理及按条件初始化，以%end结尾</p>
+<h5 id="group"><a href="#group" class="headerlink" title="%group"></a>%group</h5><p>将hook分组，便于代码管理及按条件初始化，以%end结尾</p>
 <p>一个 %group 可以包含多个%hook，不属于某个自定义group的%hook会被归类到%group _ungrouped中</p>
 <p>如果定义了group 那么一定要写%init(group)</p>
 <p>%init初始化某个%group 必须在%hook或%ctor内调用</p>
@@ -475,49 +445,33 @@
 <p>group需要初始化</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">%ctor &#123;</span><br><span class="line"> <span class="built_in">NSString</span> *v = [[<span class="built_in">UIDevice</span> currentDevice] systemVersion];</span><br><span class="line"> <span class="keyword">if</span>(v.doubleValue &gt; <span class="number">11.0</span>) &#123;</span><br><span class="line">    %init(group1)；</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    %init(group2)；</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">%hook TargetClass</span><br><span class="line">- (<span class="keyword">void</span>)targetMethod &#123;</span><br><span class="line">  <span class="built_in">NSString</span> *v = [[<span class="built_in">UIDevice</span> currentDevice] systemVersion];</span><br><span class="line"> <span class="keyword">if</span>(v.doubleValue &gt; <span class="number">11.0</span>) &#123;</span><br><span class="line">    %init(group1)；</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    %init(group2)；</span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br><span class="line">%end</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>%ctor</li>
-</ul>
-<p>完成初始化工作 没定义会隐式生成 构造函数</p>
+<h5 id="ctor"><a href="#ctor" class="headerlink" title="%ctor"></a>%ctor</h5><p>完成初始化工作 没定义会隐式生成 构造函数，构造函数</p>
 <p>一般可以用来初始化%group 不需要%end结尾</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">%hook SpringBoard</span><br><span class="line"><span class="comment">//hook方法</span></span><br><span class="line">%end</span><br><span class="line">%ctor &#123;</span><br><span class="line">    %init(_ungrouped); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>%dtor</li>
-</ul>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%dtor &#123;</span><br><span class="line">    <span class="comment">//析构</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="dtor"><a href="#dtor" class="headerlink" title="%dtor"></a>%dtor</h5><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%dtor &#123;</span><br><span class="line">    <span class="comment">//析构</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>%new</li>
-</ul>
-<p>给现有class添加新函数</p>
+<h5 id="new"><a href="#new" class="headerlink" title="%new"></a>%new</h5><p>给现有class添加新函数</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">%hook XLMemberManager</span><br><span class="line"><span class="comment">//hook方法</span></span><br><span class="line"><span class="comment">//%new 不用%end  写在%hook类内部</span></span><br><span class="line">%new</span><br><span class="line">- (<span class="keyword">void</span>)newmethod &#123;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br></pre></td></tr></table></figure>
 
 <p>添加了新方法，使用 [self newmethod] 调用会报错。</p>
 <p>只需要加个定义，骗过编译器</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XLMemberManager</span></span></span><br><span class="line">- (<span class="keyword">void</span>)newmethod;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>%c</li>
-</ul>
-<p>动态获取一个类的定义 相当于objc_getClass 或 NSClassFroming</p>
+<h5 id="c"><a href="#c" class="headerlink" title="%c"></a>%c</h5><p>动态获取一个类的定义 相当于objc_getClass 或 NSClassFroming</p>
 <p>获取某个类 %c(ViewController)</p>
 <p>然后可以调用类方法</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XLMemberConfigure</span></span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">...</span><br><span class="line">XLMemberConfigure *configure = [[%c(XLMemberConfigure) alloc] init];</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;memberConfigure=%@&quot;</span>, configure);</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>%property</li>
-<li>%subclass</li>
-</ul>
-<p>子类块</p>
-<p>父类中不存在的方法用%new说明符 要实例化新类的一个对象用%c运算符</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">%subclass MyObject : <span class="built_in">NSObject</span></span><br><span class="line">- (<span class="keyword">id</span>)init &#123;</span><br><span class="line"><span class="keyword">self</span> = %orig;</span><br><span class="line">[<span class="keyword">self</span> setSomeValue:<span class="string">@&quot;value&quot;</span>];</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//the following two new methods act as `@property (nonatomic, retain) id someValue;`</span></span><br><span class="line">%new</span><br><span class="line">- (<span class="keyword">id</span>)someValue &#123;</span><br><span class="line"><span class="keyword">return</span> objc_getAssociatedObject(<span class="keyword">self</span>, <span class="keyword">@selector</span>(someValue));</span><br><span class="line">&#125;</span><br><span class="line">%new</span><br><span class="line">- (<span class="keyword">void</span>)setSomeValue:(<span class="keyword">id</span>)value &#123;</span><br><span class="line">objc_setAssociatedObject(<span class="keyword">self</span>, <span class="keyword">@selector</span>(someValue), value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br></pre></td></tr></table></figure>
+<h5 id="property"><a href="#property" class="headerlink" title="%property"></a>%property</h5><p>添加属性</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%subclass MyObject: <span class="built_in">NSObject</span></span><br><span class="line">%property (<span class="keyword">nonatomic</span>, <span class="keyword">retain</span>) <span class="built_in">NSString</span> *someValue;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>%hookf</li>
-</ul>
-<p>给指定函数生成Hook，是对 MSHookFunction() 函数的包装格式</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%hookf(rtype, symbolName, args...)&#123;...&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="subclass"><a href="#subclass" class="headerlink" title="%subclass"></a>%subclass</h5><p>运行时创建子类</p>
+<p>父类中不存在的方法用%new说明符，要实例化新类的一个对象用%c运算符</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">%subclass MyObject : <span class="built_in">NSObject</span></span><br><span class="line">- (<span class="keyword">id</span>)init &#123;</span><br><span class="line">	<span class="keyword">self</span> = %orig;</span><br><span class="line">	[<span class="keyword">self</span> setSomeValue:<span class="string">@&quot;value&quot;</span>];</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//the following two new methods act as `@property (nonatomic, retain) id someValue;`</span></span><br><span class="line">%new</span><br><span class="line">- (<span class="keyword">id</span>)someValue &#123;</span><br><span class="line">	<span class="keyword">return</span> objc_getAssociatedObject(<span class="keyword">self</span>, <span class="keyword">@selector</span>(someValue));</span><br><span class="line">&#125;</span><br><span class="line">%new</span><br><span class="line">- (<span class="keyword">void</span>)setSomeValue:(<span class="keyword">id</span>)value &#123;</span><br><span class="line">	objc_setAssociatedObject(<span class="keyword">self</span>, <span class="keyword">@selector</span>(someValue), value, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br></pre></td></tr></table></figure>
+
+<h5 id="hookf"><a href="#hookf" class="headerlink" title="%hookf"></a>%hookf</h5><p>给指定函数生成Hook，是对 MSHookFunction() 函数的包装格式</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//rtype：返回值</span></span><br><span class="line"><span class="comment">//symbolName：原函数地址</span></span><br><span class="line">%hookf(rtype, symbolName, args...)&#123;...&#125;</span><br></pre></td></tr></table></figure>
 
 <p>symbolName 可以传入函数地址或者函数符号</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//传入地址</span></span><br><span class="line">FILE *fopen(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *mode);</span><br><span class="line">%hookf(File *, fopen, <span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *mode) &#123;</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@&quot;fopen hooked&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(path[<span class="number">0</span>] !=<span class="string">&#x27;/&#x27;</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> %orig;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -525,10 +479,7 @@
 <p>如果将 symbolName 作为字符串传入，那么函数将被动态查找</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">FILE *fopen(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *mode);</span><br><span class="line">%hookf(File *, <span class="string">&quot;_open&quot;</span>, <span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *mode) &#123;</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@&quot;fopen hooked&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(path[<span class="number">0</span>] !=<span class="string">&#x27;/&#x27;</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> %orig;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h5 id="Logos-Tip"><a href="#Logos-Tip" class="headerlink" title="Logos Tip"></a>Logos Tip</h5><ul>
-<li>获取属性，调用属性方法</li>
-</ul>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UIView</span> *_anyView = MSHookIvar&lt;<span class="built_in">UIView</span>*&gt;(<span class="keyword">self</span>,<span class="string">&quot;_view&quot;</span>);</span><br><span class="line">_anyView.backgroundColor = [<span class="built_in">UIColor</span> redColor];</span><br></pre></td></tr></table></figure>
+<h4 id="Logos-Tip"><a href="#Logos-Tip" class="headerlink" title="Logos Tip"></a>Logos Tip</h4><h5 id="获取类成员变量"><a href="#获取类成员变量" class="headerlink" title="获取类成员变量"></a>获取类成员变量</h5><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用substitute提供的MSHookIvar</span></span><br><span class="line"><span class="built_in">UIView</span> *_anyView = MSHookIvar&lt;<span class="built_in">UIView</span>*&gt;(<span class="keyword">self</span>,<span class="string">&quot;_view&quot;</span>);</span><br><span class="line">_anyView.backgroundColor = [<span class="built_in">UIColor</span> redColor];</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用原生valueForKey</span></span><br><span class="line">XLMemberConfigure *config = [<span class="keyword">self</span> valueForKey:<span class="string">@&quot;_config&quot;</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用ZKSwizzle提供的ZKHookIvar</span></span><br><span class="line"><span class="meta">#import ZKSwizzle<span class="meta-string">&quot;&quot;</span></span></span><br><span class="line"><span class="built_in">NSString</span> *deviceMode = ZKHookIvar(config, <span class="built_in">NSString</span> *, <span class="string">&quot;_deviceModel&quot;</span>);</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>打印参数Class</li>
@@ -546,6 +497,15 @@
 
 <p>再 hook P1HomeNearbyViewController的 takeAction 方法里就可以直接用self 否则会self报错</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)takeAction:(<span class="keyword">id</span>)arg1 withEvent:(<span class="keyword">id</span>)arg2 &#123;</span><br><span class="line">  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(<span class="number">1.0</span> * <span class="built_in">NSEC_PER_SEC</span>)),      dispatch_get_main_queue(), ^&#123;</span><br><span class="line">      [<span class="keyword">self</span> takeAction:arg1 withEvent:arg2];</span><br><span class="line">  &#125;);</span><br><span class="line">  %log;</span><br><span class="line">  %or&#125;ig;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>类声明</li>
+</ul>
+<p>为了通过编译，有些类需要声明，可以创建 .h 头文件，内容都是从 class-dump 出来的文件拷贝</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">PSSpecifier</span>:<span class="title">NSObject</span> </span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">retain</span>) <span class="keyword">id</span> target;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">PSSpecifier</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>Tweak.xm </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;PSSpecifier.h&quot;</span></span></span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>修改返回值</li>
@@ -577,6 +537,11 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">findprocess_FILES &#x3D; main.c</span><br></pre></td></tr></table></figure>
 
 <p>DEBUG=0 make package install 将命令行工具安装到设备</p>
+<p>如果提示 THEOS_DEVICE_IP 问题，添加环境变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export THEOS_DEVICE_IP&#x3D;192.168.0.101</span><br></pre></td></tr></table></figure>
+
+
+
 <ul>
 <li>兼容 iOS11-iOS13</li>
 </ul>
@@ -620,29 +585,110 @@
 <p>编译安装后闪退了，这是因为backboardd以mobile权限运行不能加载要求root权限的程序</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~root# ps aux | grep backboardd</span><br><span class="line">mobile 2438 0.6 1.0 .....</span><br></pre></td></tr></table></figure>
 
-<p>换句话说，崩溃是好事，说明提升成功了</p>
+<p>换句话说，崩溃是好事，说明提升成功了，对 iOS11 以下的系统处理方法比较复杂</p>
 <p>。。。</p>
 <ul>
 <li>以root权限运行（iOS11、iOS12）</li>
 <li>以root权限运行（iOS13）</li>
 </ul>
-<h4 id="守护进程开发"><a href="#守护进程开发" class="headerlink" title="守护进程开发"></a>守护进程开发</h4><p>守护进程是一个运行在系统后台、不受前台用户交互影响的进程，通常，守护进程以字母 d 结尾，syslogd 是处理系统日志的后台，afc2d是文件服务的后台进程等</p>
+<h4 id="守护进程开发"><a href="#守护进程开发" class="headerlink" title="守护进程开发"></a>守护进程开发</h4><p>守护进程是一个运行在系统后台、不受前台用户交互影响的进程，通常，守护进程以字母 d 结尾</p>
+<p>其实就是一个命令行程序和一个 plist 文件构成</p>
+<p>syslogd 是处理系统日志的后台，afc2d是文件服务的后台进程等</p>
+<p>编写一个简单 pygioserbookd 守护进程，启动时打印一行日志，并往 tmp 目录写入 pp.log 文件后常驻后台</p>
+<p>选择 tool 模板创建工程</p>
+<p>修改 main.mm</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv, <span class="keyword">char</span> **envp) &#123;</span><br><span class="line">    <span class="built_in">NSString</span> *str = <span class="string">@&quot;[PYGiOSBook] 守护进程启动成功&quot;</span>;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>, str);</span><br><span class="line">    [str writeToFile:<span class="string">@&quot;/tmp/pp.log&quot;</span> atomically:<span class="literal">YES</span> encoding:<span class="built_in">NSUTF8StringEncoding</span> error:<span class="literal">nil</span>];</span><br><span class="line">    <span class="comment">//保持运行</span></span><br><span class="line">    <span class="built_in">CFRunLoopRun</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>安装到设备，测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root# pygioserbookd</span><br></pre></td></tr></table></figure>
+
+<h5 id="守护进程配置"><a href="#守护进程配置" class="headerlink" title="守护进程配置"></a>守护进程配置</h5><p>新建 com.pygioserbookd.plist </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE plist PUBLIC &quot;-&#x2F;&#x2F;Apple&#x2F;&#x2F;DTD PLIST 1.0&#x2F;&#x2F;EN&quot; &quot;http:&#x2F;&#x2F;www.apple.com&#x2F;DTDs&#x2F;PropertyList-1.0.dtd&quot;&gt;</span><br><span class="line">&lt;plist version&#x3D;&quot;1.0&quot;&gt;</span><br><span class="line">&lt;dict&gt;</span><br><span class="line">	&lt;key&gt;RunAtLoad&lt;&#x2F;key&gt;</span><br><span class="line">	&lt;string&gt;true&lt;&#x2F;string&gt;</span><br><span class="line">	&lt;key&gt;Program&lt;&#x2F;key&gt;</span><br><span class="line">	&lt;string&gt;&#x2F;usr&#x2F;bin&#x2F;pygioserbookd&lt;&#x2F;string&gt;</span><br><span class="line">	&lt;key&gt;Label&lt;&#x2F;key&gt;</span><br><span class="line">	&lt;string&gt;com.pygioserbookd&lt;&#x2F;string&gt;</span><br><span class="line">&lt;&#x2F;dict&gt;</span><br><span class="line">&lt;&#x2F;plist&gt;</span><br></pre></td></tr></table></figure>
+
+<p>Label：守护进程唯一标识</p>
+<p>Program：对应的可执行文件</p>
+<p>RunAtLoad：加载的同时启动</p>
+<p>如果后台进程需要其它的参数，只需要在文件中增加类似下面的键值对即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;key&gt;ProgramArguments&lt;&#x2F;key&gt;</span><br><span class="line">&lt;array&gt;</span><br><span class="line">	&lt;string&gt;-m&lt;&#x2F;string&gt;</span><br><span class="line">	&lt;string&gt;-i&lt;&#x2F;string&gt;</span><br><span class="line">	&lt;string&gt;其它参数&lt;&#x2F;string&gt;</span><br><span class="line">&lt;&#x2F;array&gt;</span><br></pre></td></tr></table></figure>
+
+<p>iOS 的根进程是 launchd，它会在开机时检查 /System/Library/LaunchDaemons 和 /Library/LaunchDaemons 目录下所有符合条件的 plist 文件。</p>
+<p>所以把 com.pygioserbookd.plist 文件放到上面任意目录下，输入 reboot 重启设备（又要重新越狱），查看发现 pygioserbookd 已随系统启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root# ps aux | grep pygioserbookd</span><br></pre></td></tr></table></figure>
+
+<p>也可以不重启，iOS 提供了 launchctl 命令行工具。用于显示、加载、卸载、启动和关闭守护进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;获取信息</span><br><span class="line">&#x2F;&#x2F;第一列进程ID，如果显示 - 说明已加载，但没运行</span><br><span class="line">&#x2F;&#x2F;第二列上次退出的状态码，0成功，正数错误退出，负数收到信号后退出</span><br><span class="line">&#x2F;&#x2F;第三列守护进程唯一标识</span><br><span class="line">root# launchctl list  </span><br><span class="line">-   78 com.apple.networkd_priv</span><br><span class="line">258 0  com.apple.apsd</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;加载&#x2F;卸载（load&#x2F;unload）</span><br><span class="line">root# launchctl load &#x2F;Library&#x2F;LaunchDaemons&#x2F;com.pygioserbookd.plist</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;启动&#x2F;停止（start&#x2F;stop）</span><br><span class="line">root# launchctl start com.pygioserbookd</span><br></pre></td></tr></table></figure>
+
+<h5 id="自动部署"><a href="#自动部署" class="headerlink" title="自动部署"></a>自动部署</h5><p>编写好守护进程，处理那些 plist 文件需要人工干预来处理，这里利用 Theos 的 layout 功能来完成自动部署</p>
+<p>工程目录下创建 layout 文件夹，theos 在打包时会将其中的内容按照路径添加到 deb 包中</p>
+<p>1、先将 com.pygioserbookd.plist 文件放到 layout/Library/LaunchDaemons 文件夹内</p>
+<p>2、新建 DEBIAN 文件夹并将 control 移进来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir .&#x2F;layout&#x2F;DEBIAN</span><br><span class="line">$ mv control .&#x2F;layout&#x2F;DEBIAN</span><br></pre></td></tr></table></figure>
+
+<p>3、在 DEBIAN 文件夹中分别新建 postinst、preinst、prerm 文件，各自内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#postinst deb包安装完成后所需的配置工作</span><br><span class="line">#!bin&#x2F;sh</span><br><span class="line">launchctl load &#x2F;Library&#x2F;LaunchDaemons&#x2F;com.pygioserbookd.plist</span><br><span class="line"></span><br><span class="line">#preinst 解压前执行的脚本</span><br><span class="line">#!bin&#x2F;sh</span><br><span class="line">launchctl unload &#x2F;Library&#x2F;LaunchDaemons&#x2F;com.pygioserbookd.plist 2&gt;&amp;1 &gt; &#x2F;dev&#x2F;null</span><br><span class="line"></span><br><span class="line">#prerm 卸载deb包前执行</span><br><span class="line">#!bin&#x2F;sh</span><br><span class="line">launchctl unload &#x2F;Library&#x2F;LaunchDaemons&#x2F;com.pygioserbookd.plist</span><br></pre></td></tr></table></figure>
+
+<p>这几个脚本分别用于 deb 包安装前后的一些处理，其实是吧人工执行 launchctl 命令的过程用脚本代替</p>
+<p>make package 打包后，所有文件已经按照 layout 的结构打包进去了。</p>
+<p>利用 layout 能方便地将所有需要集成的文件统一进行处理</p>
+<p>make package install 安装完后通过 launchctl list 查看 pygioserbookd 是还未启动的</p>
+<ul>
+<li>报错问题</li>
+</ul>
+<p>make package 之后提示 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ERROR: maintainer script &#39;preinst&#39; has bad permissions 644 (must be &gt;&#x3D;0555 and &lt;&#x3D;0775)</span><br><span class="line"></span><br><span class="line">#添加权限</span><br><span class="line">chmod 755 preinst</span><br><span class="line">chmod 755 postinst</span><br><span class="line">chmod 755 prerm</span><br></pre></td></tr></table></figure>
+
+
+
+
+
 <h4 id="增加系统设置项"><a href="#增加系统设置项" class="headerlink" title="增加系统设置项"></a>增加系统设置项</h4><p>PreferenceLoader 是一个开源的基础依赖包，越狱插件的系统设置菜单就是由它提供，Cydia 搜索安装 PreferenceLoader</p>
 <p>进入系统设置时 PreferenceLoader 会从 /Library/PreferenceLoader/Preferences/ 目录下解析符合规则的 plist 文件，并生成响应的控件动态添加到系统设置</p>
 <p><a target="_blank" rel="noopener" href="http://iphonedevwiki.net/index.php/PreferenceBundles">http://iphonedevwiki.net/index.php/PreferenceBundles</a></p>
+<p><a target="_blank" rel="noopener" href="https://iphonedev.wiki/index.php/Preferences_specifier_plist">https://iphonedev.wiki/index.php/Preferences_specifier_plist</a></p>
+<p>theos 选择 iphone/preference_bundle_modern 模板</p>
+<blockquote>
+<p>需要引用私有库 Preferences，编译提示找不到路径</p>
+</blockquote>
 <h4 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h4><p>进程间通信（IPC）就是在不同进程之间传播或交换信息，正向开发中只能使用苹果公司提供 URLScheme，应用之间互相调用并且传送简单字符的一种机制</p>
-<h5 id="Notification通信"><a href="#Notification通信" class="headerlink" title="Notification通信"></a>Notification通信</h5><p>有一个 userinfo 参数，但实际上无法传递，总是为 nil，不适合传递参数</p>
+<h5 id="Notification通信"><a href="#Notification通信" class="headerlink" title="Notification通信"></a>Notification通信</h5><p>CFNotificationCenterGetDarwinNotifyCenter() 有一个 userinfo 参数，但实际上无法传递，总是为 nil，不适合传递参数</p>
 <h5 id="XPC通信"><a href="#XPC通信" class="headerlink" title="XPC通信"></a>XPC通信</h5><p>仅限于系统级别应用，如果用普通应用是不可达的</p>
-<h5 id="RocketBootstrap通信"><a href="#RocketBootstrap通信" class="headerlink" title="RocketBootstrap通信"></a>RocketBootstrap通信</h5><p>私有框架 APPSupport 中存在一个 CPDistributedMessagingCenter（分布式消息传递中心）使用简单的消息和字典来提供不同进程之间的通信，RocketBootstrap 就是在其上进行封装</p>
+<h5 id="RocketBootstrap通信"><a href="#RocketBootstrap通信" class="headerlink" title="RocketBootstrap通信"></a>RocketBootstrap通信</h5><p><a target="_blank" rel="noopener" href="https://iphonedev.wiki/index.php/RocketBootstrap#CPDistributedMessagingCenter_Example">RocketBootstrap</a></p>
+<p>私有框架 APPSupport 中存在一个 CPDistributedMessagingCenter（分布式消息传递中心）使用简单的消息和字典来提供不同进程之间的通信</p>
+<p>RocketBootstrap 就是在其上进行封装，越过沙盒限制，给越狱环境提供稳定的进程通信服务，cydia 中搜索安装即可</p>
 <p>RocketBootstrap 要求在权限比较高的进程中启动一个服务，再通过发送通知的方式越过沙盒，因此创建一个 tweak 并注入 SpringBoard进程</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;rocketbootstrap/rocketbootstrap.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;AppSupport/CPDistributedMessagingCenter.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">%group HookSpringBoard</span><br><span class="line"></span><br><span class="line">%hook SpringBoard</span><br><span class="line">- (<span class="keyword">void</span>)applicationDidFinishLaunching:(<span class="keyword">id</span>)application &#123;</span><br><span class="line">    %orig;</span><br><span class="line">    CPDistributedMessagingCenter *c = [%c(CPDistributedMessagingCenter) centerNamed:<span class="string">@&quot;MyCPCenter&quot;</span>];</span><br><span class="line">    rocketbootstrap_distributedmessagingcenter_apply(c);</span><br><span class="line">    [c runServerOnCurrentThread];</span><br><span class="line">    [c registerForMessageName:<span class="string">@&quot;MyCPCenterNoti&quot;</span> target: <span class="keyword">self</span> selector:<span class="keyword">@selector</span>(handleMessage:withUserInfo:)];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;注册监听&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//收到沙盒内发的消息时弹出对话框</span></span><br><span class="line">%new</span><br><span class="line">- (<span class="keyword">void</span>)handleMessage:(<span class="built_in">NSString</span> *)name withUserInfo:(<span class="built_in">NSDictionary</span> *)userInfo &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;handleMessage withUserInfo&quot;</span>);</span><br><span class="line">    <span class="built_in">NSString</span> *action = userInfo[<span class="string">@&quot;action&quot;</span>];</span><br><span class="line">    <span class="keyword">if</span> ([action isEqualToString:<span class="string">@&quot;AlertView&quot;</span>]) &#123;</span><br><span class="line">        <span class="built_in">NSString</span> *nsInfo = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;book=%@, author=%@&quot;</span>, userInfo[<span class="string">@&quot;book&quot;</span>], userInfo[<span class="string">@&quot;author&quot;</span>]];</span><br><span class="line">        <span class="built_in">UIAlertView</span> *alert = [[<span class="built_in">UIAlertView</span> alloc] initWithTitle:<span class="string">@&quot;来自应用沙盒的消息&quot;</span> message:nsInfo delegate:<span class="literal">nil</span> cancelButtonTitle:<span class="string">@&quot;确定&quot;</span> otherButtonTitles: <span class="literal">nil</span>, <span class="literal">nil</span>];</span><br><span class="line">        [alert show];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br><span class="line"></span><br><span class="line">%end</span><br><span class="line"></span><br><span class="line">%ctor &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;__[PYGiOSReBook] inject success__&quot;</span>);</span><br><span class="line">    <span class="built_in">NSString</span> *bundleIdentifier = [[<span class="built_in">NSBundle</span> mainBundle] bundleIdentifier];</span><br><span class="line">    <span class="keyword">if</span> ([bundleIdentifier isEqualToString:<span class="string">@&quot;com.apple.springboard&quot;</span>]) &#123;</span><br><span class="line">        %init(HookSpringBoard);</span><br><span class="line">    &#125;</span><br><span class="line">    %init;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改 Makefile</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">include $(THEOS)&#x2F;makefiles&#x2F;common.mk</span><br><span class="line"></span><br><span class="line">TWEAK_NAME &#x3D; RocketBootstrapTest</span><br><span class="line"></span><br><span class="line">RocketBootstrapTest_FILES &#x3D; Tweak.xm</span><br><span class="line">RocketBootstrapTest_CFLAGS &#x3D; -fobjc-arc</span><br><span class="line"></span><br><span class="line">include $(THEOS_MAKE_PATH)&#x2F;tweak.mk</span><br><span class="line"></span><br><span class="line">ARCHS &#x3D; arm64</span><br><span class="line">RocketBootstrapTest_LIBRARIES &#x3D; rocketbootstrap</span><br><span class="line">RocketBootstrapTest_PRIVATE_FRAMEWORKS &#x3D; AppSupport</span><br></pre></td></tr></table></figure>
+
+<p>还需要添加 AppSupport 框架，可以在 <a target="_blank" rel="noopener" href="https://github.com/theos/sdks">https://github.com/theos/sdks</a>  找到SDK 版本，选择和自己 SDK 接近的版本就可以了</p>
+<p>下载的 SDK 两种使用方法：</p>
+<p>1、如选择 iPhoneOS14.5，将整个 iPhoneOS14.5.sdk 文件夹复制到 $THEOS/sdks 目录下</p>
+<p>修改 Makefile 的 TARGET 字段，强制指定 SDK 为下载版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TARGET &#x3D; iphone:14.5:8.0</span><br></pre></td></tr></table></figure>
+
+<p>2、将 iPhoneOS14.5.sdk/System/Library/PrivateFrameworks 目录下找到所需要的私有库（也可以全部选择）复制到目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;Applications&#x2F;Xcode.app&#x2F;Contents&#x2F;Developer&#x2F;Platforms&#x2F;iPhoneOS.platform&#x2F;Developer&#x2F;SDKs&#x2F;iPhoneOS.sdk&#x2F;System&#x2F;Library&#x2F;PrivateFr-ameworks</span><br><span class="line">（书上写的是PrivateFr-ameworks 不知道是不是写错了是 PrivateFrameworks）</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>两种方式都没成功，make 编译找不到库 ld: framework not found AppSupport</p>
+</blockquote>
+<ul>
+<li>发送消息</li>
+</ul>
+<p>Xcode 新建项目，</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;rocketbootstrap/rocketbootstrap.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;AppSupport/CPDistributedMessagingCenter.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="built_in">NSMutableDictionary</span> *userInfo = [<span class="built_in">NSMutableDictionary</span> dictionary];</span><br><span class="line">userInfo[<span class="string">@&quot;action&quot;</span>] = <span class="string">@&quot;AlertView&quot;</span>;</span><br><span class="line">userInfo[<span class="string">@&quot;book&quot;</span>] = <span class="string">@&quot;book1&quot;</span>;</span><br><span class="line">userInfo[<span class="string">@&quot;author&quot;</span>] = <span class="string">@&quot;author1&quot;</span>;</span><br><span class="line">CPDistributedMessagingCenter *c = [CPDistributedMessagingCenter centerNamed:<span class="string">@&quot;MyCPCenter&quot;</span>];</span><br><span class="line">rocketbootstrap_distributedmessagingcenter_apply(c);</span><br><span class="line">[c sendMessageName:<span class="string">@&quot;MyCPCenterNoti&quot;</span> userInfo:userInfo];</span><br></pre></td></tr></table></figure>
+
+<p>还要配置头文件路径。Build Setting - Header Search Paths 添加 /opt/theos/vendor/include</p>
+<p>接着将 /opt/theos/vendor/lib/librocketbootstrap.tbd 动态库添加到项目</p>
+<blockquote>
+<p>#import &lt;AppSupport/CPDistributedMessagingCenter.h&gt; 找不到文件，只能把 AppSupport.framework 拖入项目，新建了两个项目一个注册监听，一个发送消息，测试结果两个app间没收到消息，有空再试</p>
+</blockquote>
 <h4 id="deb重打包"><a href="#deb重打包" class="headerlink" title="deb重打包"></a>deb重打包</h4><p>有时候需要对别人 deb 包进行修改破解限制，就需要 deb 重打包</p>
 <p>新建必要目录，存放解包后的文件及打包后的文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir extract</span><br><span class="line">$ mkdir extract&#x2F;DEBIAN</span><br><span class="line">$ mkdir build</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>安装 dpkg</li>
-</ul>
-<p>安装 <a target="_blank" rel="noopener" href="https://www.macports.org/install.php">MacPorts</a> 软件包管理软件</p>
+<h5 id="安装-dpkg"><a href="#安装-dpkg" class="headerlink" title="安装 dpkg"></a>安装 dpkg</h5><p>安装 <a target="_blank" rel="noopener" href="https://www.macports.org/install.php">MacPorts</a> 软件包管理软件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo port install dpkg</span><br></pre></td></tr></table></figure>
 
 <p>或者</p>
@@ -650,17 +696,19 @@
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ dpkg-deb -c deb文件 &#x2F;&#x2F;显示文件列表</span><br><span class="line">$ dpkg-deb -X deb文件 输出路径 &#x2F;&#x2F;解压获取到Library中文件，里面有dylib</span><br><span class="line">$ dpkg-deb -e deb文件 输出路径 &#x2F;&#x2F;解压获取到Control文件</span><br><span class="line">$ dpkg-deb -R deb文件 输出路径 &#x2F;&#x2F;获取到 dylib和control文件</span><br><span class="line">$ dpkg-deb -b 通过-解压出来的文件 xxx.deb &#x2F;&#x2F;打包生成deb</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>解包</li>
-</ul>
-<p>-X参数可以提取deb包中的所有文件到 extract，-e 参数可以提取deb包中的控制信息到extract/DEBIAN</p>
+<h5 id="解包"><a href="#解包" class="headerlink" title="解包"></a>解包</h5><p>-X参数可以提取deb包中的所有文件到 extract，-e 参数可以提取deb包中的控制信息到extract/DEBIAN</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ dpkg -X .&#x2F;xxx.deb extract</span><br><span class="line">$ dpkg -e .&#x2F;xxx.deb extract&#x2F;DEBIAN</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>重新打包成deb</li>
 </ul>
 <p>检查目录是否存在 .DS_Store 文件删除，再设置用户组权限打包</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chown -R root:wheel .&#x2F;extract</span><br><span class="line">$ dpkg-deb -b extract&#x2F; build&#x2F; 如果报错 </span><br><span class="line">$ dpkg-deb -Z gzip -b extract&#x2F; build&#x2F;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chown -R root:wheel .&#x2F;extract</span><br><span class="line">$ dpkg-deb -b extract&#x2F; build&#x2F; </span><br><span class="line">#如果安装报错将打包命令修改成如下 </span><br><span class="line">$ dpkg-deb -Z gzip -b extract&#x2F; build&#x2F;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>dpkg 可以在 iOS 设备上安装 deb 包，SSH 到设备</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dpkg -i &#x2F;var&#x2F;mobile&#x2F;Cydown&#x2F;test.deb</span><br></pre></td></tr></table></figure>
 
 
 

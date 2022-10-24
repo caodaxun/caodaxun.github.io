@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="改变代码的执行流程，执行自己的代码 HookMethod SwizzlingObjective-C 中调用一个方法，实则是向一个对象发送消息，查找消息的唯一依据是 selector 名字 每个类都有一个方法列表，存放着 selector 和 IMP 的映射关系。IMP 有点类似函数指针，指向具体的 Method 实现 利用 OC runtime 特性，动态改变 SEL 和 IMP 对应关系，达到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向-HOOK&amp;注入">
+<meta property="og:url" content="http://example.com/2022/10/23/%E9%80%86%E5%90%91-HOOK&%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="改变代码的执行流程，执行自己的代码 HookMethod SwizzlingObjective-C 中调用一个方法，实则是向一个对象发送消息，查找消息的唯一依据是 selector 名字 每个类都有一个方法列表，存放着 selector 和 IMP 的映射关系。IMP 有点类似函数指针，指向具体的 Method 实现 利用 OC runtime 特性，动态改变 SEL 和 IMP 对应关系，达到">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-23T11:16:00.000Z">
+<meta property="article:modified_time" content="2022-10-23T13:57:11.538Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/10/23/%E9%80%86%E5%90%91-HOOK&%E6%B3%A8%E5%85%A5/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>逆向-HOOK&注入 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Hook"><span class="nav-number">1.</span> <span class="nav-text">Hook</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Method-Swizzling"><span class="nav-number">1.1.</span> <span class="nav-text">Method Swizzling</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MSHookMessageEx"><span class="nav-number">1.2.</span> <span class="nav-text">MSHookMessageEx</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Inline-Hook"><span class="nav-number">1.3.</span> <span class="nav-text">Inline Hook</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MSHookFunction"><span class="nav-number">1.4.</span> <span class="nav-text">MSHookFunction</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fishhook"><span class="nav-number">1.5.</span> <span class="nav-text">fishhook</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HookZz"><span class="nav-number">1.6.</span> <span class="nav-text">HookZz</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">注入</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%86%E5%A4%87-dylib"><span class="nav-number">2.1.</span> <span class="nav-text">准备 dylib</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8E%BB%E6%8E%89-CydiaSubstrate-%E4%BE%9D%E8%B5%96"><span class="nav-number">2.1.1.</span> <span class="nav-text">去掉 CydiaSubstrate 依赖</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#yololib"><span class="nav-number">2.2.</span> <span class="nav-text">yololib</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#optool"><span class="nav-number">2.3.</span> <span class="nav-text">optool</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/23/%E9%80%86%E5%90%91-HOOK&%E6%B3%A8%E5%85%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向-HOOK&注入
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-10-23 19:16:00 / 修改时间：21:57:11" itemprop="dateCreated datePublished" datetime="2022-10-23T19:16:00+08:00">2022-10-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>改变代码的执行流程，执行自己的代码</p>
+<h4 id="Hook"><a href="#Hook" class="headerlink" title="Hook"></a>Hook</h4><h5 id="Method-Swizzling"><a href="#Method-Swizzling" class="headerlink" title="Method Swizzling"></a>Method Swizzling</h5><p>Objective-C 中调用一个方法，实则是向一个对象发送消息，查找消息的唯一依据是 selector 名字</p>
+<p>每个类都有一个方法列表，存放着 selector 和 IMP 的映射关系。IMP 有点类似函数指针，指向具体的 Method 实现</p>
+<p>利用 OC runtime 特性，动态改变 SEL 和 IMP 对应关系，达到 OC 方法调用流程改变的目的</p>
+<p>method_exchangeImplementation</p>
+<blockquote>
+<p>ZKSwizzle 库</p>
+</blockquote>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">InjectCode</span></span></span><br><span class="line">+(<span class="keyword">void</span>)load &#123;</span><br><span class="line">    <span class="comment">//WCAccountMainLoginViewController onNext</span></span><br><span class="line">    Method onNext = class_getInstanceMethod(objc_getClass(<span class="string">&quot;WCAccountMainLoginViewController&quot;</span>), <span class="keyword">@selector</span>(onNext));</span><br><span class="line">    Method my_next = class_getInstanceMethod(<span class="keyword">self</span>, <span class="keyword">@selector</span>(my_next));</span><br><span class="line">    method_exchangeImplementations(onNext, my_next);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//id self , SEL _cmd</span></span><br><span class="line">-(<span class="keyword">void</span>)my_next&#123;</span><br><span class="line">    <span class="built_in">NSString</span> * pwd = [[[<span class="keyword">self</span> valueForKey:<span class="string">@&quot;_textFieldUserPwdItem&quot;</span>]valueForKey:<span class="string">@&quot;m_textField&quot;</span>] performSelector:<span class="keyword">@selector</span>(text)];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;密码是！%@&quot;</span>,pwd);<span class="comment">//破坏！</span></span><br><span class="line">    <span class="comment">//self:当前方法的调用者！</span></span><br><span class="line">    [<span class="keyword">self</span> my_next];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">+(<span class="keyword">void</span>)load</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//GET &amp; SET</span></span><br><span class="line">    Method onNext = class_getInstanceMethod(objc_getClass(<span class="string">&quot;WCAccountMainLoginViewController&quot;</span>), sel_registerName(<span class="string">&quot;onNext&quot;</span>));</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//1.保存原始的IMP</span></span><br><span class="line">    old_onNext = method_getImplementation(onNext);</span><br><span class="line">    <span class="comment">//2.SET</span></span><br><span class="line">    method_setImplementation(onNext, (IMP)my_next);</span><br><span class="line">&#125;</span><br><span class="line">IMP (*old_onNext)(<span class="keyword">id</span> <span class="keyword">self</span>,SEL _cmd);</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> my_next(<span class="keyword">id</span> <span class="keyword">self</span>,SEL _cmd)&#123;</span><br><span class="line">    <span class="built_in">NSString</span> * pwd = [[[<span class="keyword">self</span> valueForKey:<span class="string">@&quot;_textFieldUserPwdItem&quot;</span>]valueForKey:<span class="string">@&quot;m_textField&quot;</span>] performSelector:<span class="keyword">@selector</span>(text)];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;密码是！%@&quot;</span>,pwd);<span class="comment">//破坏！</span></span><br><span class="line">    <span class="comment">//调用原来的方法</span></span><br><span class="line">    old_onNext(<span class="keyword">self</span>,_cmd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="MSHookMessageEx"><a href="#MSHookMessageEx" class="headerlink" title="MSHookMessageEx"></a>MSHookMessageEx</h5><p>Cydia Substrate 框架提供了 MSHookMessageEx 函数，利用运行时机制对 Objective-C 方法进行替换</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">_class：要Hook的OC方法的类名</span></span><br><span class="line"><span class="comment">message：要Hook的OC方法</span></span><br><span class="line"><span class="comment">hook：替换后的实现方法地址</span></span><br><span class="line"><span class="comment">old：原方法的地址，若无须调用原方法，可以设为NULL</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">void</span> MSHookMessageEx(Class _<span class="keyword">class</span>, SEL message, IMP hook, IMP *old)</span><br><span class="line">  </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> (*oldViewDidLoad)(<span class="keyword">id</span> <span class="keyword">self</span>, SEL _cmd);</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> newViewDidLoad(<span class="keyword">id</span> <span class="keyword">self</span>, SEL _cmd)&#123;</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@&quot;call %s&quot;</span>, __FUNCTION__);</span><br><span class="line">  (*oldViewDidLoad)(<span class="keyword">self</span>, _cmd);</span><br><span class="line">&#125;</span><br><span class="line">MSHookMessageEx(objc_getClass(<span class="string">&quot;ViewController&quot;</span>),<span class="keyword">@selector</span>(viewDidLoad),</span><br><span class="line">               (IMP)&amp;newViewDidLoad, (IMP*)&amp;oldViewDidLoad);</span><br></pre></td></tr></table></figure>
+
+<p>实际使用中通常不会直接使用 MSHookMessageEx Theos 的 Logos 语法已经对 MSHookMessageEx 进行了封装</p>
+<h5 id="Inline-Hook"><a href="#Inline-Hook" class="headerlink" title="Inline Hook"></a>Inline Hook</h5><p>因为 C/C++ 没有运行时机制提供这些高级 API 来直接替换方法实现，所以 Method Swizzling 对它是无效的，需要使用 Inline Hook 才能达到目的。</p>
+<p>修改函数的前 N 字节内存，使其跳转到自己编写的函数，这样原函数的逻辑就被新函数接管了，同时还应保存原函数的前 N 字节，以便在需要时能正确恢复原来的汇编代码从而执行原始逻辑</p>
+<p>Cydia Substrate 框架提供了 MSHookFunction 函数来完成 InlineHook</p>
+<h5 id="MSHookFunction"><a href="#MSHookFunction" class="headerlink" title="MSHookFunction"></a>MSHookFunction</h5><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">symbol：需要hook的地址，该地址不局限于函数头，也可以是函数内部的任意地址</span></span><br><span class="line"><span class="comment">hook：替换后的函数地址</span></span><br><span class="line"><span class="comment">old：保存被Hook函数的原始代码，若不需要调用原函数，可以设为NULL</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">void</span> MSHookFunction(<span class="keyword">void</span> *symbol, <span class="keyword">void</span> *hook, <span class="keyword">void</span> **old)</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> *(pfn_getenv)(<span class="keyword">char</span> *key);</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> *my_getenv(<span class="keyword">char</span> *key)&#123;</span><br><span class="line">  <span class="keyword">return</span> pfn_getenv(key);</span><br><span class="line">&#125;</span><br><span class="line">%ctor &#123;</span><br><span class="line">  MSHookFunction((<span class="keyword">void</span> *)getenv,(<span class="keyword">void</span> *)&amp;my_getenv, (<span class="keyword">void</span>**)&amp;pfn_getenv);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="fishhook"><a href="#fishhook" class="headerlink" title="fishhook"></a>fishhook</h5><p>动态修改链接 MachO 文件的工具，利用 MachO 文件加载原理，通过修改懒加载和非懒加载两个表的指针达到C函数hook的目的</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> rebinding(</span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">char</span> *name;  <span class="comment">//字符串名称</span></span><br><span class="line">  <span class="keyword">void</span> *replacement; <span class="comment">//替换后的函数</span></span><br><span class="line">  <span class="keyword">void</span> **replaced;	 <span class="comment">//原始函数</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="meta">#import <span class="meta-string">&quot;fishhook&quot;</span></span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> *(*orig_getenv)(<span class="keyword">const</span> <span class="keyword">char</span> *name);</span><br><span class="line"><span class="keyword">char</span> *my_getenv(<span class="keyword">const</span> <span class="keyword">char</span> *name)&#123;</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@&quot;++++ name=%s&quot;</span>, name);</span><br><span class="line">  <span class="keyword">return</span> orig_getenv(name);</span><br><span class="line">&#125;</span><br><span class="line">__attribute__((constructor) <span class="keyword">static</span> <span class="keyword">void</span> PiaoYun(<span class="keyword">void</span>)) &#123;</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@&quot;inject success&quot;</span>);</span><br><span class="line">  rebind_symbols(<span class="keyword">struct</span> rebinding[<span class="number">1</span>]&#123;</span><br><span class="line">    &#123;<span class="string">&quot;getenv&quot;</span>, (<span class="keyword">void</span>*)my_getenv,(<span class="keyword">void</span>**)&amp;orig_getenv&#125;</span><br><span class="line">  &#125;, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import fishhook</span></span><br><span class="line"><span class="comment">//NSLog的定义是 void NSLog(NSString *format, ...)</span></span><br><span class="line"><span class="comment">//原始方法 函数指针 保存原来方法地址</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span>(*sys_nslog)(<span class="built_in">NSString</span> *format, ...);</span><br><span class="line"><span class="comment">//定义一个新的函数</span></span><br><span class="line"><span class="keyword">void</span> myNSLog(<span class="built_in">NSString</span> *format, ...) &#123;</span><br><span class="line">	format = [format stringByAppendingString: <span class="string">@&quot;勾上了 \n&quot;</span>];</span><br><span class="line">	<span class="comment">//调用原始的</span></span><br><span class="line">	sys_nslog(format);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> rebinding &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *name; <span class="comment">//需要hook的函数名称，c字符串</span></span><br><span class="line">  <span class="keyword">void</span> *replacement; <span class="comment">//新函数地址</span></span><br><span class="line">  <span class="keyword">void</span> **replaced; <span class="comment">//原函数地址的指针</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// arg1:存放 rebinding 结构体的数组</span></span><br><span class="line"><span class="comment">// arg2:数组长度</span></span><br><span class="line"><span class="keyword">int</span> rebind_symbols(<span class="keyword">struct</span> rebinding rebindings[], size_t rebindings_nel);</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> rebinding nslog;</span><br><span class="line">nslog.name = <span class="string">&quot;NSLog&quot;</span>;</span><br><span class="line">nslog.replacement = myNSLog;</span><br><span class="line">nslog.replaced = (<span class="keyword">void</span> **)&amp;sys_nslog;<span class="comment">//(void **)是为了不报错</span></span><br><span class="line"><span class="comment">//定义数组</span></span><br><span class="line"><span class="keyword">struct</span> rebinding rebs[<span class="number">1</span>] = &#123;nslog&#125;;</span><br><span class="line">rebind_symbols(rebs, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="HookZz"><a href="#HookZz" class="headerlink" title="HookZz"></a>HookZz</h5><p>由 jmpews 开发的一套 Hook 框架，支持 iOS、Android 平台下的 ARM、ARM64 架构</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jmpews/HookZz">https://github.com/jmpews/HookZz</a></p>
+<p>下载后编译成静态库或动态库即可，可以放到 /opt/theos/vendor 目录下，利用 Theos 的 tweak 模板进行编译、安装</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;hookzz.h&gt;</span></span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> *(*orig_getenv)(<span class="keyword">const</span> <span class="keyword">char</span> *name);</span><br><span class="line"><span class="keyword">char</span> *my_getenv(<span class="keyword">const</span> <span class="keyword">char</span> *name)&#123;</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@&quot;++++ name=%s&quot;</span>, name);</span><br><span class="line">  <span class="keyword">return</span> orig_getenv(name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> hook_getenv()&#123;</span><br><span class="line">  ZzReplace((<span class="keyword">void</span> *)getenv, (<span class="keyword">void</span>*)my_getenv, (<span class="keyword">void</span>**)&amp;orig_getenv);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__attribute__((constructor) <span class="keyword">static</span> <span class="keyword">void</span> PiaoYun(<span class="keyword">void</span>)) &#123;</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@&quot;inject success&quot;</span>);</span><br><span class="line">  hook_getenv();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改 Makefile 文件，链接 HookZz 静态库及去掉 CydiaSubstrate 依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HookZzTest_LDFLAGS &#x3D; -lhookzz #链接HookZz</span><br><span class="line">HookZzTest_LOGOS_DEFAULT_GENERATOR &#x3D; internal #不使用CydiaSubstrate</span><br></pre></td></tr></table></figure>
+
+<h4 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h4><h5 id="准备-dylib"><a href="#准备-dylib" class="headerlink" title="准备 dylib"></a>准备 dylib</h5><p>使用 Theos 编译一个 test.dylib 的动态库</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">__attribute__((constructor)) <span class="keyword">static</span> <span class="keyword">void</span> entry() &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;__inject success__&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将生成的 test.dylib 拖入 MachOView，可以看到 LC_LOAD_DYLIB（CydiaSubstrate），即直接编译生成的 dylib 会依赖 CydiaSubstrate，对非越狱系统会因找不到依赖库而闪退</p>
+<p>也可以用 otool 查看动态库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ otool -L test.dylib</span><br></pre></td></tr></table></figure>
+
+<p>可以看到依赖 /Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate </p>
+<h6 id="去掉-CydiaSubstrate-依赖"><a href="#去掉-CydiaSubstrate-依赖" class="headerlink" title="去掉 CydiaSubstrate 依赖"></a>去掉 CydiaSubstrate 依赖</h6><p>修改 Makefile</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 去掉 CydiaSubstrate 依赖</span><br><span class="line">test_USE_SUBSTRATE &#x3D; NO</span><br><span class="line"></span><br><span class="line"># 添加版本号，用于解决签名后闪退问题</span><br><span class="line">_THEOS_TARGET_LDFLAGS +&#x3D; -current_version 1.0</span><br><span class="line">_THEOS_TARGET_LDFLAGS +&#x3D; -compatibility_version 1.0</span><br></pre></td></tr></table></figure>
+
+<p>再次编译后 test.dylib 文件已经没有了 CydiaSubstrate 依赖了</p>
+<h5 id="yololib"><a href="#yololib" class="headerlink" title="yololib"></a>yololib</h5><p>下载地址  <a target="_blank" rel="noopener" href="https://github.com/KJCracks/yololib">https://github.com/KJCracks/yololib</a>   编译后放到 /usr/local/bin 目录下</p>
+<p>将 test.dylib 复制到 AVPlayer.app 目录下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yololib .&#x2F;Payload&#x2F;AVPlayer.app&#x2F;AVPlayer test.dylib</span><br></pre></td></tr></table></figure>
+
+<p>执行完，可以用 MachOView 确认下，找到 LC_LOAD_DYLIB（test.dylib），路径值是@executable_path/test.dylib</p>
+<h5 id="optool"><a href="#optool" class="headerlink" title="optool"></a>optool</h5><p>optool 功能比 yololib 强大的多，不但能添加动态库，还能将已存在的动态库删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git clone https:&#x2F;&#x2F;github.com&#x2F;alexzielenski&#x2F;optool.git</span><br><span class="line">$ cd optool</span><br><span class="line">$ git submodule update --init --recursive #使用 --recursive将子模块全部clone下来</span><br></pre></td></tr></table></figure>
+
+<p>编译后得到可执行文件放到 /usr/local/bin 目录下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#添加dylib依赖</span><br><span class="line">$ optool install -c load -p &quot;@executable_path&#x2F;test.dylib&quot; -t .&#x2F;Payload&#x2F;AVPlayer.app&#x2F;AVPlayer</span><br><span class="line"></span><br><span class="line">#删除依赖</span><br><span class="line">$ optool uninstall -p &quot;@executable_path&#x2F;test.dylib&quot; -t .&#x2F;Payload&#x2F;AVPlayer.app&#x2F;AVPlayer</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/21/LLDB-debugserver/" rel="prev" title="">
+                  <i class="fa fa-chevron-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

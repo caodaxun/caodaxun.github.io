@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="7. 动态渲染页面爬取Python 提供了许多模拟浏览器运行的库，如  Selenium、Splash、PyV8、Ghost 等 有些 Ajax 接口含有很多加密参数，难以直接找出其规律，也很难直接分析 Ajax 来抓取，可以使用模拟浏览器运行的方式来实现，不用管 Ajax 接口到底有哪些参数 7.1 Selenium 的使用Selenium 是一个自动化测试工具，利用它可以驱动浏览器执行特定的动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取1">
+<meta property="og:url" content="http://example.com/2022/10/06/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-7JavaScript%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%88%AC%E5%8F%961/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="7. 动态渲染页面爬取Python 提供了许多模拟浏览器运行的库，如  Selenium、Splash、PyV8、Ghost 等 有些 Ajax 接口含有很多加密参数，难以直接找出其规律，也很难直接分析 Ajax 来抓取，可以使用模拟浏览器运行的方式来实现，不用管 Ajax 接口到底有哪些参数 7.1 Selenium 的使用Selenium 是一个自动化测试工具，利用它可以驱动浏览器执行特定的动">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-06T14:07:37.000Z">
+<meta property="article:modified_time" content="2022-10-09T00:57:19.847Z">
+<meta property="article:author" content="daxun">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/10/06/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-7JavaScript%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%88%AC%E5%8F%961/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取1 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#7-%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%88%AC%E5%8F%96"><span class="nav-number">1.</span> <span class="nav-text">7. 动态渲染页面爬取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-1-Selenium-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">7.1 Selenium 的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.</span> <span class="nav-text">声明浏览器对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E9%A1%B5%E9%9D%A2"><span class="nav-number">2.3.</span> <span class="nav-text">访问页面</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E8%8A%82%E7%82%B9"><span class="nav-number">2.4.</span> <span class="nav-text">查找节点</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8D%95%E4%B8%AA%E8%8A%82%E7%82%B9-find-element"><span class="nav-number">2.4.1.</span> <span class="nav-text">单个节点 find_element</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E6%96%B9%E6%B3%95-find-element"><span class="nav-number">2.4.2.</span> <span class="nav-text">通用方法 find_element</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%A4%9A%E4%B8%AA%E8%8A%82%E7%82%B9-find-elements"><span class="nav-number">2.4.3.</span> <span class="nav-text">多个节点  find_elements()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E4%BA%A4%E4%BA%92"><span class="nav-number">2.4.4.</span> <span class="nav-text">节点交互</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8A%A8%E4%BD%9C%E9%93%BE"><span class="nav-number">2.4.5.</span> <span class="nav-text">动作链</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C-JavaScript"><span class="nav-number">2.4.6.</span> <span class="nav-text">执行 JavaScript</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E8%8A%82%E7%82%B9%E4%BF%A1%E6%81%AF"><span class="nav-number">2.5.</span> <span class="nav-text">获取节点信息</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%B1%9E%E6%80%A7"><span class="nav-number">2.5.1.</span> <span class="nav-text">获取属性</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%96%87%E6%9C%AC%E5%80%BC"><span class="nav-number">2.5.2.</span> <span class="nav-text">获取文本值</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-id%E3%80%81%E4%BD%8D%E7%BD%AE%E3%80%81%E6%A0%87%E7%AD%BE%E5%90%8D%E5%92%8C%E5%A4%A7%E5%B0%8F"><span class="nav-number">2.5.3.</span> <span class="nav-text">获取 id、位置、标签名和大小</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%87%E6%8D%A2-Frame"><span class="nav-number">2.6.</span> <span class="nav-text">切换 Frame</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BB%B6%E6%97%B6%E7%AD%89%E5%BE%85"><span class="nav-number">2.7.</span> <span class="nav-text">延时等待</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E7%AD%89%E5%BE%85"><span class="nav-number">2.7.1.</span> <span class="nav-text">隐式等待</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E7%AD%89%E5%BE%85"><span class="nav-number">2.7.2.</span> <span class="nav-text">显式等待</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E7%AD%89%E5%BE%85%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.7.3.</span> <span class="nav-text">其它等待条件</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%89%8D%E8%BF%9B%E5%92%8C%E5%90%8E%E9%80%80"><span class="nav-number">2.8.</span> <span class="nav-text">前进和后退</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cookies"><span class="nav-number">2.9.</span> <span class="nav-text">Cookies</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%89%E9%A1%B9%E5%8D%A1%E7%AE%A1%E7%90%86"><span class="nav-number">2.10.</span> <span class="nav-text">选项卡管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">2.11.</span> <span class="nav-text">异常处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%8D%E5%B1%8F%E8%94%BD"><span class="nav-number">2.12.</span> <span class="nav-text">反屏蔽</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%A0%E5%A4%B4%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.13.</span> <span class="nav-text">无头模式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-2-Splash-%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">7.2 Splash 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B"><span class="nav-number">3.1.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Splash-Lua-%E8%84%9A%E6%9C%AC"><span class="nav-number">3.2.</span> <span class="nav-text">Splash Lua 脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%85%A5%E5%8F%A3%E5%8F%8A%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">3.2.1.</span> <span class="nav-text">入口及返回值</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E5%A4%84%E7%90%86"><span class="nav-number">3.2.2.</span> <span class="nav-text">异步处理</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Splash-%E5%AF%B9%E8%B1%A1%E5%B1%9E%E6%80%A7"><span class="nav-number">3.3.</span> <span class="nav-text">Splash 对象属性</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#args"><span class="nav-number">3.3.1.</span> <span class="nav-text">args</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#js-enabled"><span class="nav-number">3.3.2.</span> <span class="nav-text">js_enabled</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#resource-timeout"><span class="nav-number">3.3.3.</span> <span class="nav-text">resource_timeout</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#images-enabled"><span class="nav-number">3.3.4.</span> <span class="nav-text">images_enabled</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#plugins-enabled"><span class="nav-number">3.3.5.</span> <span class="nav-text">plugins_enabled</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#scroll-postion"><span class="nav-number">3.3.6.</span> <span class="nav-text">scroll_postion</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Splash-%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">3.4.</span> <span class="nav-text">Splash 对象的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#go"><span class="nav-number">3.4.1.</span> <span class="nav-text">go</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#wait"><span class="nav-number">3.4.2.</span> <span class="nav-text">wait</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#jsfunc"><span class="nav-number">3.4.3.</span> <span class="nav-text">jsfunc</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#evaljs"><span class="nav-number">3.4.4.</span> <span class="nav-text">evaljs</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#runjs"><span class="nav-number">3.4.5.</span> <span class="nav-text">runjs</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#autoload"><span class="nav-number">3.4.6.</span> <span class="nav-text">autoload()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#call-later"><span class="nav-number">3.4.7.</span> <span class="nav-text">call_later()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#http-get"><span class="nav-number">3.4.8.</span> <span class="nav-text">http_get()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#http-post"><span class="nav-number">3.4.9.</span> <span class="nav-text">http_post()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#set-content"><span class="nav-number">3.4.10.</span> <span class="nav-text">set_content()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#html"><span class="nav-number">3.4.11.</span> <span class="nav-text">html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#png%E3%80%81jpeg"><span class="nav-number">3.4.12.</span> <span class="nav-text">png、jpeg</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#har"><span class="nav-number">3.4.13.</span> <span class="nav-text">har</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#url"><span class="nav-number">3.4.14.</span> <span class="nav-text">url</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#get-cookies"><span class="nav-number">3.4.15.</span> <span class="nav-text">get_cookies()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#add-cookie"><span class="nav-number">3.4.16.</span> <span class="nav-text">add_cookie()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#clear-cookies"><span class="nav-number">3.4.17.</span> <span class="nav-text">clear_cookies()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#get-viewport-size"><span class="nav-number">3.4.18.</span> <span class="nav-text">get_viewport_size()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#set-viewport-size"><span class="nav-number">3.4.19.</span> <span class="nav-text">set_viewport_size()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#set-viewport-full"><span class="nav-number">3.4.20.</span> <span class="nav-text">set_viewport_full()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#set-user-agent"><span class="nav-number">3.4.21.</span> <span class="nav-text">set_user_agent</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#set-custom-headers"><span class="nav-number">3.4.22.</span> <span class="nav-text">set_custom_headers()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#select"><span class="nav-number">3.4.23.</span> <span class="nav-text">select</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#select-all"><span class="nav-number">3.4.24.</span> <span class="nav-text">select_all()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#mouse-click"><span class="nav-number">3.4.25.</span> <span class="nav-text">mouse_click</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Splash-API-%E8%B0%83%E7%94%A8"><span class="nav-number">3.5.</span> <span class="nav-text">Splash API 调用</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#render-html"><span class="nav-number">3.5.1.</span> <span class="nav-text">render.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#render-png"><span class="nav-number">3.5.2.</span> <span class="nav-text">render.png</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#render-jpeg"><span class="nav-number">3.5.3.</span> <span class="nav-text">render.jpeg</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#render-har"><span class="nav-number">3.5.4.</span> <span class="nav-text">render.har</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#render-json"><span class="nav-number">3.5.5.</span> <span class="nav-text">render.json</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#execute"><span class="nav-number">3.5.6.</span> <span class="nav-text">execute</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Splash-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%85%8D%E7%BD%AE"><span class="nav-number">3.6.</span> <span class="nav-text">Splash 负载均衡配置</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Splash-%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.6.1.</span> <span class="nav-text">配置 Splash 服务</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">3.6.2.</span> <span class="nav-text">配置负载均衡</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%AE%A4%E8%AF%81"><span class="nav-number">3.6.3.</span> <span class="nav-text">配置认证</span></a></li></ol></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/06/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-7JavaScript%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%88%AC%E5%8F%961/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取1
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-06 22:07:37" itemprop="dateCreated datePublished" datetime="2022-10-06T22:07:37+08:00">2022-10-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-10-09 08:57:19" itemprop="dateModified" datetime="2022-10-09T08:57:19+08:00">2022-10-09</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="7-动态渲染页面爬取"><a href="#7-动态渲染页面爬取" class="headerlink" title="7. 动态渲染页面爬取"></a>7. 动态渲染页面爬取</h4><p>Python 提供了许多模拟浏览器运行的库，如  Selenium、Splash、PyV8、Ghost 等</p>
+<p>有些 Ajax 接口含有很多加密参数，难以直接找出其规律，也很难直接分析 Ajax 来抓取，可以使用模拟浏览器运行的方式来实现，不用管 Ajax 接口到底有哪些参数</p>
+<h4 id="7-1-Selenium-的使用"><a href="#7-1-Selenium-的使用" class="headerlink" title="7.1 Selenium 的使用"></a>7.1 Selenium 的使用</h4><p>Selenium 是一个自动化测试工具，利用它可以驱动浏览器执行特定的动作，如点击、下拉，同时还可以获取浏览器当前呈现页面的源码，做到可见即可爬</p>
+<p>需要配置好 ChromeDriver，安装好 python 的 selenium 库</p>
+<h5 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h5><h5 id="声明浏览器对象"><a href="#声明浏览器对象" class="headerlink" title="声明浏览器对象"></a>声明浏览器对象</h5><p>Selenium 支持非常多浏览器，如 Chrome、Firefox等</p>
+<p>初始化浏览器对象并赋值为 browser 对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">browser = webdriver.Chrome()  <span class="comment">#弹出Chrome浏览器</span></span><br><span class="line">browser = webdriver.Safari()</span><br><span class="line">browser = webdriver.Firefox()</span><br></pre></td></tr></table></figure>
+
+<h5 id="访问页面"><a href="#访问页面" class="headerlink" title="访问页面"></a>访问页面</h5><p>调用 get() 来请求页面，传入链接 URL 即可</p>
+<p>如 get() 方法访问页面，打印源代码再关闭浏览器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">browser = webdriver.Chrome()  <span class="comment">#弹出Chrome浏览器</span></span><br><span class="line">browser.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line">print(browser.page_source)<span class="comment">#打印源代码</span></span><br><span class="line">browser.close()</span><br></pre></td></tr></table></figure>
+
+<h5 id="查找节点"><a href="#查找节点" class="headerlink" title="查找节点"></a>查找节点</h5><p>Selenium 可以驱动浏览器完成各种动作，如填充表单模拟点击等</p>
+<h6 id="单个节点-find-element"><a href="#单个节点-find-element" class="headerlink" title="单个节点 find_element"></a>单个节点 find_element</h6><p>比如想获取百度搜索框的这个节点，查看源码找到搜索框</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">imput</span> <span class="attr">id</span>=<span class="string">&quot;kw&quot;</span> <span class="attr">name</span>=<span class="string">&quot;wd&quot;</span> <span class="attr">class</span>=<span class="string">&quot;s_ipt&quot;</span> <span class="attr">value</span> <span class="attr">maxlength</span>=<span class="string">&quot;255&quot;</span> <span class="attr">autocomplete</span>=<span class="string">&quot;off&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>接下来就是获取它了，可以通过 find_element_by_name() 根据 name 值获取，find_element_by_id() 是根据 id 获取，还有根据 XPath、CSS 选择器等获取方式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">browser = webdriver.Chrome()  <span class="comment">#弹出Chrome浏览器</span></span><br><span class="line">browser.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line">input_first = browser.find_element_by_id(<span class="string">&#x27;kw&#x27;</span>)</span><br><span class="line">input_second = browser.find_element_by_class_name(<span class="string">&#x27;s_ipt&#x27;</span>)</span><br><span class="line">input_third = browser.find_element_by_name(<span class="string">&#x27;wd&#x27;</span>)</span><br><span class="line">input_forth = browser.find_element_by_xpath(<span class="string">&#x27;//*[@id=&quot;kw&quot;]&#x27;</span>)</span><br><span class="line">input_five  = browser.find_element_by_css_selector(<span class="string">&#x27;#kw&#x27;</span>)</span><br><span class="line">print(input_first, input_second, input_third, input_forth, input_five)</span><br></pre></td></tr></table></figure>
+
+<p>返回结果都是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;selenium.webdriver.remote.webelement.WebElement (session=<span class="string">&quot;21787490d750c720cf715181e538f416&quot;</span>, element=<span class="string">&quot;b3dcf1e9-05a9-4a1c-8e83-deebd46c2413&quot;</span>)&gt; </span><br></pre></td></tr></table></figure>
+
+<p>获取单个节点可以使用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">find_element_by_id	find_element_by_name	find_element_by_xpath</span><br><span class="line">find_element_by_link_text	find_element_by_partial_link_text</span><br><span class="line">find_element_by_tag_name	find_element_by_class_name</span><br><span class="line">find_element_by_css_selector</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="通用方法-find-element"><a href="#通用方法-find-element" class="headerlink" title="通用方法 find_element"></a>通用方法 find_element</h6><p>selenium 还提供了通用的方法 find_element() ，两个参数：查找方式 By 和方式的取值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line">input_first = browser.find_element(By.ID, <span class="string">&#x27;kw&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="多个节点-find-elements"><a href="#多个节点-find-elements" class="headerlink" title="多个节点  find_elements()"></a>多个节点  find_elements()</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">browser = webdriver.Chrome()  <span class="comment">#弹出Chrome浏览器</span></span><br><span class="line">browser.get(<span class="string">&#x27;https://www.taobao.com&#x27;</span>)</span><br><span class="line"><span class="built_in">list</span> = browser.find.elements_by_css_selector(<span class="string">&#x27;.service-bd li&#x27;</span>)</span><br><span class="line"><span class="comment">#也可直接用 find_elements() 方法来选择</span></span><br><span class="line"><span class="built_in">list</span> = browser.find_elements(By.CSS_SELECTOR, <span class="string">&#x27;.service-bd li&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="节点交互"><a href="#节点交互" class="headerlink" title="节点交互"></a>节点交互</h6><p>让浏览器执行一些动作，输入文字 send_keys()，清空文字 clear()， 点击按钮 click()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.remote.webelement <span class="keyword">import</span> WebElement</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="built_in">input</span> = browser.find_element(By.ID, <span class="string">&#x27;kw&#x27;</span>)<span class="comment"># type: WebElement</span></span><br><span class="line"><span class="built_in">input</span>.send_keys(<span class="string">&#x27;iPhone&#x27;</span>)</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">input</span>.clear()</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">input</span>.send_keys(<span class="string">&#x27;iPad&#x27;</span>)</span><br><span class="line">button = browser.find_element(By.ID, <span class="string">&#x27;su&#x27;</span>) <span class="comment"># type: WebElement</span></span><br><span class="line">button.click()</span><br></pre></td></tr></table></figure>
+
+<p>驱动浏览器打开百度，输入文字，清空搜索，调用 click() 点击搜索</p>
+<p>更多操作交互查看 </p>
+<p><a target="_blank" rel="noopener" href="https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.remote.webelement">https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.remote.webelement</a></p>
+<h6 id="动作链"><a href="#动作链" class="headerlink" title="动作链"></a>动作链</h6><p>一些操作没有特定的执行对象，比如鼠标拖拽，键盘按键等，这些动作用另一种方式来执行，就是动作链</p>
+<p>拖拽实例</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;iframe frameborder=&quot;0&quot; id=&quot;iframeResult&quot; style=&quot;height: 592.96px;&quot; cd_frame_id_=&quot;8cb7e7ff87254590477aee6f726ea77d&quot;&gt;&lt;/iframe&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver <span class="keyword">import</span> ActionChains</span><br><span class="line"></span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">url = <span class="string">&#x27;http://www.runoob.com/try/try.php?filename=jqueryui-api-droppable&#x27;</span></span><br><span class="line">browser.get(url)</span><br><span class="line">browser.switch_to.frame(<span class="string">&#x27;iframeResult&#x27;</span>) <span class="comment">#切换frame</span></span><br><span class="line">source = browser.find_element_by_css_selector(<span class="string">&#x27;#draggable&#x27;</span>)<span class="comment">#拖拽节点</span></span><br><span class="line">target = browser.find_element_by_css_selector(<span class="string">&#x27;#droppable&#x27;</span>)<span class="comment">#拖拽目标节点</span></span><br><span class="line">actions = ActionChains(browser)</span><br><span class="line">actions.drag_and_drop(source, target)</span><br><span class="line">actions.perform()<span class="comment">#执行</span></span><br></pre></td></tr></table></figure>
+
+<p>更多动作链操作</p>
+<p><a target="_blank" rel="noopener" href="https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.action_chains">https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.action_chains</a></p>
+<h6 id="执行-JavaScript"><a href="#执行-JavaScript" class="headerlink" title="执行 JavaScript"></a>执行 JavaScript</h6><p>利用 execute_script() 将进度条下拉到最底部，然后弹窗</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">browser = webdriver.Chrome()</span><br><span class="line">browser.get(<span class="string">&#x27;https://www.zhihu.com/explore&#x27;</span>)</span><br><span class="line">browser.execute_script(<span class="string">&#x27;window.scrollTo(0, document.body.scrollHeight)&#x27;</span>)</span><br><span class="line">browser.execute_script(<span class="string">&#x27;alert(&quot;To Bottom&quot;)&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取节点信息"><a href="#获取节点信息" class="headerlink" title="获取节点信息"></a>获取节点信息</h5><p>前面通过 page_souce 属性获取网页源代码，接着就可以使用解析库（正则、Beautiful Soup、pyquery）等来提取信息</p>
+<p>Selenium 已提供了选取节点的方法，返回 WebElement 类型，它也有相关的方法和属性来直接提取节点信息，如属性、文本等。这样就可以不用通过解析源代码来提取信息了</p>
+<h6 id="获取属性"><a href="#获取属性" class="headerlink" title="获取属性"></a>获取属性</h6><p>通过 get_attribute() 方法获取节点属性，输入想要获取的属性名</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.remote.webelement <span class="keyword">import</span> WebElement</span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">browser.get(<span class="string">&#x27;https://www.zhihu.com/explore&#x27;</span>)</span><br><span class="line">logo = browser.find_element_by_class_name(<span class="string">&#x27;ExploreHomePage-specialsLoginImg&#x27;</span>) <span class="comment"># type: WebElement</span></span><br><span class="line">print(logo)</span><br><span class="line">print(logo.get_attribute(<span class="string">&#x27;class&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<h6 id="获取文本值"><a href="#获取文本值" class="headerlink" title="获取文本值"></a>获取文本值</h6><p>每个 WebElement 都有 text 属性，获取到节点内部的文本信息</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">logo = browser.find_element_by_class_name(<span class="string">&#x27;ExploreHomePage-ContentSection-header&#x27;</span>) <span class="comment"># type: WebElement</span></span><br><span class="line">print(logo.text)</span><br></pre></td></tr></table></figure>
+
+<h6 id="获取-id、位置、标签名和大小"><a href="#获取-id、位置、标签名和大小" class="headerlink" title="获取 id、位置、标签名和大小"></a>获取 id、位置、标签名和大小</h6><p>id 获取节点id，location 获取该节点在页面中相对位置，tag_name 获取标签名称，size 获取节点大小也就是宽高</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">print(logo.<span class="built_in">id</span>)</span><br><span class="line">print(logo.location)</span><br><span class="line">print(logo.tag_name)</span><br><span class="line">print(logo.size)</span><br></pre></td></tr></table></figure>
+
+<h5 id="切换-Frame"><a href="#切换-Frame" class="headerlink" title="切换 Frame"></a>切换 Frame</h5><p>网页中有一种节点叫作 iframe，也就是子 Frame，相当于页面的子页面</p>
+<p>Selenium 打开页面后，默认是在父级 Frame 里面操作，此时如果页面中还有子 Frame，它是不能获取到子Frame 里面的节点的，需要用 switch_to.frame() 方法来切换 Frame</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> NoSuchElementException</span><br><span class="line"></span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">url = <span class="string">&#x27;http://www.runoob.com/try/try.php?filename=jqueryui-api-droppable&#x27;</span></span><br><span class="line">browser.get(url)</span><br><span class="line">browser.switch_to.frame(<span class="string">&#x27;iframeResult&#x27;</span>)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    logo = browser.find_element_by_class_name(<span class="string">&#x27;logo&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> NoSuchElementException:</span><br><span class="line">    print(<span class="string">&#x27;No Logo&#x27;</span>)</span><br><span class="line">browser.switch_to.parent_frame()</span><br><span class="line">logo = browser.find_element_by_class_name(<span class="string">&#x27;logo&#x27;</span>)</span><br><span class="line">print(logo)</span><br><span class="line">print(logo.text)</span><br><span class="line"><span class="comment">#结果</span></span><br><span class="line">No Logo</span><br><span class="line">&lt;selenium.webdriver.remote.webelement.WebElement (session=<span class="string">&quot;020e37884ff7c4ab42f87a840d6bc616&quot;</span>, element=<span class="string">&quot;d5450a09-946b-4ace-b6b2-f3dd7c0382fd&quot;</span>)&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里先通过 switch_to.frame 切换到子 Frame里面，尝试获取父级 Frame 里的 logo 节点（这是不能找到的）找不到抛出异常，接着切换回父级 Frame，然后再次重新获取节点，此时成功获取了</p>
+<p>所以当页面中包含子 Frame 时，如果想获取子 Frame 中的节点，需要先调用 switch_to.frame 方法切换到对应的 Frame，然后再进行操作</p>
+<h5 id="延时等待"><a href="#延时等待" class="headerlink" title="延时等待"></a>延时等待</h5><p>Selenium 中，get 方法会在网页框架加载结束后执行，此时如果获取 page_source，可能并不是浏览器完全加载完成的页面，有些还有额外的 Ajax 请求，需要等待一段时间，确保节点已加载出来</p>
+<h6 id="隐式等待"><a href="#隐式等待" class="headerlink" title="隐式等待"></a>隐式等待</h6><p>implicitly_wait</p>
+<p>如果 Selenium 没有在 DOM 中找到节点，将继续等待，超出设定时间抛出找不到节点的异常</p>
+<p>当查找节点没有立即出现，隐式等待一段时间再查找DOM，默认时间0</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">browser = webdriver.Chrome()</span><br><span class="line">browser.implicitly_wait(<span class="number">10</span>) <span class="comment">#隐式等待</span></span><br><span class="line">browser.get(<span class="string">&#x27;https://www.zhihu.com/explore&#x27;</span>)</span><br><span class="line"><span class="built_in">input</span> = browser.find_element_by_class_name(<span class="string">&#x27;zu-top-add-question&#x27;</span>)</span><br><span class="line">print(<span class="built_in">input</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="显式等待"><a href="#显式等待" class="headerlink" title="显式等待"></a>显式等待</h6><p>指定要查找的结点，指定一个最长等待时间，规定时间内加载出来了这个节点，就返回查找节点，超过时间未找到节点抛出异常</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.ui <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">browser.implicitly_wait(<span class="number">10</span>)<span class="comment"># 指定最长等待时间</span></span><br><span class="line">browser.get(<span class="string">&#x27;https://www.taobao.com/&#x27;</span>)</span><br><span class="line">wait = WebDriverWait(browser, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">input</span> = wait.until(EC.presence_of_element_located(By.ID, <span class="string">&#x27;q&#x27;</span>)) <span class="comment">#节点出现</span></span><br><span class="line">button = wait.until(EC.element_to_be_clickable(By.CSS_SELECTOR, <span class="string">&#x27;.btn-search&#x27;</span>)) <span class="comment">#节点可点击</span></span><br><span class="line">print(<span class="built_in">input</span>, button)</span><br></pre></td></tr></table></figure>
+
+<p>引入 WebDriverWait 对象，指定最长等待时间</p>
+<p>调用 until 方法，传入要等待条件 presence_of_element_located 节点出现的意思，参数是节点的定位元组，ID 为 q 的节点搜索框</p>
+<p>10秒内搜索框成功加载出来，就返回该节点，超过10秒抛出异常</p>
+<p>element_to_be_clickable 可点击，查按钮查找 CSS 选择器 .btn-search ，10秒内它是可点击的，也就是成功加载出来了，就返回这个按钮节点，超过10秒不可点击，也就是没有加载出来，就抛出异常</p>
+<h6 id="其它等待条件"><a href="#其它等待条件" class="headerlink" title="其它等待条件"></a>其它等待条件</h6><p>比如判断标题内容，判断某个节点内是否出现了某文字等</p>
+<table>
+<thead>
+<tr>
+<th>等待条件</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>title_is</td>
+<td>标题是某内容</td>
+</tr>
+<tr>
+<td>title_contains</td>
+<td>标题包含某内容</td>
+</tr>
+<tr>
+<td>presence_of_element_loated</td>
+<td>节点加载出来，传入定位元组(By.ID,’p’)</td>
+</tr>
+<tr>
+<td>visibility_of_element_located</td>
+<td>节点可见，传入定位元组</td>
+</tr>
+<tr>
+<td>visibility_of</td>
+<td>可见，传入节点对象</td>
+</tr>
+<tr>
+<td>presence_of_all_elements_located</td>
+<td>所有节点加载出来</td>
+</tr>
+<tr>
+<td>text_to_be_present_in_element</td>
+<td>某个节点文本包含某文字</td>
+</tr>
+<tr>
+<td>text_to_be_present_in_element_value</td>
+<td>某个节点值包含某文字</td>
+</tr>
+<tr>
+<td>frame_to_be_available_and_switch_to_it</td>
+<td>加载并切换</td>
+</tr>
+<tr>
+<td>invisibility_of_element_located</td>
+<td>节点不可见</td>
+</tr>
+<tr>
+<td>element_to_be_clickable</td>
+<td>节点可点击</td>
+</tr>
+<tr>
+<td>staleness_of</td>
+<td>判断一个结点是否仍在DOM，可判断页面是否已刷新</td>
+</tr>
+<tr>
+<td>element_to_be_selected</td>
+<td>节点可选择，传入节点对象</td>
+</tr>
+<tr>
+<td>element_located_to_be_selected</td>
+<td>节点可选择，传入定位元组</td>
+</tr>
+<tr>
+<td>element_selection_state_to_be</td>
+<td>传入节点对象及状态，相等返回True，否则返回False</td>
+</tr>
+<tr>
+<td>element_located_selection_state_to_be</td>
+<td>传入定位元组及状态，相等返回True，否则返回False</td>
+</tr>
+<tr>
+<td>alert_is_present</td>
+<td>是否出现警告</td>
+</tr>
+</tbody></table>
+<p>更多等待条件的参数及用法</p>
+<p> <a target="_blank" rel="noopener" href="https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.support.expected_conditions">https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.support.expected_conditions</a></p>
+<h5 id="前进和后退"><a href="#前进和后退" class="headerlink" title="前进和后退"></a>前进和后退</h5><p>back() 和 forward()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">browser.back()</span><br><span class="line">browser.forward()</span><br></pre></td></tr></table></figure>
+
+<h5 id="Cookies"><a href="#Cookies" class="headerlink" title="Cookies"></a>Cookies</h5><p>获取、添加、删除 Cookies</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(browser.get_cookie())</span><br><span class="line">browser.add_cookie(&#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;name&#x27;</span>&#125;)</span><br><span class="line">browser.delete_all_cookies()</span><br></pre></td></tr></table></figure>
+
+<h5 id="选项卡管理"><a href="#选项卡管理" class="headerlink" title="选项卡管理"></a>选项卡管理</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">browser = webdriver.Chrome()</span><br><span class="line">browser.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line">browser.execute_script(<span class="string">&#x27;window.open()&#x27;</span>) <span class="comment">#打开新选项卡</span></span><br><span class="line">print(browser.window_handles) <span class="comment">#打印所有选项卡</span></span><br><span class="line">browser.switch_to.window(browser.window_handles[<span class="number">1</span>]) <span class="comment">#切换选项卡</span></span><br><span class="line">browser.get(<span class="string">&#x27;https://www.zhihu.com/explore&#x27;</span>) <span class="comment">#新选项卡打开页面</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">browser.switch_to.window(browser.window_handles[<span class="number">0</span>]) <span class="comment">#切换到第1个选项卡</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h5><p>try except</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> NoSuchElementException, TimeoutException</span><br><span class="line"></span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">  browser.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> TimeoutException:</span><br><span class="line">  print(<span class="string">&#x27;Time Out&#x27;</span>)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">  browser.find_element_by_id(<span class="string">&#x27;hello&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> NoSuchElementException:</span><br><span class="line">  print(<span class="string">&#x27;No Element&#x27;</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">  browser.close()</span><br></pre></td></tr></table></figure>
+
+<p>更多异常类 <a target="_blank" rel="noopener" href="https://selenium-python.readthedocs.io/api.html#module-selenium.common.exceptions">https://selenium-python.readthedocs.io/api.html#module-selenium.common.exceptions</a></p>
+<h5 id="反屏蔽"><a href="#反屏蔽" class="headerlink" title="反屏蔽"></a>反屏蔽</h5><p>现在很多网站都增加了对 Selenium 的检测，防止一些爬虫的恶意爬取，检测到 Selenium 打开浏览器，就直接屏蔽</p>
+<p>检测原理是检测当前浏览器窗口下 window.navigator 对象中是否包含 webdriver 属性，在正常使用浏览器时这个属性应该是 undefined</p>
+<p><a target="_blank" rel="noopener" href="https://antispider1.scrape.center/">https://antispider1.scrape.center/</a></p>
+<p>Selenium 中，可以使用 CDP（Chrome 开发工具协议）解决这个问题，利用它可以实现在每个页面刚加载的时候就执行 JavaScript 语句</p>
+<p>还可以加入几个选项来隐藏 WebDriver 提示条河自动化扩展信息</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver <span class="keyword">import</span> ChromeOptions</span><br><span class="line"></span><br><span class="line">option = ChromeOptions()</span><br><span class="line">option.add_experimental_option(<span class="string">&#x27;excludeSwitches&#x27;</span>, [<span class="string">&#x27;enable-automation&#x27;</span>])</span><br><span class="line">option.add_experimental_option(<span class="string">&#x27;useAutomationExtension&#x27;</span>, <span class="literal">False</span>)</span><br><span class="line">browser = webdriver.Chrome(options=option)</span><br><span class="line">browser.execute_cpd_cmd(<span class="string">&#x27;Page.addScriptToEvaluateOnNewDocument&#x27;</span>,&#123;</span><br><span class="line">  <span class="string">&#x27;source&#x27;</span>:<span class="string">&#x27;Object.defineProperty(navigator, &quot;webdriver&quot;, &#123;get:() =&gt; undefined&#125;)&#x27;</span></span><br><span class="line">&#125;)</span><br><span class="line">browser.get(<span class="string">&#x27;htttps://antispider1.scrape.center/&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="无头模式"><a href="#无头模式" class="headerlink" title="无头模式"></a>无头模式</h5><p>可以借助 ChromeOptions 对象开启 Chrome 浏览器的无头模式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver <span class="keyword">import</span> ChromeOptions</span><br><span class="line"></span><br><span class="line">option = ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">&#x27;--headless&#x27;</span>)</span><br><span class="line">browser = webdriver.Chrome(options=option)</span><br><span class="line">browser.set_window_size(<span class="number">1366</span>,<span class="number">768</span>)</span><br><span class="line">browser.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line">browser.get_screenshot_as_file(<span class="string">&#x27;preview.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>无头模式下最好设置下窗口大小</p>
+<h4 id="7-2-Splash-使用"><a href="#7-2-Splash-使用" class="headerlink" title="7.2 Splash 使用"></a>7.2 Splash 使用</h4><p>Splash Scripts Reference <a target="_blank" rel="noopener" href="https://splash.readthedocs.io/en/stable/scripting-ref.html">https://splash.readthedocs.io/en/stable/scripting-ref.html</a></p>
+<p>Splash 是一个 JavaScript 渲染服务，是一个带有 HTTP API 的轻量级浏览器，对接了 Python 中的 Twisted 和 QT 库，利用它同样可以动态渲染页面的抓取</p>
+<ul>
+<li>Splash 可以实现功能</li>
+</ul>
+<p>异步方式处理多个网页渲染过程</p>
+<p>获取渲染后的页面的源代码或截图</p>
+<p>通过关闭图片渲染或者使用 Adblock 规则来加快页面渲染速度</p>
+<p>可执行特定的 JavaScript 脚本</p>
+<p>可通过 Lua 脚本来控制页面渲染过程</p>
+<p>获取渲染的详细过程并通过 HAR（HTTP Archive）格式呈现</p>
+<h5 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h5><p>Docker 安装 Splash 后启动，本机 8050 端口运行了 Splash 服务，打开 <a target="_blank" rel="noopener" href="http://localhost:8050/">http://localhost:8050</a> 可以看到 Web 页面，显示一个渲染示例，有个输入框默认 <a target="_blank" rel="noopener" href="http://google.com/">http://google.com</a></p>
+<p>修改成百度 <a target="_blank" rel="noopener" href="https://www.baidu.com/">https://www.baidu.com</a> ，点击 Render me 测试渲染</p>
+<p>可以看到网页返回结果显示了渲染截图、HAR加载统计数据、网页的源代码</p>
+<p>通过 HAR 结果可以看到，Splash 执行了整个网页的渲染过程，包括 CSS、JavaScript 的加载等过程，呈现的页面和在浏览器中得到的结果一致</p>
+<p>返回查看入口的脚本 </p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">  <span class="built_in">assert</span>(splash:go(args.url))</span><br><span class="line">  <span class="built_in">assert</span>(splash:wait(<span class="number">0.5</span>))</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    html = splash:html(),</span><br><span class="line">    png = splash:png(),</span><br><span class="line">    har = splash:har(),</span><br><span class="line">  &#125;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>这是用 Lua 语言写的脚本，首先调用 go() 方法去加载页面，然后调用 wait() 方法等待一定时间，最后返回页面的源码、截图、HAR等信息</p>
+<h5 id="Splash-Lua-脚本"><a href="#Splash-Lua-脚本" class="headerlink" title="Splash Lua 脚本"></a>Splash Lua 脚本</h5><p>Splash 可以通过 Lua 脚本执行一系列渲染操作，这样就可以用 Splash 来模拟类似 Chrome、PhantomJs 的操作</p>
+<h6 id="入口及返回值"><a href="#入口及返回值" class="headerlink" title="入口及返回值"></a>入口及返回值</h6><p>方法的返回值可以是字符形式或者字典形式</p>
+<p>evaljs() 方法传入 JavaScript 脚本</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">  splash:go(args.url)</span><br><span class="line">  splash:wait(<span class="number">0.5</span>)</span><br><span class="line">  <span class="keyword">local</span> title = splash:evaljs(<span class="string">&#x27;document.title&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> title</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"># <span class="keyword">return</span> &#123;hello: <span class="string">&quot;world&quot;</span>&#125; </span><br><span class="line"># <span class="keyword">return</span> <span class="string">&#x27;hello&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="异步处理"><a href="#异步处理" class="headerlink" title="异步处理"></a>异步处理</h6><p>Splash 支持异步处理，但是没有显式指明回调方法，其回调的跳转是在 Splash 内部完成</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">  <span class="keyword">local</span> example_urls = &#123;<span class="string">&quot;www.baidu.com&quot;</span>, <span class="string">&quot;www.taobao.com&quot;</span>, <span class="string">&quot;www.zhihu.com&quot;</span>&#125;</span><br><span class="line">  <span class="keyword">local</span> urls = args.urls <span class="keyword">or</span> example_urls</span><br><span class="line">  <span class="keyword">local</span> results = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> index, url <span class="keyword">in</span> <span class="built_in">ipairs</span>(urls) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">local</span> ok, reason = splash:go(<span class="string">&quot;http://&quot;</span> .. url) #lua字符串拼接</span><br><span class="line">    <span class="keyword">if</span> ok <span class="keyword">then</span></span><br><span class="line">      splash:wait(<span class="number">2</span>)</span><br><span class="line">      results[url] = splash:png()</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">return</span> results</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>go() 方法会返回加载页面的结果状态，如果返回错误 ok 变量就为空</p>
+<p>Splash 执行到 wait 方法时，会转而处理其他任务，等待指定时间后再回来继续处理</p>
+<p>Lua 脚本语法 <a target="_blank" rel="noopener" href="http://www.runoob.com/lua/lua-basic-syntax.html">http://www.runoob.com/lua/lua-basic-syntax.html</a></p>
+<h5 id="Splash-对象属性"><a href="#Splash-对象属性" class="headerlink" title="Splash 对象属性"></a>Splash 对象属性</h5><h6 id="args"><a href="#args" class="headerlink" title="args"></a>args</h6><p>该属性可以获取加载时配置的参数</p>
+<p>Splash 支持将 main 方法的第二个参数直接设置为 args，第二个参数 args 就相当于 splash.args 属性，下面两个方法是等价的</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">	<span class="keyword">local</span> url = args.url</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash)</span></span></span><br><span class="line">	<span class="keyword">local</span> url = splash.args.url</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="js-enabled"><a href="#js-enabled" class="headerlink" title="js_enabled"></a>js_enabled</h6><p>Splash 的 JavaScript 执行开关，设置为 true 或 false 来控制是否执行 JavaScript，默认开启一般不用设置</p>
+<h6 id="resource-timeout"><a href="#resource-timeout" class="headerlink" title="resource_timeout"></a>resource_timeout</h6><p>设置加载超时时间，单位秒，0 或 nil 不检测超时</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">splash.resourcce_timeout = <span class="number">0.1</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="images-enabled"><a href="#images-enabled" class="headerlink" title="images_enabled"></a>images_enabled</h6><p>设置图片是否加载，默认加载，禁用后可以节省流量提高网页加载速度，禁用后可能会影响 JavaScript 渲染，因为禁用后外层DOM节点高度会受影响，进而影响 DOM 节点位置</p>
+<p>Splash 使用了缓存，如果一开始加载出来了网页图片，然后禁用图片加载，重新加载页面，之前加载好的图片可能还会显示出来，重启Splash即可</p>
+<h6 id="plugins-enabled"><a href="#plugins-enabled" class="headerlink" title="plugins_enabled"></a>plugins_enabled</h6><p>可以控制浏览器插件（如Flash插件）是否开启，默认 false</p>
+<h6 id="scroll-postion"><a href="#scroll-postion" class="headerlink" title="scroll_postion"></a>scroll_postion</h6><p>可以控制页面上下或左右滚动</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">splash.scroll_position = &#123;y=<span class="number">400</span>&#125;</span><br><span class="line">splash.scroll_position = &#123;x=<span class="number">200</span>, y=<span class="number">400</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="Splash-对象的方法"><a href="#Splash-对象的方法" class="headerlink" title="Splash 对象的方法"></a>Splash 对象的方法</h5><h6 id="go"><a href="#go" class="headerlink" title="go"></a>go</h6><p>请求某个链接，可以模拟GET和POST请求，支持传入请求头、表单</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ok, reason = splash:go&#123;url, baseurl=<span class="literal">nil</span>, headers=<span class="literal">nil</span>, http_method=<span class="string">&quot;GET&quot;</span>, body=<span class="literal">nil</span>, formdata=<span class="literal">nil</span>&#125;</span><br><span class="line"></span><br><span class="line">#baseurl 资源加载相对路径 可选</span><br><span class="line">#body POST请求时的表单数据 Content-<span class="built_in">type</span> 为 application/json</span><br><span class="line">#fordata POST请求时的表单数据 Content-<span class="built_in">type</span> 为 application/x-www-form-urlencoded</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">	<span class="keyword">local</span> ok, reason = splash:go&#123;<span class="string">&quot;http://httpbin.org/post&quot;</span>, http_method=<span class="string">&quot;POST&quot;</span>, body=<span class="string">&quot;name=Germey&quot;</span>&#125;</span><br><span class="line">	<span class="keyword">if</span> ok <span class="keyword">then</span></span><br><span class="line">		<span class="keyword">return</span> splash:html() #返回网页源码</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="wait"><a href="#wait" class="headerlink" title="wait"></a>wait</h6><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ok, reason = splash:wait&#123;<span class="built_in">time</span>, cancel_on_redirect=<span class="literal">false</span>, cancel_on_error=<span class="literal">true</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>cancel_on_redirect 可选，默认false，如果发生了重定向就停止等待，并返回重定向结果</p>
+<p>cancel_on_error 可选，默认false，如果发生了加载错误，就停止等待</p>
+<h6 id="jsfunc"><a href="#jsfunc" class="headerlink" title="jsfunc"></a>jsfunc</h6><p>可以直接调用 JavaScript 定义的方法，调用的方法需要用双中括号包围</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">  <span class="keyword">local</span> get_div_count = splash:jsfunc(<span class="string">[[</span></span><br><span class="line"><span class="string">  function()&#123;</span></span><br><span class="line"><span class="string">    var body = document.body;</span></span><br><span class="line"><span class="string">    var divs = body.getElementsByTagName(&#x27;div&#x27;);</span></span><br><span class="line"><span class="string">    return divs.length;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  ]]</span>)</span><br><span class="line">  splash:go(<span class="string">&quot;https://www.baidu.com&quot;</span>)</span><br><span class="line">  <span class="keyword">return</span> (<span class="string">&quot;There are %s DIVS&quot;</span>):<span class="built_in">format</span>(get_div_count())</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>更多JavaScript 到 Lua 转换细节 <a target="_blank" rel="noopener" href="https://splash.readthedocs.io/en/stable/scripting-ref.html">https://splash.readthedocs.io/en/stable/scripting-ref.html</a></p>
+<h6 id="evaljs"><a href="#evaljs" class="headerlink" title="evaljs"></a>evaljs</h6><p>可以执行 JavaScript 代码并返回最后一条 JavaScript 语句的返回结果</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> title = splash:evaljs(<span class="string">&quot;document.title&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="runjs"><a href="#runjs" class="headerlink" title="runjs"></a>runjs</h6><p>可以执行 JavaScript 代码，与 evaljs() 功能类似，但更偏向于执行某些动作或声明某些方法</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">splash:runjs(<span class="string">&quot;foo = function() &#123; return &#x27;bar&#x27; &#125;&quot;</span>) #声明一个JavaScript定义的方法</span><br><span class="line"><span class="keyword">local</span> result = splash:evaljs(<span class="string">&quot;foo()&quot;</span>) #通过evaljs()调用得到结果</span><br></pre></td></tr></table></figure>
+
+<h6 id="autoload"><a href="#autoload" class="headerlink" title="autoload()"></a>autoload()</h6><p>可以设置每个页面访问时自动加载的对象</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ok, reason = splash:autoload&#123;source_or_url, source=<span class="literal">nil</span>, url=<span class="literal">nil</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>source_or_url JavaScript 代码或者 JavaScript 库链接</p>
+<p>source JavaScript 代码</p>
+<p>url JavaScript 库链接</p>
+<p>此方法只负责加载 JavaScript 代码或库，不执行任何操作，如果要执行，evaljs()</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">	splash:autoload(<span class="string">[[</span></span><br><span class="line"><span class="string">  function get_document_title()&#123;</span></span><br><span class="line"><span class="string">    return document.title;</span></span><br><span class="line"><span class="string">  &#125;  </span></span><br><span class="line"><span class="string">  ]]</span>)</span><br><span class="line">  splash:go(<span class="string">&quot;https://www.baidu.com&quot;</span>)</span><br><span class="line">  <span class="keyword">return</span> splash:evaljs(<span class="string">&quot;get_document_title()&quot;</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>这里用 autoload 声明了一个 JavaScript 方法</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">	<span class="built_in">assert</span>(splash:autoload(<span class="string">&quot;https://code.jquery.com/jquery-2.1.3.min.js&quot;</span>))</span><br><span class="line">  <span class="built_in">assert</span>(splash:go(<span class="string">&quot;https://www.taobao.com&quot;</span>))</span><br><span class="line">  <span class="keyword">local</span> version = splash:evaljs(<span class="string">&quot;$.fn.jquery&quot;</span>)</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;JQuery version&#x27;</span> .. version</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="call-later"><a href="#call-later" class="headerlink" title="call_later()"></a>call_later()</h6><p>可以通过设置定时任务和延迟时间来实现任务延迟执行，并且可以在执行前通过 cancel() 方法重新执行特定任务</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">timer = splash:call_later(callback, delay)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">  <span class="keyword">local</span> snapshots = &#123;&#125;</span><br><span class="line">  <span class="keyword">local</span> timer = splash:call_later(<span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">    snapshots[<span class="string">&quot;a&quot;</span>] = splash:png()</span><br><span class="line">    splash:wait(<span class="number">1.0</span>)</span><br><span class="line">    snapshots[<span class="string">&quot;b&quot;</span>] = splash:png()</span><br><span class="line">  <span class="keyword">end</span>, <span class="number">1.5</span>)</span><br><span class="line">  <span class="built_in">assert</span>(splash:go(<span class="string">&quot;https://www.baidu.com&quot;</span>))</span><br><span class="line">  splash:wait(<span class="number">3.0</span>)</span><br><span class="line">  timer:reraise()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> snapshots</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>设置了一个定时任务，1.5 秒的时候获取网页截图，等待1秒，2.5秒的时候再获取网页截图</p>
+<h6 id="http-get"><a href="#http-get" class="headerlink" title="http_get()"></a>http_get()</h6><p>模拟发送 HTTP 的 GET请求</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response = splash:http_get(url, headers=<span class="literal">nil</span>, follow_redirects=<span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
+
+<p>follow_redirects 是否启动自动重定向 默认 true</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">	<span class="keyword">local</span> treat = <span class="built_in">require</span>(<span class="string">&quot;treat&quot;</span>)</span><br><span class="line">	<span class="keyword">local</span> response = splash:http_get(<span class="string">&quot;http://httpbin.org/get&quot;</span>)</span><br><span class="line">  	<span class="keyword">return</span> &#123;</span><br><span class="line">      html = treat.as_string(response.body),</span><br><span class="line">      url = response.url,</span><br><span class="line">      <span class="built_in">status</span> = response.<span class="built_in">status</span></span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="http-post"><a href="#http-post" class="headerlink" title="http_post()"></a>http_post()</h6><p>模拟 POST 请求</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response = splash:http_post&#123;url, headers=<span class="literal">nil</span>, follow_redirects=<span class="literal">true</span>, body=<span class="literal">nil</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash, args)</span></span></span><br><span class="line">	<span class="keyword">local</span> treat = <span class="built_in">require</span>(<span class="string">&quot;treat&quot;</span>)</span><br><span class="line">  <span class="keyword">local</span> json = <span class="built_in">require</span>(<span class="string">&quot;json&quot;</span>)</span><br><span class="line">	<span class="keyword">local</span> response = splash:http_post&#123;<span class="string">&quot;http://httpbin.org/post&quot;</span>,</span><br><span class="line">  	body=json.encode(&#123;name=<span class="string">&quot;Germey&quot;</span>&#125;),</span><br><span class="line">    headers = &#123;[<span class="string">&quot;content-type&quot;</span>] = <span class="string">&quot;application/json&quot;</span>&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  	<span class="keyword">return</span> &#123;</span><br><span class="line">      html = treat.as_string(response.body),</span><br><span class="line">      url = response.url,</span><br><span class="line">      <span class="built_in">status</span> = response.<span class="built_in">status</span></span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="set-content"><a href="#set-content" class="headerlink" title="set_content()"></a>set_content()</h6><p>用来设置页面内容</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">funciton main(splash)</span><br><span class="line">	<span class="built_in">assert</span>(splash:set_content(<span class="string">&quot;&lt;html&gt;&lt;body&gt;hello&lt;/body&gt;&lt;/html&gt;&quot;</span>))</span><br><span class="line">	<span class="keyword">return</span> splash:png()</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="html"><a href="#html" class="headerlink" title="html"></a>html</h6><p>获取网页源代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return splash:html()</span><br></pre></td></tr></table></figure>
+
+<h6 id="png、jpeg"><a href="#png、jpeg" class="headerlink" title="png、jpeg"></a>png、jpeg</h6><p>获取 PNG/JPEG 格式的页面截图</p>
+<h6 id="har"><a href="#har" class="headerlink" title="har"></a>har</h6><p>获取页面加载过程描述信息</p>
+<h6 id="url"><a href="#url" class="headerlink" title="url"></a>url</h6><p>获取当前正在访问的URL</p>
+<h6 id="get-cookies"><a href="#get-cookies" class="headerlink" title="get_cookies()"></a>get_cookies()</h6><p>获取当前页面的 Cookies</p>
+<h6 id="add-cookie"><a href="#add-cookie" class="headerlink" title="add_cookie()"></a>add_cookie()</h6><p>添加 Cookie</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cookies = splash:add_cookie&#123;name, value, <span class="built_in">path</span>=<span class="literal">nil</span>, domain=<span class="literal">nil</span>, expires=<span class="literal">nil</span>, httpOnly=<span class="literal">nil</span>, secure=<span class="literal">nil</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">(splash)</span></span></span><br><span class="line">	splash:add_cookie&#123;<span class="string">&quot;sessionid&quot;</span>, <span class="string">&quot;34234jojo&quot;</span>, <span class="string">&quot;/&quot;</span>, domain=<span class="string">&quot;http://example.com&quot;</span>&#125;</span><br><span class="line">  splash:go(<span class="string">&quot;http://example.com&quot;</span>)</span><br><span class="line">  <span class="keyword">return</span> splash:html()</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="clear-cookies"><a href="#clear-cookies" class="headerlink" title="clear_cookies()"></a>clear_cookies()</h6><p>清除所有 cookies</p>
+<h6 id="get-viewport-size"><a href="#get-viewport-size" class="headerlink" title="get_viewport_size()"></a>get_viewport_size()</h6><p>获取当前浏览器页面的大小，即宽高</p>
+<h6 id="set-viewport-size"><a href="#set-viewport-size" class="headerlink" title="set_viewport_size()"></a>set_viewport_size()</h6><p>设置浏览器页面宽高</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">splash:set_viewport(<span class="number">400</span>, <span class="number">700</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="set-viewport-full"><a href="#set-viewport-full" class="headerlink" title="set_viewport_full()"></a>set_viewport_full()</h6><p>设置浏览器全屏显示</p>
+<h6 id="set-user-agent"><a href="#set-user-agent" class="headerlink" title="set_user_agent"></a>set_user_agent</h6><p>设置浏览器 User-Agent</p>
+<h6 id="set-custom-headers"><a href="#set-custom-headers" class="headerlink" title="set_custom_headers()"></a>set_custom_headers()</h6><p>设置请求头</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">splash:set_custom_headers(&#123;</span><br><span class="line">	[<span class="string">&quot;User-Agent&quot;</span>] = <span class="string">&quot;Splash&quot;</span>,</span><br><span class="line">	[<span class="string">&quot;Site&quot;</span>] = <span class="string">&quot;Splash&quot;</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h6 id="select"><a href="#select" class="headerlink" title="select"></a>select</h6><p>选中符合条件的第一个节点，如果有多个符合条件只会返回一个，参数是CSS 选择器</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">input</span> = splash:<span class="built_in">select</span>(<span class="string">&quot;#kw&quot;</span>)</span><br><span class="line"><span class="built_in">input</span>:send_text(<span class="string">&#x27;Splash&#x27;</span>)</span><br><span class="line">splash:wait(<span class="number">3</span>)</span><br><span class="line"><span class="keyword">return</span> splash:png()</span><br></pre></td></tr></table></figure>
+
+<h6 id="select-all"><a href="#select-all" class="headerlink" title="select_all()"></a>select_all()</h6><p>选中所有符合条件的节点，参数是CSS 选择器</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">local</span> treat = <span class="built_in">require</span>(<span class="string">&#x27;treat&#x27;</span>)</span><br><span class="line"><span class="built_in">assert</span>(splash:go(<span class="string">&quot;https://quotes.toscrape.com/&quot;</span>))</span><br><span class="line"><span class="keyword">local</span> texts = splash:select_all(<span class="string">&#x27;.quote .text&#x27;</span>)</span><br><span class="line"> <span class="keyword">for</span> index, text <span class="keyword">in</span> <span class="built_in">ipairs</span>(texts) <span class="keyword">do</span></span><br><span class="line">   results[index] = text.node.innerHTML</span><br><span class="line"> <span class="keyword">end</span></span><br><span class="line"> <span class="keyword">return</span> treat.as_array(results)</span><br></pre></td></tr></table></figure>
+
+<p>通过 CSS 选择器选中了节点的正文内容，随后遍历所有节点，将内容获取下来</p>
+<h6 id="mouse-click"><a href="#mouse-click" class="headerlink" title="mouse_click"></a>mouse_click</h6><p>可以模拟鼠标点击操作，参数为坐标x和y，也可以直接选中某个节点</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">input</span> = splash:<span class="built_in">select</span>(<span class="string">&#x27;#kw&#x27;</span>)</span><br><span class="line"><span class="built_in">input</span>:send_text(<span class="string">&#x27;Splash&#x27;</span>)</span><br><span class="line">submit = splash:<span class="built_in">select</span>(<span class="string">&#x27;#su&#x27;</span>)</span><br><span class="line">submit:mouse_click()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>针对页面元素的API操作 <a target="_blank" rel="noopener" href="https://splash.readthedocs.io/en/stable/scripting-element-object.html">https://splash.readthedocs.io/en/stable/scripting-element-object.html</a></p>
+<h5 id="Splash-API-调用"><a href="#Splash-API-调用" class="headerlink" title="Splash API 调用"></a>Splash API 调用</h5><p>如何利用 Splash 渲染页面，Splash 提供了一些 HTTP API 接口，只需要请求这些接口并传递相应的参数即可</p>
+<h6 id="render-html"><a href="#render-html" class="headerlink" title="render.html"></a>render.html</h6><p>用于获取 JavaScript 渲染的页面的 HTML 代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;localhost:8050&#x2F;render.html?url&#x3D;https:&#x2F;&#x2F;www.baidu.com</span><br></pre></td></tr></table></figure>
+
+<p>传递一个url参数来指定渲染 URL，返回结果即页面渲染后的源代码</p>
+<p>Python 实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">url = <span class="string">&#x27;http://localhost:8050/render.html?url=https://www.baidu.com&#x27;</span></span><br><span class="line">response = requests.get(url)</span><br><span class="line">print(respons.text)</span><br></pre></td></tr></table></figure>
+
+<p>此接口还可以指定其它参数 如wait 等待秒数 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url = <span class="string">&#x27;http://localhost:8050/render.html?url=https://www.baidu.com&amp;wait=5&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>还支持代理设置、图片加载设置、Headers 设置、请求方法设置</p>
+<p>具体用法 <a target="_blank" rel="noopener" href="https://splash.readthedocs.io/en/stable/api.html">https://splash.readthedocs.io/en/stable/api.html</a></p>
+<h6 id="render-png"><a href="#render-png" class="headerlink" title="render.png"></a>render.png</h6><p>可以获取网页截图，参数比 render.html 多了几个 比如 width 和 height 来控制宽高</p>
+<p>返回 PNG 格式的图片二进制数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;localhost:8050&#x2F;render.png?url&#x3D;https:&#x2F;&#x2F;www.baidu.com&amp;wait&#x3D;5&amp;width&#x3D;1000&amp;height&#x3D;700</span><br></pre></td></tr></table></figure>
+
+<p>具体用法 <a target="_blank" rel="noopener" href="https://splash.readthedocs.io/en/stable/api.html">https://splash.readthedocs.io/en/stable/api.html</a></p>
+<h6 id="render-jpeg"><a href="#render-jpeg" class="headerlink" title="render.jpeg"></a>render.jpeg</h6><p>和 render.png 类似，返回 JPEG 格式二进制图片</p>
+<h6 id="render-har"><a href="#render-har" class="headerlink" title="render.har"></a>render.har</h6><p>获取页面加载的 HAR 数据，JSON 格式的</p>
+<h6 id="render-json"><a href="#render-json" class="headerlink" title="render.json"></a>render.json</h6><p>包含了前面接口所有功能，JSON 格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;localhost:8050&#x2F;render.json?url&#x3D;http:&#x2F;&#x2F;httpbin.org</span><br></pre></td></tr></table></figure>
+
+<p>可以传入不同的参数控制返回结果，传入html=1 返回结果会增加源代码数据 png=1 增加 PNG 截图数据，传入 har=1 会获得页面 HAR 数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;localhost:8050&#x2F;render.json?url&#x3D;http:&#x2F;&#x2F;httpbin.org&amp;html&#x3D;1&amp;png&#x3D;1&amp;har&#x3D;1</span><br></pre></td></tr></table></figure>
+
+<h6 id="execute"><a href="#execute" class="headerlink" title="execute"></a>execute</h6><p>用此接口便可实现与 Lua脚本的对接</p>
+<p>如果实现一些交互操作的话，使用 execute 接口</p>
+<p>写个简单的脚本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function main(splash)</span><br><span class="line">	return &#39;hello&#39;</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>然后将此接口转化为 URL 编码的字符串，拼接到 execute 接口后面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;localhost:8050&#x2F;execute?lua_source&#x3D;function+main%jo342342</span><br></pre></td></tr></table></figure>
+
+<p>lua_source 参数传递了转码后的 Lua 脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line">lua = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">function main(splash)</span></span><br><span class="line"><span class="string">	return &#x27;hello&#x27;</span></span><br><span class="line"><span class="string">end</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">url = <span class="string">&#x27;http://localhost:8050/execute?lua_source=&#x27;</span> + quote(lua)</span><br><span class="line">response = requests.get(url)</span><br></pre></td></tr></table></figure>
+
+<p>返回 JSON 格式，成功获取了请求的 URL、状态码、网页源代码</p>
+<h5 id="Splash-负载均衡配置"><a href="#Splash-负载均衡配置" class="headerlink" title="Splash 负载均衡配置"></a>Splash 负载均衡配置</h5><p>具体配置 <a target="_blank" rel="noopener" href="https://setup.scrape.center/splash-loadbalance">https://setup.scrape.center/splash-loadbalance</a></p>
+<p>Splash 做页面抓取时，如果爬取的量非常大，任务非常多，用一个Splash服务来处理压力太大，搭建一个负载均衡器把压力分散到服务器上，相当于多台机器多个服务共同参与任务的处理，减小单个 Splash服务的压力</p>
+<h6 id="配置-Splash-服务"><a href="#配置-Splash-服务" class="headerlink" title="配置 Splash 服务"></a>配置 Splash 服务</h6><p>要搭建 Splash 负载均衡，首先要有多个 Splash 服务</p>
+<p>比如 4台远程主机的 8050 端口上都开启了 Splash 服务，访问其中任何一个服务时，都可以使用 Splash 服务</p>
+<h6 id="配置负载均衡"><a href="#配置负载均衡" class="headerlink" title="配置负载均衡"></a>配置负载均衡</h6><p>任意一台带有公网IP 的主机配置负载均衡，主机上装好 Nginx 修改 Nginx 配置文件 nginx.conf</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">http&#123;</span><br><span class="line">	upstream splash &#123;</span><br><span class="line">		least_conn;</span><br><span class="line">		server 41.159.27:8050;</span><br><span class="line">		server 41.159.27:8050;</span><br><span class="line">		server 41.159.27:8050;</span><br><span class="line">		server 41.159.27:8050;</span><br><span class="line">	&#125;</span><br><span class="line">	server&#123;</span><br><span class="line">		listen 8050;</span><br><span class="line">		location &#x2F; &#123;</span><br><span class="line">			proxy_pass http:splash;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>。。。</p>
+<p>配置完成后重启 Nginx 服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<p>直接访问 Nginx 所在服务器的 8050 端口，即可实现负载均衡了</p>
+<h6 id="配置认证"><a href="#配置认证" class="headerlink" title="配置认证"></a>配置认证</h6>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/02/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%912/" rel="prev" title="Python3网络爬虫开发实战-11JavaScript逆向2">
+                  <i class="fa fa-chevron-left"></i> Python3网络爬虫开发实战-11JavaScript逆向2
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/07/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-7JavaScript%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%88%AC%E5%8F%962/" rel="next" title="Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取2">
+                  Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取2 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

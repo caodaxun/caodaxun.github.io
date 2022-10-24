@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="7.3 Pyppeteer 使用Puppeteer 是 Google 基于 Node.js 开发的一个工具，有了它，我们可以利用 JavaScript 控制 Chrome 浏览器的一些操作 Pyppeteer 其实就是 Puppeteer 的 Python 版实现 Pyppeteer 是依赖 Chromium 浏览器运行的，如果第一次运行 Pyppeteer 没有按照 Chromium 浏览器，程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取2">
+<meta property="og:url" content="http://example.com/2022/10/07/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-7JavaScript%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%88%AC%E5%8F%962/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="7.3 Pyppeteer 使用Puppeteer 是 Google 基于 Node.js 开发的一个工具，有了它，我们可以利用 JavaScript 控制 Chrome 浏览器的一些操作 Pyppeteer 其实就是 Puppeteer 的 Python 版实现 Pyppeteer 是依赖 Chromium 浏览器运行的，如果第一次运行 Pyppeteer 没有按照 Chromium 浏览器，程">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-07T07:22:04.000Z">
+<meta property="article:modified_time" content="2022-10-09T00:57:19.848Z">
+<meta property="article:author" content="daxun">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2022/10/07/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-7JavaScript%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%88%AC%E5%8F%962/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取2 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#7-3-Pyppeteer-%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">7.3 Pyppeteer 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Launch"><span class="nav-number">1.2.</span> <span class="nav-text">Launch</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%A0%E5%A4%B4%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">无头模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">调试模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A6%81%E7%94%A8%E6%8F%90%E7%A4%BA%E6%9D%A1"><span class="nav-number">1.5.</span> <span class="nav-text">禁用提示条</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%98%B2%E6%AD%A2%E6%A3%80%E6%B5%8B"><span class="nav-number">1.6.</span> <span class="nav-text">防止检测</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E5%A4%A7%E5%B0%8F%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.7.</span> <span class="nav-text">页面大小设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">1.8.</span> <span class="nav-text">用户数据持久化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%A0%E7%97%95%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.9.</span> <span class="nav-text">无痕模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Page"><span class="nav-number">1.10.</span> <span class="nav-text">Page</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E5%99%A8"><span class="nav-number">1.10.1.</span> <span class="nav-text">选择器</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%80%89%E9%A1%B9%E6%93%8D%E4%BD%9C"><span class="nav-number">1.10.2.</span> <span class="nav-text">选项操作</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E6%93%8D%E4%BD%9C"><span class="nav-number">1.10.3.</span> <span class="nav-text">页面操作</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%82%B9%E5%87%BB"><span class="nav-number">1.10.4.</span> <span class="nav-text">点击</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%96%87%E6%9C%AC"><span class="nav-number">1.10.5.</span> <span class="nav-text">输入文本</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E4%BF%A1%E6%81%AF"><span class="nav-number">1.10.6.</span> <span class="nav-text">获取信息</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C-JavaScript"><span class="nav-number">1.10.7.</span> <span class="nav-text">执行 JavaScript</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%BB%B6%E6%97%B6%E7%AD%89%E5%BE%85"><span class="nav-number">1.10.8.</span> <span class="nav-text">延时等待</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8A%9F%E8%83%BD"><span class="nav-number">1.10.9.</span> <span class="nav-text">其他功能</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-Playwright"><span class="nav-number">2.</span> <span class="nav-text">7.4 Playwright</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8-1"><span class="nav-number">2.1.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="nav-number">2.2.</span> <span class="nav-text">代码生成</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-number">2.3.</span> <span class="nav-text">支持移动端浏览器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E5%99%A8-1"><span class="nav-number">2.4.</span> <span class="nav-text">选择器</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E9%80%89%E6%8B%A9"><span class="nav-number">2.4.1.</span> <span class="nav-text">文本选择</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#CSS%E9%80%89%E6%8B%A9%E5%99%A8"><span class="nav-number">2.4.2.</span> <span class="nav-text">CSS选择器</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#CSS%E9%80%89%E6%8B%A9%E5%99%A8-%E6%96%87%E6%9C%AC%E5%80%BC"><span class="nav-number">2.4.3.</span> <span class="nav-text">CSS选择器+文本值</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#CSS%E9%80%89%E6%8B%A9%E5%99%A8-%E8%8A%82%E7%82%B9%E5%85%B3%E7%B3%BB"><span class="nav-number">2.4.4.</span> <span class="nav-text">CSS选择器+节点关系</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#XPath"><span class="nav-number">2.4.5.</span> <span class="nav-text">XPath</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95"><span class="nav-number">2.5.</span> <span class="nav-text">常用操作方法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC"><span class="nav-number">2.5.1.</span> <span class="nav-text">事件监听</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%A1%B5%E9%9D%A2%E6%BA%90%E7%A0%81"><span class="nav-number">2.5.2.</span> <span class="nav-text">获取页面源码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E7%82%B9%E5%87%BB"><span class="nav-number">2.5.3.</span> <span class="nav-text">页面点击</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E8%BE%93%E5%85%A5"><span class="nav-number">2.5.4.</span> <span class="nav-text">文本输入</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E8%8A%82%E7%82%B9%E5%B1%9E%E6%80%A7"><span class="nav-number">2.5.5.</span> <span class="nav-text">获取节点属性</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%A4%9A%E4%B8%AA%E8%8A%82%E7%82%B9"><span class="nav-number">2.5.6.</span> <span class="nav-text">获取多个节点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8D%95%E4%B8%AA%E8%8A%82%E7%82%B9"><span class="nav-number">2.5.7.</span> <span class="nav-text">获取单个节点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%8A%AB%E6%8C%81"><span class="nav-number">2.5.8.</span> <span class="nav-text">网络劫持</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-5-%E4%BD%BF%E7%94%A8-Selenium-%E7%88%AC%E5%8F%96%E6%B7%98%E5%AE%9D%E5%95%86%E5%93%81"><span class="nav-number">3.</span> <span class="nav-text">7.5 使用 Selenium 爬取淘宝商品</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%95%86%E5%93%81%E5%88%97%E8%A1%A8"><span class="nav-number">3.0.1.</span> <span class="nav-text">获取商品列表</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90%E5%95%86%E5%93%81%E5%88%97%E8%A1%A8"><span class="nav-number">3.0.2.</span> <span class="nav-text">解析商品列表</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BF%9D%E5%AD%98%E5%88%B0-MongoDB"><span class="nav-number">3.0.3.</span> <span class="nav-text">保存到 MongoDB</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%81%8D%E5%8E%86%E6%AF%8F%E9%A1%B5"><span class="nav-number">3.0.4.</span> <span class="nav-text">遍历每页</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Chrome-Handless-%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.0.5.</span> <span class="nav-text">Chrome Handless 模式</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Config"><span class="nav-number">3.0.6.</span> <span class="nav-text">Config</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%AF%B9%E6%8E%A5-Firefox"><span class="nav-number">3.0.7.</span> <span class="nav-text">对接 Firefox</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-6Selenium%E7%88%AC%E5%8F%96%E5%AE%9E%E6%88%98"><span class="nav-number">4.</span> <span class="nav-text">7.6Selenium爬取实战</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-7Pyppeteer%E7%88%AC%E5%8F%96%E5%AE%9E%E6%88%98"><span class="nav-number">5.</span> <span class="nav-text">7.7Pyppeteer爬取实战</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-8CSS%E4%BD%8D%E7%BD%AE%E5%81%8F%E7%A7%BB%E5%8F%8D%E7%88%AC%E6%A1%88%E4%BE%8B"><span class="nav-number">6.</span> <span class="nav-text">7.8CSS位置偏移反爬案例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-9%E5%AD%97%E4%BD%93%E5%8F%8D%E7%88%AC%E6%A1%88%E4%BE%8B"><span class="nav-number">7.</span> <span class="nav-text">7.9字体反爬案例</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/07/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-7JavaScript%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%88%AC%E5%8F%962/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-07 15:22:04" itemprop="dateCreated datePublished" datetime="2022-10-07T15:22:04+08:00">2022-10-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-10-09 08:57:19" itemprop="dateModified" datetime="2022-10-09T08:57:19+08:00">2022-10-09</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="7-3-Pyppeteer-使用"><a href="#7-3-Pyppeteer-使用" class="headerlink" title="7.3 Pyppeteer 使用"></a>7.3 Pyppeteer 使用</h4><p>Puppeteer 是 Google 基于 Node.js 开发的一个工具，有了它，我们可以利用 JavaScript 控制 Chrome 浏览器的一些操作</p>
+<p>Pyppeteer 其实就是 Puppeteer 的 Python 版实现</p>
+<p>Pyppeteer 是依赖 Chromium 浏览器运行的，如果第一次运行 Pyppeteer 没有按照 Chromium 浏览器，程序会自动帮我们安装和配置好</p>
+<p>Pyppeteer 是基于 Python 的新特性 async 实现的，所以它的一些操作执行也支持异步方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install pyppeteer</span><br></pre></td></tr></table></figure>
+
+<h5 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> pyppeteer <span class="keyword">import</span> launch</span><br><span class="line"><span class="keyword">from</span> pyquery <span class="keyword">import</span> PyQuery <span class="keyword">as</span> pq</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">  browser = <span class="keyword">await</span> launch() <span class="comment">#启动浏览器</span></span><br><span class="line">  page = <span class="keyword">await</span> browser.newPage()</span><br><span class="line">  <span class="keyword">await</span> page.goto(<span class="string">&#x27;https://spa2.scrape.center/&#x27;</span>)  <span class="comment">#访问网站</span></span><br><span class="line">  <span class="keyword">await</span> page.waitForSelector(<span class="string">&#x27;.item .name&#x27;</span>) <span class="comment">#等待节点加载出来</span></span><br><span class="line">  doc = pq(<span class="keyword">await</span> page.content()) </span><br><span class="line">  <span class="comment">#通过pyquery从源码中提取电影名称输出</span></span><br><span class="line">  names = [item.text() <span class="keyword">for</span> item <span class="keyword">in</span> doc(<span class="string">&#x27;.item .name&#x27;</span>).items()]</span><br><span class="line">  print(<span class="string">&#x27;Names&#x27;</span>, names)</span><br><span class="line">  <span class="keyword">await</span> browser.close()</span><br><span class="line"></span><br><span class="line">asyncio.get_event_loop().run_until_complete(main())</span><br></pre></td></tr></table></figure>
+
+<p>利用 Pyppeteer 可以控制浏览器执行几乎所有想实现的操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> pyppeteer <span class="keyword">import</span> launch</span><br><span class="line"></span><br><span class="line">width, height = <span class="number">1366</span>,<span class="number">768</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">  browser = <span class="keyword">await</span> launch()</span><br><span class="line">  page = <span class="keyword">await</span> browser.newPage()</span><br><span class="line">  <span class="keyword">await</span> page.setViewport(&#123;<span class="string">&#x27;width&#x27;</span>: width, <span class="string">&#x27;height&#x27;</span>: height&#125;)</span><br><span class="line">  <span class="keyword">await</span> page.goto(<span class="string">&#x27;https://spa2.scrape.center/&#x27;</span>)  <span class="comment">#访问网站</span></span><br><span class="line">  <span class="keyword">await</span> page.waitForSelector(<span class="string">&#x27;.item .name&#x27;</span>) <span class="comment">#等待节点加载出来</span></span><br><span class="line">  <span class="keyword">await</span> asyncio.sleep(<span class="number">2</span>)</span><br><span class="line">  <span class="keyword">await</span> page.screenshot(path=<span class="string">&#x27;example.png&#x27;</span>)</span><br><span class="line">  dimensions = <span class="keyword">await</span> page.evaluate(<span class="string">&#x27;&#x27;&#x27;()=&gt;&#123;</span></span><br><span class="line"><span class="string">  	return &#123;</span></span><br><span class="line"><span class="string">  		width:document.documentElement.clientWidth,</span></span><br><span class="line"><span class="string">  		height:document.documentElement.clientHeight,</span></span><br><span class="line"><span class="string">  		deviceScaleFactor:window.devicePixelRatio,</span></span><br><span class="line"><span class="string">  	&#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;&#x27;&#x27;</span>)</span><br><span class="line">  print(dimensions)</span><br><span class="line">  <span class="keyword">await</span> browser.close()</span><br><span class="line"></span><br><span class="line">asyncio.get_event_loop().run_until_complete(main())</span><br></pre></td></tr></table></figure>
+
+<p>API 文档链接 <a target="_blank" rel="noopener" href="https://pyppeteer.github.io/pyppeteer/reference.html">https://pyppeteer.github.io/pyppeteer/reference.html</a></p>
+<h5 id="Launch"><a href="#Launch" class="headerlink" title="Launch"></a>Launch</h5><h5 id="无头模式"><a href="#无头模式" class="headerlink" title="无头模式"></a>无头模式</h5><p>设置 handless=False 启动的时候就能看到页面了，默认 True，启动时看不到任何界面</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> launch(handless=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="调试模式"><a href="#调试模式" class="headerlink" title="调试模式"></a>调试模式</h5><p>devtool=True 每开启一个页面就会弹出一个调试窗口，如果设置为 True，无头模式就会关闭，界面始终会显现出来</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">browser = <span class="keyword">await</span> launch(devtools=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="禁用提示条"><a href="#禁用提示条" class="headerlink" title="禁用提示条"></a>禁用提示条</h5><p>浏览器的提示，Chrome 正受到自动测试软件的控制</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">browser = <span class="keyword">await</span> launch(handless=<span class="literal">False</span>, args=[<span class="string">&#x27;--disable-infobars&#x27;</span>])</span><br></pre></td></tr></table></figure>
+
+<h5 id="防止检测"><a href="#防止检测" class="headerlink" title="防止检测"></a>防止检测</h5><p>pyppeteer 的 Page 对象有一个叫作 evaluateOnNewDocument 方法，意思是每次加载网页的时候执行某条语句，这里可以利用它执行隐藏 webdriver 属性的命令</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> pyppeteer <span class="keyword">import</span> launch</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">  browser = <span class="keyword">await</span> launch(handless=<span class="literal">False</span>, args=[<span class="string">&#x27;--disable-infobars&#x27;</span>])</span><br><span class="line">  page = <span class="keyword">await</span> browser.newPage()</span><br><span class="line">  <span class="keyword">await</span> page.evaluateOnNewDocument(<span class="string">&#x27;Object.defineProperty(navigator, &quot;webdriver&quot;,&#123;get:()=&gt; undefined&#125;)&#x27;</span>)</span><br><span class="line">  <span class="keyword">await</span> page.goto(<span class="string">&#x27;https://antispider1.scrape.center/&#x27;</span>)</span><br><span class="line">  <span class="keyword">await</span> asyncio.sleep(<span class="number">100</span>)</span><br><span class="line">  </span><br><span class="line">asyncio.get_event_loop().run_until_complete(main())</span><br></pre></td></tr></table></figure>
+
+<h5 id="页面大小设置"><a href="#页面大小设置" class="headerlink" title="页面大小设置"></a>页面大小设置</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">width, height = <span class="number">1366</span>,<span class="number">768</span></span><br><span class="line"><span class="keyword">await</span> page.setViewPort(&#123;<span class="string">&#x27;width&#x27;</span>: width, <span class="string">&#x27;height&#x27;</span>: height&#125;)</span><br></pre></td></tr></table></figure>
+
+<h5 id="用户数据持久化"><a href="#用户数据持久化" class="headerlink" title="用户数据持久化"></a>用户数据持久化</h5><p>设置用户目录，启动浏览器的时候设置 userDataDir</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> pyppeteer <span class="keyword">import</span> launch</span><br><span class="line"></span><br><span class="line">browser = <span class="keyword">await</span> launch(handless=<span class="literal">False</span>, userDataDir=<span class="string">&#x27;./userdata&#x27;</span>,args=[<span class="string">&#x27;--disable-infobars&#x27;</span>])</span><br><span class="line">  page = <span class="keyword">await</span> browser.newPage()</span><br><span class="line">  <span class="keyword">await</span> page.goto(<span class="string">&#x27;https://www.taobao.com&#x27;</span>)</span><br><span class="line">  <span class="keyword">await</span> asyncio.sleep(<span class="number">100</span>)</span><br><span class="line">  </span><br><span class="line">asyncio.get_event_loop().run_until_complete(main())</span><br></pre></td></tr></table></figure>
+
+<p>运行代码，登录淘宝，可以看到当前运行目录下多了一个 userdata 文件夹，再次运行发现淘宝已处于登录状态</p>
+<h5 id="无痕模式"><a href="#无痕模式" class="headerlink" title="无痕模式"></a>无痕模式</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">width, height = <span class="number">1366</span>,<span class="number">768</span></span><br><span class="line">browser = <span class="keyword">await</span> launch(handless=<span class="literal">False</span>,args=[<span class="string">&#x27;--disable-infobars&#x27;</span>], <span class="string">f&#x27;--window-size=<span class="subst">&#123;width&#125;</span>,<span class="subst">&#123;height&#125;</span>&#x27;</span>)</span><br><span class="line">context = <span class="keyword">await</span> browser.createIncognitoBrowserContest()</span><br><span class="line">page = <span class="keyword">await</span> context.newPage()</span><br></pre></td></tr></table></figure>
+
+<h5 id="Page"><a href="#Page" class="headerlink" title="Page"></a>Page</h5><h6 id="选择器"><a href="#选择器" class="headerlink" title="选择器"></a>选择器</h6><p>Page 对象内置了很多用于选取节点的选择器方法。</p>
+<p>J 方法：传入一个选择器，就能返回匹配到的第一个节点，等价于 querySelector 方法；</p>
+<p>JJ 方法，传入选择器，返回符合选择器的所有节点组成的列表，等价于 querySelectorAll</p>
+<p>JJeval() 等价于 querySelectorAllEval()</p>
+<p>Jeval() 等价于 querySelectorEval()</p>
+<p>Jx() 等价于 xpath()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> page.waitForSelector(<span class="string">&#x27;.item .name&#x27;</span>)</span><br><span class="line">j_result1 = <span class="keyword">await</span> page.J(<span class="string">&#x27;.item .name&#x27;</span>)</span><br><span class="line">j_result2 = <span class="keyword">await</span> page.querySelector(<span class="string">&#x27;.item .name&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#获取url组成列表</span></span><br><span class="line"><span class="keyword">await</span> page.querySelectorAllEval(<span class="string">&#x27;,item .name&#x27;</span>, <span class="string">&#x27;nodes =&gt; nodes.map(node =&gt; node.href)&#x27;</span>)</span><br><span class="line"><span class="keyword">await</span> page.querySelectorEval(<span class="string">&#x27;.cover&#x27;</span>, <span class="string">&#x27;node =&gt; node.src&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>querySelectorAllEval 接收两个参数一个selector选择器，另一个pageFunction，代表要执行的 JavaScript 方法，这个方法的作用是找出和选择器匹配的节点，然后根据 pageFunction 定义的逻辑从这些节点中抽取出对应的结果并返回</p>
+<h6 id="选项操作"><a href="#选项操作" class="headerlink" title="选项操作"></a>选项操作</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pages = <span class="keyword">await</span> browser.pages()</span><br><span class="line">page1 = pages[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">await</span> = page1.bringToFront() <span class="comment">#切换选项卡</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="页面操作"><a href="#页面操作" class="headerlink" title="页面操作"></a>页面操作</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> page.goBack()</span><br><span class="line"><span class="keyword">await</span> page.goFroward()</span><br><span class="line"><span class="keyword">await</span> page.reload()</span><br><span class="line"><span class="keyword">await</span> page.pdf()</span><br><span class="line"><span class="keyword">await</span> page.screenshot()</span><br><span class="line"><span class="keyword">await</span> page.setContent(<span class="string">&#x27;&lt;h2&gt;hello world&lt;/h2&gt;&#x27;</span>)</span><br><span class="line"><span class="keyword">await</span> page.setUserAgent(<span class="string">&#x27;Python&#x27;</span>)</span><br><span class="line"><span class="keyword">await</span> page.setExtraHTTPHeaders(headers=&#123;&#125;)</span><br><span class="line"><span class="keyword">await</span> page.close()</span><br><span class="line"><span class="keyword">await</span> browser.close()</span><br></pre></td></tr></table></figure>
+
+<h6 id="点击"><a href="#点击" class="headerlink" title="点击"></a>点击</h6><p>click 第一个参数是选择器，即哪里操作，第二个参数是几项配置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> page.waitForSelector(<span class="string">&#x27;.item .name&#x27;</span>)</span><br><span class="line"><span class="keyword">await</span> page.click(<span class="string">&#x27;.item .name&#x27;</span>, options=&#123;</span><br><span class="line">  <span class="string">&#x27;button&#x27;</span>: <span class="string">&#x27;right&#x27;</span>, <span class="comment">#left、middle、right</span></span><br><span class="line">  <span class="string">&#x27;clickCount&#x27;</span>: <span class="number">1</span>, <span class="comment">#1或2</span></span><br><span class="line">	<span class="string">&#x27;delay&#x27;</span>: <span class="number">3000</span>, <span class="comment">#毫秒 延迟点击</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">await</span> browser.close()</span><br></pre></td></tr></table></figure>
+
+<h6 id="输入文本"><a href="#输入文本" class="headerlink" title="输入文本"></a>输入文本</h6><p>给 type 方法第一个参数传入选择器，第二个参数输入想要输入的内容</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> page.<span class="built_in">type</span>(<span class="string">&#x27;#q&#x27;</span>, <span class="string">&#x27;iPad&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="获取信息"><a href="#获取信息" class="headerlink" title="获取信息"></a>获取信息</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> page.content() <span class="comment">#获取源码</span></span><br><span class="line"><span class="keyword">await</span> page.cookies()</span><br></pre></td></tr></table></figure>
+
+<h6 id="执行-JavaScript"><a href="#执行-JavaScript" class="headerlink" title="执行 JavaScript"></a>执行 JavaScript</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">dimensions = <span class="keyword">await</span> page.evaluate(<span class="string">&#x27;&#x27;&#x27;()=&gt;&#123;</span></span><br><span class="line"><span class="string">  return &#123;</span></span><br><span class="line"><span class="string">    width:document.documentElement.clientWidth,</span></span><br><span class="line"><span class="string">    height:document.documentElement.clientHeight,</span></span><br><span class="line"><span class="string">    deviceScaleFactor:window.devicePixelRatio,</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;&#x27;&#x27;</span>)</span><br><span class="line">print(dimensions)</span><br></pre></td></tr></table></figure>
+
+<h6 id="延时等待"><a href="#延时等待" class="headerlink" title="延时等待"></a>延时等待</h6><p>waitForSelector 传入CSS 选择器，如果找到符合条件的节点，就立马返回结果</p>
+<p>waitForFunction 等待某个JavaScript 方法执行完毕或返回结果</p>
+<p>waitNavigation 等待页面跳转</p>
+<p>waitForRequest、waitForResponse 等待特定请求发出，等待特定请求对应的响应</p>
+<p>waitFor 通用的等待方法</p>
+<p>waitForXPath 等待复合 XPath 的节点加载出来</p>
+<h6 id="其他功能"><a href="#其他功能" class="headerlink" title="其他功能"></a>其他功能</h6><p>还有其他功能如键盘事件、鼠标事件、对话框事件等 </p>
+<p><a target="_blank" rel="noopener" href="https://miyakogi.github.io/pyppeteer/reference.html">https://miyakogi.github.io/pyppeteer/reference.html</a></p>
+<h4 id="7-4-Playwright"><a href="#7-4-Playwright" class="headerlink" title="7.4 Playwright"></a>7.4 Playwright</h4><p>微软2020年初开源的新一代自动化测试工具</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip3 install playwright</span><br><span class="line">playwright install</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后可以使用 Playwright 启动 Chromium、firefox 或 WebKit 浏览器来进行自动化操作</p>
+<h5 id="基本使用-1"><a href="#基本使用-1" class="headerlink" title="基本使用"></a>基本使用</h5><p>playwright 支持两种编写模式，一种是和 Pyppeteer 一样的异步模式；一种是和 Selenium 一样的同步模式</p>
+<p>同步模式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> playwright.sync_api <span class="keyword">import</span> sync_playwright</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> sync_playwright() <span class="keyword">as</span> p:</span><br><span class="line">  <span class="keyword">for</span> browser_type <span class="keyword">in</span> [p.chromium, p.firefox, p.webkit]</span><br><span class="line">  browser = browser_type.launch(headless=<span class="literal">False</span>)</span><br><span class="line">  page = browser.new_Page()</span><br><span class="line">  page.goto(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line">  page.screenshot(path=<span class="string">f&#x27;screenshot-<span class="subst">&#123;browser_type.name&#125;</span>.png&#x27;</span>)</span><br><span class="line">  print(page.title())</span><br><span class="line">  browser.close()</span><br></pre></td></tr></table></figure>
+
+<p>异步模式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> playwright.sync_api <span class="keyword">import</span> sync_playwright</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span>  </span><br><span class="line">  <span class="keyword">with</span> sync_playwright() <span class="keyword">as</span> p:</span><br><span class="line">    <span class="keyword">for</span> browser_type <span class="keyword">in</span> [p.chromium, p.firefox, p.webkit]</span><br><span class="line">    browser = <span class="keyword">await</span> browser_type.launch()</span><br><span class="line">    page = <span class="keyword">await</span> browser.new_Page()</span><br><span class="line">    page.goto(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line">    page.screenshot(path=<span class="string">f&#x27;screenshot-<span class="subst">&#123;browser_type.name&#125;</span>.png&#x27;</span>)</span><br><span class="line">    print(<span class="keyword">await</span> page.title())</span><br><span class="line">    browser.close()</span><br><span class="line">    </span><br><span class="line">asyncio.run(main())</span><br></pre></td></tr></table></figure>
+
+<h5 id="代码生成"><a href="#代码生成" class="headerlink" title="代码生成"></a>代码生成</h5><p>Playwright 还可以录制我们在浏览器中的操作并自动生成代码，通过 playwright 的命令行调用 codegen 实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">playwright codegen --help</span><br><span class="line">- target 使用语言默认python，代表会生成同步模式的操作代码，如果传入 python-async 则生成异步模式的代码</span><br><span class="line">- o 输出代码文件名称</span><br><span class="line">-b 使用浏览器，默认chromium</span><br><span class="line">-device 可以模拟使用手机浏览器（如iPhone11）</span><br><span class="line">-lang 代表设置浏览器的语言</span><br><span class="line">-timeout 可以设置页面加载的超时时间</span><br><span class="line"></span><br><span class="line">playwright codegen -o script.py -b firefox</span><br></pre></td></tr></table></figure>
+
+<p>运行代码后弹出 Firefox 浏览器，同时右侧输出一个脚本窗口</p>
+<h5 id="支持移动端浏览器"><a href="#支持移动端浏览器" class="headerlink" title="支持移动端浏览器"></a>支持移动端浏览器</h5><p>Playwright 的另一个特色就是支持模拟移动端浏览器，例如模拟打开 iPhone12ProMax 上的Safari浏览器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> playwright.sync_api <span class="keyword">import</span> sync_playwright</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> sync_playwright() <span class="keyword">as</span> p:</span><br><span class="line">  iphone_12_pro_max = p.device[<span class="string">&#x27;iPhone 12 Pro Max&#x27;</span>]</span><br><span class="line">  browser = p.webkit.launch(headless=<span class="literal">False</span>)</span><br><span class="line">  context = browser.new_context(</span><br><span class="line">   **iphone_12_pro_max,</span><br><span class="line">    locale=<span class="string">&#x27;zh-CN&#x27;</span></span><br><span class="line">  )</span><br><span class="line">  page = context.new_page()</span><br><span class="line">  page.goto(<span class="string">&#x27;https://www.whatismybrowser.com/&#x27;</span>) <span class="comment">#一个获取浏览器信息的网站</span></span><br><span class="line">  page.wait_for_load_state(state=<span class="string">&#x27;networkidle&#x27;</span>) <span class="comment">#等待页面的某个状态完成 空闲状态完成就是当前页面初始化和数据加载完成</span></span><br><span class="line">  page.screenshot(path=<span class="string">&#x27;browser-iphone.png&#x27;</span>)</span><br><span class="line">  browser.close()</span><br></pre></td></tr></table></figure>
+
+<h5 id="选择器-1"><a href="#选择器-1" class="headerlink" title="选择器"></a>选择器</h5><h6 id="文本选择"><a href="#文本选择" class="headerlink" title="文本选择"></a>文本选择</h6><p>文本选择支持直接使用 text= 这样的语法进行筛选</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">page.click(<span class="string">&#x27;text=Log in&#x27;</span>) <span class="comment">#选择并点击文本内容是Log in的节点</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="CSS选择器"><a href="#CSS选择器" class="headerlink" title="CSS选择器"></a>CSS选择器</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据id或者class进行筛选</span></span><br><span class="line">page.click(<span class="string">&quot;button&quot;</span>)</span><br><span class="line">page.click(<span class="string">&quot;#nav-bar .contact-us-item&quot;</span>)</span><br><span class="line"><span class="comment">#根据特定的节点属性筛选</span></span><br><span class="line">page.click(<span class="string">&quot;[data-test=login-button]&quot;</span>)</span><br><span class="line">page.click(<span class="string">&quot;[aria-label=&#x27;Sign in&#x27;]&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="CSS选择器-文本值"><a href="#CSS选择器-文本值" class="headerlink" title="CSS选择器+文本值"></a>CSS选择器+文本值</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#选择文本值中包含Playwright字符串的 article节点</span></span><br><span class="line">page.click(<span class="string">&quot;article:has-text(&#x27;Playwright&#x27;)&quot;</span>)</span><br><span class="line"><span class="comment">#选择id为nav-bar的节点中文本值为 Contact us的节点</span></span><br><span class="line">page.click(<span class="string">&quot;#nav-bar :text(&#x27;Contact us&#x27;)&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="CSS选择器-节点关系"><a href="#CSS选择器-节点关系" class="headerlink" title="CSS选择器+节点关系"></a>CSS选择器+节点关系</h6><p>CSS选择器还可以结合节点关系来筛选节点，例如使用 has 指定另外一个选择器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#选择class为item-description的节点，且节点包含class为item-promo-banner的子节点</span></span><br><span class="line">page.click(<span class="string">&quot;.item-description:has(.item-promo-banner)&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#right-of 指定位于某个节点右侧的节点</span></span><br><span class="line"><span class="comment">#选择input结点，且该节点要位于文本值为Username的节点的右侧</span></span><br><span class="line">page.click(<span class="string">&quot;input:right-of(:text(&#x27;Username&#x27;))&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="XPath"><a href="#XPath" class="headerlink" title="XPath"></a>XPath</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">page.click(<span class="string">&quot;xpath=//button&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>更多关于选择器的用法 <a target="_blank" rel="noopener" href="https://playwright.dev/python/docs/selectors">https://playwright.dev/python/docs/selectors</a></p>
+<h5 id="常用操作方法"><a href="#常用操作方法" class="headerlink" title="常用操作方法"></a>常用操作方法</h5><p>Page 对象提供了一个 on 方法，用来监听页面中发生的各个事件，例如close、console、load、request、response 等</p>
+<h6 id="事件监听"><a href="#事件监听" class="headerlink" title="事件监听"></a>事件监听</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> playwright.sync_api <span class="keyword">import</span> sync_playwright</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_response</span>(<span class="params">response</span>):</span></span><br><span class="line">  print(<span class="string">f&#x27;Status <span class="subst">&#123;response.status&#125;</span>: <span class="subst">&#123;response.url&#125;</span>&#x27;</span>)<span class="comment">#输出状态码和链接</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> sync_playwright <span class="keyword">as</span> p:</span><br><span class="line">  browser = p.chromium.launch(headless=<span class="literal">False</span>)</span><br><span class="line">  page = browser.new_page()</span><br><span class="line">  page.on(<span class="string">&#x27;response&#x27;</span>, on_response)</span><br><span class="line">  page.goto(<span class="string">&#x27;https://spa6.scrape.center/&#x27;</span>)</span><br><span class="line">  page.wait_for_load_state(<span class="string">&#x27;networkidle&#x27;</span>)</span><br><span class="line">  browser.close()</span><br></pre></td></tr></table></figure>
+
+<p>监听 response 事件，回调方法设置 on_response</p>
+<p>可以输出 JSON</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_response</span>(<span class="params">response</span>):</span></span><br><span class="line">  <span class="keyword">if</span> <span class="string">&#x27;/api/movie/&#x27;</span> <span class="keyword">in</span> response.url <span class="keyword">and</span> response.status == <span class="number">200</span>:</span><br><span class="line">    print(response.json())</span><br></pre></td></tr></table></figure>
+
+<h6 id="获取页面源码"><a href="#获取页面源码" class="headerlink" title="获取页面源码"></a>获取页面源码</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">html = page.content()</span><br><span class="line">print(html)</span><br></pre></td></tr></table></figure>
+
+<h6 id="页面点击"><a href="#页面点击" class="headerlink" title="页面点击"></a>页面点击</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">page.click(selector, **kwargs)</span><br><span class="line"></span><br><span class="line">click_count 点击次数默认<span class="number">1</span></span><br><span class="line">timeout 单位秒默认<span class="number">30</span> 等待找到要点击的节点的超时时间</span><br><span class="line">position 传入字典，有x y属性，代表点击位置相对节点左上角的偏移量</span><br><span class="line">force 默认<span class="literal">False</span> 即使按钮设置了不可点击也能强制点击</span><br></pre></td></tr></table></figure>
+
+<p>click 内部执行逻辑，找到Selector匹配的节点，如果没有找到，一直等到直到超时，</p>
+<h6 id="文本输入"><a href="#文本输入" class="headerlink" title="文本输入"></a>文本输入</h6><p>第一个参数选择器，第二个参数输入值，还可以通过 timeout 指定查找对应节点的超时时间</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">page.fill(selector, value, **kwargs)</span><br></pre></td></tr></table></figure>
+
+<h6 id="获取节点属性"><a href="#获取节点属性" class="headerlink" title="获取节点属性"></a>获取节点属性</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">page.get_attribute(selector, name, **kwargs)</span><br><span class="line"></span><br><span class="line"><span class="comment">#查找class为name的a节点，name参数传入了href，代表获取超链接内容</span></span><br><span class="line">page.get_attribute(<span class="string">&#x27;a.name&#x27;</span>, <span class="string">&#x27;href&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="获取多个节点"><a href="#获取多个节点" class="headerlink" title="获取多个节点"></a>获取多个节点</h6><p>query_selector_all</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">elements = page.query_selector_all(<span class="string">&#x27;a.name&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> element <span class="keyword">in</span> elements:</span><br><span class="line">  print(element.get_attribute(<span class="string">&#x27;href&#x27;</span>)) <span class="comment">#节点属性</span></span><br><span class="line">  print(element.text_content()) <span class="comment">#节点文本</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="获取单个节点"><a href="#获取单个节点" class="headerlink" title="获取单个节点"></a>获取单个节点</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">element = page.query_selector(<span class="string">&#x27;a.name&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="网络劫持"><a href="#网络劫持" class="headerlink" title="网络劫持"></a>网络劫持</h6><p>route，利用这个方法可以实现网络劫持和修改操作，如修改 request 的属性，修改相应结果等</p>
+<p>修改请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> playwright.sync_api <span class="keyword">import</span> sync_playwright</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> aync_playwright <span class="keyword">as</span> p:</span><br><span class="line">  browser = p.chromium.launch(headless=<span class="literal">False</span>)</span><br><span class="line">  page = browser.new_page()</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">cancel_request</span>(<span class="params">route, request</span>):</span></span><br><span class="line">    route.abort()</span><br><span class="line">    </span><br><span class="line">  page.route(re.<span class="built_in">compile</span>(<span class="string">r&quot;\(.png)|\(.jpg)&quot;</span>), cancel_request) <span class="comment">#包含.png或者.jpg的链接</span></span><br><span class="line">  page.goto(<span class="string">&quot;https://spa6.scrape.center/&quot;</span>)</span><br><span class="line">  page.wait_for_load(<span class="string">&#x27;networkidle&#x27;</span>)</span><br><span class="line">  page.screenshot(path=<span class="string">&#x27;no_picture.png&#x27;</span>)</span><br><span class="line">  browser.close()</span><br></pre></td></tr></table></figure>
+
+<p>修改响应</p>
+<p>custom_response.html </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">modify_response</span>(<span class="params">reoute, request</span>):</span></span><br><span class="line">  route.fulfill(path=<span class="string">&#x27;./custom_response.html&#x27;</span>)</span><br><span class="line">  </span><br><span class="line">page.route(<span class="string">&#x27;/&#x27;</span>, modify_response)</span><br><span class="line">page.goto(<span class="string">&quot;https://spa6.scrape.center/&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="7-5-使用-Selenium-爬取淘宝商品"><a href="#7-5-使用-Selenium-爬取淘宝商品" class="headerlink" title="7.5 使用 Selenium 爬取淘宝商品"></a>7.5 使用 Selenium 爬取淘宝商品</h4><p>代码 <a target="_blank" rel="noopener" href="https://github.com/Python3WebSpider/TaobaoProduct">https://github.com/Python3WebSpider/TaobaoProduct</a></p>
+<p>利用 Selenium 模拟浏览器操作抓取淘宝的商品信息，并将结果保存到MongoDB</p>
+<h6 id="获取商品列表"><a href="#获取商品列表" class="headerlink" title="获取商品列表"></a>获取商品列表</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.ui <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> TimeoutException</span><br><span class="line"></span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">wait = WebDriverWait(browser, <span class="number">10</span>)</span><br><span class="line">KEYWORD = <span class="string">&#x27;iPad&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index_page</span>(<span class="params">page</span>):</span></span><br><span class="line">  <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">  抓取索引页</span></span><br><span class="line"><span class="string">  :param page: 页码</span></span><br><span class="line"><span class="string">  &quot;&quot;&quot;</span></span><br><span class="line">  print(<span class="string">&#x27;正在爬取第&#x27;</span>, page, <span class="string">&#x27;页&#x27;</span>)</span><br><span class="line">  <span class="keyword">try</span>:</span><br><span class="line">      url = <span class="string">&#x27;https://s.taobao.com/search?q=&#x27;</span> + quote(KEYWORD)</span><br><span class="line">      browser.get(url)</span><br><span class="line">      <span class="keyword">if</span> page &gt; <span class="number">1</span>:</span><br><span class="line">          <span class="built_in">input</span> = wait.until(</span><br><span class="line">              EC.presence_of_element_located((By.CSS_SELECTOR, <span class="string">&#x27;#mainsrp-pager div.form &gt; input&#x27;</span>)))</span><br><span class="line">          submit = wait.until(</span><br><span class="line">              EC.element_to_be_clickable((By.CSS_SELECTOR, <span class="string">&#x27;#mainsrp-pager div.form &gt; span.btn.J_Submit&#x27;</span>)))</span><br><span class="line">          <span class="built_in">input</span>.clear()</span><br><span class="line">          <span class="built_in">input</span>.send_keys(page)</span><br><span class="line">          submit.click()</span><br><span class="line">      wait.until(</span><br><span class="line">          EC.text_to_be_present_in_element((By.CSS_SELECTOR, <span class="string">&#x27;#mainsrp-pager li.item.active &gt; span&#x27;</span>), <span class="built_in">str</span>(page)))</span><br><span class="line">      wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, <span class="string">&#x27;.m-itemlist .items .item&#x27;</span>)))</span><br><span class="line">      get_products()</span><br><span class="line">  <span class="keyword">except</span> TimeoutException:</span><br><span class="line">      index_page(page)</span><br></pre></td></tr></table></figure>
+
+<p>定义了 index_page() 方法，抓取商品列表</p>
+<p>访问搜索链接，页码大于1就进行跳页操作，否则等待页面加载完成</p>
+<p>等待加载使用 WebDriverWait 对象，指定最长等待时间 10 秒，这个时间内匹配了等待条件，也就说页面加载出来了，就立即返回相应结果继续向下执行，否则到了最大时间没加载出来时，抛出异常</p>
+<p>等待商品加载出来 presence_of_element_located，传入 CSS 选择器 .m-itemlist .items .item，这选择器对应页面内容是每个商品的信息块</p>
+<p>是否跳转到了对应页面，跳转到某一页后页码都会高亮，只需要判断当前高亮的页码数是当前页码即可</p>
+<p>text_to_be_present_in_element 会等待指定的文本出现在某个节点里时返回成功，会检测当前高亮的页码节点是不是传过来的页码数</p>
+<h6 id="解析商品列表"><a href="#解析商品列表" class="headerlink" title="解析商品列表"></a>解析商品列表</h6><p>直接返回页面源代码，使用pyquery解析</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_products</span>():</span></span><br><span class="line">  <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">  提取商品数据</span></span><br><span class="line"><span class="string">  &quot;&quot;&quot;</span></span><br><span class="line">  html = browser.page_source</span><br><span class="line">  doc = pq(html)</span><br><span class="line">  items = doc(<span class="string">&#x27;#mainsrp-itemlist .items .item&#x27;</span>).items()</span><br><span class="line">  <span class="keyword">for</span> item <span class="keyword">in</span> items:</span><br><span class="line">      product = &#123;</span><br><span class="line">          <span class="string">&#x27;image&#x27;</span>: item.find(<span class="string">&#x27;.pic .img&#x27;</span>).attr(<span class="string">&#x27;data-src&#x27;</span>),</span><br><span class="line">          <span class="string">&#x27;price&#x27;</span>: item.find(<span class="string">&#x27;.price&#x27;</span>).text(),</span><br><span class="line">          <span class="string">&#x27;deal&#x27;</span>: item.find(<span class="string">&#x27;.deal-cnt&#x27;</span>).text(),</span><br><span class="line">          <span class="string">&#x27;title&#x27;</span>: item.find(<span class="string">&#x27;.title&#x27;</span>).text(),</span><br><span class="line">          <span class="string">&#x27;shop&#x27;</span>: item.find(<span class="string">&#x27;.shop&#x27;</span>).text(),</span><br><span class="line">          <span class="string">&#x27;location&#x27;</span>: item.find(<span class="string">&#x27;.location&#x27;</span>).text()</span><br><span class="line">      &#125;</span><br><span class="line">      print(product)</span><br><span class="line">      save_to_mongo(product)</span><br></pre></td></tr></table></figure>
+
+<h6 id="保存到-MongoDB"><a href="#保存到-MongoDB" class="headerlink" title="保存到 MongoDB"></a>保存到 MongoDB</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">MONGO_URL = <span class="string">&#x27;localhost&#x27;</span></span><br><span class="line">MONGO_DB = <span class="string">&#x27;taobao&#x27;</span></span><br><span class="line">MONGO_COLLECTION = <span class="string">&#x27;products&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">save_to_mongo</span>(<span class="params">result</span>):</span></span><br><span class="line">  <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">  保存至MongoDB</span></span><br><span class="line"><span class="string">  :param result: 结果</span></span><br><span class="line"><span class="string">  &quot;&quot;&quot;</span></span><br><span class="line">  <span class="keyword">try</span>:</span><br><span class="line">      <span class="keyword">if</span> db[MONGO_COLLECTION].insert(result):</span><br><span class="line">          print(<span class="string">&#x27;存储到MongoDB成功&#x27;</span>)</span><br><span class="line">  <span class="keyword">except</span> Exception:</span><br><span class="line">      print(<span class="string">&#x27;存储到MongoDB失败&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>quote()</p>
+<p>单个字符串编码，url 多个字符串编码用 urlencode</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line">KEYWORD = <span class="string">&#x27;ipad&#x27;</span></span><br><span class="line">url = <span class="string">&#x27;https://s.taobao.com/search?q=&#x27;</span> + quote(KEYWORD)</span><br></pre></td></tr></table></figure>
+
+<h6 id="遍历每页"><a href="#遍历每页" class="headerlink" title="遍历每页"></a>遍历每页</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MAX_PAGE = <span class="number">100</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">  <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">  遍历每一页</span></span><br><span class="line"><span class="string">  &quot;&quot;&quot;</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, MAX_PAGE + <span class="number">1</span>):</span><br><span class="line">      index_page(i)</span><br><span class="line">  browser.close()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">  main()</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h6 id="Chrome-Handless-模式"><a href="#Chrome-Handless-模式" class="headerlink" title="Chrome Handless 模式"></a>Chrome Handless 模式</h6><p>Chrome59版本开始已开始支持 Handless 模式，也就是无界面模式，这样爬取的时候就不会弹出浏览器了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chrome_options = webdriver.ChromeOptions()</span><br><span class="line">chrome_options.add_argument(<span class="string">&#x27;--headless&#x27;</span>)</span><br><span class="line">browser = webdriver.Chrome(chrome_options=chrome_options)</span><br></pre></td></tr></table></figure>
+
+<h6 id="Config"><a href="#Config" class="headerlink" title="Config"></a>Config</h6><p>可以把常量设置放 Config.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MONGO_URL = <span class="string">&#x27;localhost&#x27;</span></span><br><span class="line">MONGO_DB = <span class="string">&#x27;taobao&#x27;</span></span><br><span class="line">MONGO_COLLECTION = <span class="string">&#x27;products&#x27;</span></span><br><span class="line">KEYWORD = <span class="string">&#x27;ipad&#x27;</span></span><br><span class="line">MAX_PAGE = <span class="number">100</span></span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>from config import *</code> 导入</p>
+<h6 id="对接-Firefox"><a href="#对接-Firefox" class="headerlink" title="对接 Firefox"></a>对接 Firefox</h6><p>只需要更改</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">browser = webdriver.Firefox()</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="7-6Selenium爬取实战"><a href="#7-6Selenium爬取实战" class="headerlink" title="7.6Selenium爬取实战"></a>7.6Selenium爬取实战</h4><h4 id="7-7Pyppeteer爬取实战"><a href="#7-7Pyppeteer爬取实战" class="headerlink" title="7.7Pyppeteer爬取实战"></a>7.7Pyppeteer爬取实战</h4><h4 id="7-8CSS位置偏移反爬案例"><a href="#7-8CSS位置偏移反爬案例" class="headerlink" title="7.8CSS位置偏移反爬案例"></a>7.8CSS位置偏移反爬案例</h4><h4 id="7-9字体反爬案例"><a href="#7-9字体反爬案例" class="headerlink" title="7.9字体反爬案例"></a>7.9字体反爬案例</h4>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/06/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-7JavaScript%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%88%AC%E5%8F%961/" rel="prev" title="Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取1">
+                  <i class="fa fa-chevron-left"></i> Python3网络爬虫开发实战-7JavaScript动态渲染页面爬取1
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/18/iOS%E9%BB%91%E5%AE%A2%E6%94%BB%E9%98%B2/" rel="next" title="iOS黑客攻防">
+                  iOS黑客攻防 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

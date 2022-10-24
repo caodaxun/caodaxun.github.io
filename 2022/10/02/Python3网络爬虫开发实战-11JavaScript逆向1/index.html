@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="JavaScript 压缩去除 JavaScript 代码中不必要的空格、换行等内容，使代码都压缩为几行内容，降低代码可读性，同时提高网站加载速度 目前主流的前端开发技术大多都会利用 webpack、Rolllup 等工具进行打包，webpack、Rollup 会对源代码进行编译和压缩，输出几个打包好的 JavaScript 文件 JavaScript 压缩技术只能在很小程度上起到防护作用 Jav">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python3网络爬虫开发实战-11JavaScript逆向">
+<meta property="og:url" content="http://example.com/2022/10/02/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="JavaScript 压缩去除 JavaScript 代码中不必要的空格、换行等内容，使代码都压缩为几行内容，降低代码可读性，同时提高网站加载速度 目前主流的前端开发技术大多都会利用 webpack、Rolllup 等工具进行打包，webpack、Rollup 会对源代码进行编译和压缩，输出几个打包好的 JavaScript 文件 JavaScript 压缩技术只能在很小程度上起到防护作用 Jav">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3网络爬虫开发实战-11JavaScript逆向1/1.png">
+<meta property="og:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/2.png">
+<meta property="og:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3网络爬虫开发实战-11JavaScript逆向1/3.png">
+<meta property="og:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/4.png">
+<meta property="og:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/5.png">
+<meta property="og:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/6.png">
+<meta property="og:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/7.png">
+<meta property="og:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/8.png">
+<meta property="og:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/9.png">
+<meta property="article:published_time" content="2022-10-01T16:02:54.000Z">
+<meta property="article:modified_time" content="2022-10-09T00:57:19.825Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/Users/caodaxun/hexo/source/_posts/Python3网络爬虫开发实战-11JavaScript逆向1/1.png">
+
+
+<link rel="canonical" href="http://example.com/2022/10/02/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python3网络爬虫开发实战-11JavaScript逆向 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#JavaScript-%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.</span> <span class="nav-text">JavaScript 压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JavaScript-%E6%B7%B7%E6%B7%86"><span class="nav-number">2.</span> <span class="nav-text">JavaScript 混淆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JavaScript-%E5%8A%A0%E5%AF%86"><span class="nav-number">3.</span> <span class="nav-text">JavaScript 加密</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#javascript-obfuscator"><span class="nav-number">3.1.</span> <span class="nav-text">javascript-obfuscator</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%8E%8B%E7%BC%A9"><span class="nav-number">3.1.1.</span> <span class="nav-text">代码压缩</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E5%90%8D%E6%B7%B7%E6%B7%86"><span class="nav-number">3.1.2.</span> <span class="nav-text">变量名混淆</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86"><span class="nav-number">3.1.3.</span> <span class="nav-text">字符串混淆</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4"><span class="nav-number">3.1.4.</span> <span class="nav-text">代码自我保护</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%81%E5%B9%B3%E5%9D%A6%E5%8C%96"><span class="nav-number">3.1.5.</span> <span class="nav-text">控制流平坦化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%97%A0%E7%94%A8%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5"><span class="nav-number">3.1.6.</span> <span class="nav-text">无用代码注入</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E9%94%AE%E5%90%8D%E6%9B%BF%E6%8D%A2"><span class="nav-number">3.1.7.</span> <span class="nav-text">对象键名替换</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%A6%81%E7%94%A8%E6%8E%A7%E5%88%B6%E5%8F%B0%E8%BE%93%E5%87%BA"><span class="nav-number">3.1.8.</span> <span class="nav-text">禁用控制台输出</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E4%BF%9D%E6%8A%A4"><span class="nav-number">3.1.9.</span> <span class="nav-text">调试保护</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E9%94%81%E5%AE%9A"><span class="nav-number">3.1.10.</span> <span class="nav-text">域名锁定</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E7%BC%96%E7%A0%81"><span class="nav-number">3.1.11.</span> <span class="nav-text">特殊编码</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#WebAssembly"><span class="nav-number">3.2.</span> <span class="nav-text">WebAssembly</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E8%B0%83%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">浏览器调试</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Chrome"><span class="nav-number">4.1.</span> <span class="nav-text">Chrome</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%8A%82%E7%82%B9%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.1.1.</span> <span class="nav-text">查看节点事件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%BE%8E%E5%8C%96"><span class="nav-number">4.1.2.</span> <span class="nav-text">代码美化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%96%AD%E7%82%B9%E8%B0%83%E8%AF%95"><span class="nav-number">4.1.3.</span> <span class="nav-text">断点调试</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A7%82%E5%AF%9F%E8%B0%83%E7%94%A8%E6%A0%88"><span class="nav-number">4.1.4.</span> <span class="nav-text">观察调用栈</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Ajax-%E6%96%AD%E7%82%B9"><span class="nav-number">4.1.5.</span> <span class="nav-text">Ajax 断点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%94%B9%E5%86%99-JavaScript-%E6%96%87%E4%BB%B6"><span class="nav-number">4.1.6.</span> <span class="nav-text">改写 JavaScript 文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JavaScript-Hook-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">JavaScript Hook 的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Tampermonkey-%E6%B3%A8%E5%85%A5"><span class="nav-number">5.1.</span> <span class="nav-text">Tampermonkey 注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%8F%B0%E6%B3%A8%E5%85%A5"><span class="nav-number">5.2.</span> <span class="nav-text">控制台注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%87%8D%E5%86%99-JavaScript"><span class="nav-number">5.3.</span> <span class="nav-text">重写 JavaScript</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Python%E6%A8%A1%E6%8B%9F%E6%89%A7%E8%A1%8CJavaScript"><span class="nav-number">6.</span> <span class="nav-text">使用Python模拟执行JavaScript</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E8%B0%83%E7%94%A8"><span class="nav-number">6.1.</span> <span class="nav-text">模拟调用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Node-js%E6%A8%A1%E6%8B%9F%E6%89%A7%E8%A1%8CJavaScript"><span class="nav-number">7.</span> <span class="nav-text">使用Node.js模拟执行JavaScript</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E7%8E%AF%E5%A2%83%E4%B8%8BJavaScript%E7%9A%84%E6%A8%A1%E6%8B%9F%E6%89%A7%E8%A1%8C"><span class="nav-number">8.</span> <span class="nav-text">浏览器环境下JavaScript的模拟执行</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/02/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python3网络爬虫开发实战-11JavaScript逆向
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-02 00:02:54" itemprop="dateCreated datePublished" datetime="2022-10-02T00:02:54+08:00">2022-10-02</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-10-09 08:57:19" itemprop="dateModified" datetime="2022-10-09T08:57:19+08:00">2022-10-09</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="JavaScript-压缩"><a href="#JavaScript-压缩" class="headerlink" title="JavaScript 压缩"></a>JavaScript 压缩</h4><p>去除 JavaScript 代码中不必要的空格、换行等内容，使代码都压缩为几行内容，降低代码可读性，同时提高网站加载速度</p>
+<p>目前主流的前端开发技术大多都会利用 webpack、Rolllup 等工具进行打包，webpack、Rollup 会对源代码进行编译和压缩，输出几个打包好的 JavaScript 文件</p>
+<p>JavaScript 压缩技术只能在很小程度上起到防护作用</p>
+<h4 id="JavaScript-混淆"><a href="#JavaScript-混淆" class="headerlink" title="JavaScript 混淆"></a>JavaScript 混淆</h4><p>使用变量替换、字符串阵列化、控制流平坦化、多态变异、僵尸函数、调试保护等手段，使代码变得难以阅读和分析</p>
+<h4 id="JavaScript-加密"><a href="#JavaScript-加密" class="headerlink" title="JavaScript 加密"></a>JavaScript 加密</h4><p>将 JavaScript 代码进行加密，转成人无法阅读或者解析的代码，如借用 WebAssembly 技术，可以直接讲JavaScript代码用C/C++实现，JavaScript调用其变异后形成的文件来执行相应的功能</p>
+<p>前端开发中，JavaScript 混淆的主要实现是 javascript-obfuscator 和 terser 这两个库，都能提供一些代码混淆功能，也都有对应的 webpack 和 Rollup 打包工具的插件</p>
+<h5 id="javascript-obfuscator"><a href="#javascript-obfuscator" class="headerlink" title="javascript-obfuscator"></a>javascript-obfuscator</h5><p>需要安装 Node.js 12.x 及以上版本</p>
+<p>新建文件夹 js-obfuscator，进入文件夹，初始化工作空间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init</span><br></pre></td></tr></table></figure>
+
+<p>会提示输入一些信息，输入信息，然后创建 package.json 文件，这就完成项目初始化了。</p>
+<p>接下来安装 javascript-obfuscator 库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -D javascript-obfuscator</span><br></pre></td></tr></table></figure>
+
+<p>完成后看到本地 js-obfuscator 文件夹下生成了一个 node_modules 文件夹，里面就包含了 javascript-obfuscator 这个库</p>
+<img src="/Users/caodaxun/hexo/source/_posts/Python3网络爬虫开发实战-11JavaScript逆向1/1.png" alt="1" style="zoom:90%;" />
+
+<p>实现混淆样例：</p>
+<p>创建 main.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> code = <span class="string">`</span></span><br><span class="line"><span class="string">	let x = &#x27;1&#x27; + 1</span></span><br><span class="line"><span class="string">	console.log(&#x27;x&#x27;, x)</span></span><br><span class="line"><span class="string">`</span></span><br><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">	compact: <span class="literal">false</span>,</span><br><span class="line">	controlFlowFlattening: <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> obfuscator = <span class="built_in">require</span>(<span class="string">&#x27;javascript-obfuscator&#x27;</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">obfuscate</span>(<span class="params">code, options</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> obfuscator.obfuscate(code, options).getObfuscatedCode()</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obfuscate(code, options))</span><br></pre></td></tr></table></figure>
+
+<p>这里定义了两个变量：code，需要被混淆的代码；options，混淆选项</p>
+<p>接下来引入 javascript-obfuscator 库，定义一个方法传入 code 和 options 获取混淆后的代码，控制台输出混淆后的代码</p>
+<p><img src="/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/2.png" alt="2"></p>
+<h6 id="代码压缩"><a href="#代码压缩" class="headerlink" title="代码压缩"></a>代码压缩</h6><p>参数 compact。压缩后变量名变成了十六进制形式字符串</p>
+<h6 id="变量名混淆"><a href="#变量名混淆" class="headerlink" title="变量名混淆"></a>变量名混淆</h6><p>参数 <strong>identifierNamesGenerator</strong>。</p>
+<p>通过这个参数可以控制变量名混淆的方式，如设置为 hexadecimal：则会将变量名替换为十六进制形式字符串，如0xabc123；设置为 mangled：将变量名替换为普通简写字符串，如 a、b、c</p>
+<p>参数默认值 hexadecimal</p>
+<p>参数  <strong>identifiersPrefix</strong> 。</p>
+<p>还可以通过设置 <strong>identifiersPrefix</strong> 参数控制混淆后变量前缀</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">identifiersPrefix: &#39;germey&#39;</span><br></pre></td></tr></table></figure>
+
+<p>混淆后的变量前缀加上了自定义的字符串 germey</p>
+<p>参数 <strong>renameGlobals</strong> </p>
+<p>这个参数可以指定是否混淆全局变量和函数名称，默认值为 false</p>
+<h6 id="字符串混淆"><a href="#字符串混淆" class="headerlink" title="字符串混淆"></a>字符串混淆</h6><p>字符串混淆，即将一个字符串声明放到一个数组里，使之无法被直接搜到，可以通过 stringArray 参数来控制，默认为 true</p>
+<p>还可以通过 rotateStringArray 参数来控制数组化后结果的元素顺序，默认 true；stringArrayEncoding 参数控制数组的编码形式，默认不开启编码；如果设置为 true 或者 base64，则会使用 base64 编码，如果设置为 rc4，则使用 RC4编码；stringArrayThreshold 控制启用编码的概率，返回0-1 默认值 0.8</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">	stringArray: <span class="literal">true</span>,</span><br><span class="line">  rotateStringArray: <span class="literal">true</span>,</span><br><span class="line">  stringArrayEncoding: <span class="literal">true</span>,</span><br><span class="line">  stringArrayThreshold: <span class="number">1</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>unicodeEscapeSequence 参数对字符串进行 Unicode 转码</p>
+<h6 id="代码自我保护"><a href="#代码自我保护" class="headerlink" title="代码自我保护"></a>代码自我保护</h6><p>设置 selfDefending 参数开启代码自我保护功能，开启后，混淆后的 JavaScript 会强制以一行形式显示。如果将混淆后的代码进行格式化或者重命名，该段代码将无法执行</p>
+<h6 id="控制流平坦化"><a href="#控制流平坦化" class="headerlink" title="控制流平坦化"></a>控制流平坦化</h6><p>控制流平坦化就是将代码的执行逻辑混淆，通过 controlFlowFlattening: true 参数</p>
+<p>启用后，代码的执行时间会变长，最长达 1.5 倍之多</p>
+<p>controlFlowFlatteningThreshold 参数控制比例，范围0-1</p>
+<h6 id="无用代码注入"><a href="#无用代码注入" class="headerlink" title="无用代码注入"></a>无用代码注入</h6><p>参数 deadCodeInjection：true 开启。deadCodeInjectionThreshold 参数控制比例，0-1，默认0.4</p>
+<h6 id="对象键名替换"><a href="#对象键名替换" class="headerlink" title="对象键名替换"></a>对象键名替换</h6><p>参数 transformObjectKeys：true 开启</p>
+<h6 id="禁用控制台输出"><a href="#禁用控制台输出" class="headerlink" title="禁用控制台输出"></a>禁用控制台输出</h6><p>参数 disableConsoleOutput：true 来禁用掉 console.log 输出功能</p>
+<h6 id="调试保护"><a href="#调试保护" class="headerlink" title="调试保护"></a>调试保护</h6><p>如果在JavaScript代码中加入 debugger 关键字，那么执行到该位置的时候，就会进入调试模式。如果在代码多个位置都加入 debugger 关键字，或者定义某个逻辑来反复执行 debugger，就会不断进入调试模式，原本的代码就无法顺畅执行了，这个过程可以称为调试保护。</p>
+<p>参数 debugProtection：true 开启调试保护机制。debugProtectionInterval 启用无限调试</p>
+<h6 id="域名锁定"><a href="#域名锁定" class="headerlink" title="域名锁定"></a>域名锁定</h6><p>domainLock：[‘cuiqingcai.com’] 控制JavaScript代码只能在特定的域名下运行，不能在其它网站运行</p>
+<h6 id="特殊编码"><a href="#特殊编码" class="headerlink" title="特殊编码"></a>特殊编码</h6><p>还有些特殊的工具包，如 aaencode、jjencode、jsfuck 等，它们可以对代码进行混淆和编码</p>
+<h5 id="WebAssembly"><a href="#WebAssembly" class="headerlink" title="WebAssembly"></a>WebAssembly</h5><p>将一些和兴逻辑使用其他语言（如C/C++语言）来编写，并编译成类似字节码的文件，并通过JavaScript调用执行，从而起到二进制级别的防护作用</p>
+<h4 id="浏览器调试"><a href="#浏览器调试" class="headerlink" title="浏览器调试"></a>浏览器调试</h4><p><a target="_blank" rel="noopener" href="https://spa2.scrape.center/">https://spa2.scrape.center</a> 演示</p>
+<h5 id="Chrome"><a href="#Chrome" class="headerlink" title="Chrome"></a>Chrome</h5><h6 id="查看节点事件"><a href="#查看节点事件" class="headerlink" title="查看节点事件"></a>查看节点事件</h6><p>打开开发者工具，通过 Elements 面板可以审查页面的节点信息。</p>
+<p>右侧的 Styles 选项卡，可以看到节点对应的CSS样式，这里可以自行增删样式，实时预览效果。</p>
+<p>Computed 选项卡，可以看到节点的盒子模型，比如内边距、外边距等</p>
+<p>Event Listeners 选项卡，可以查看节点已绑定的事件。change：HTML元素改变时会触发；load：浏览器完成页面加载时会触发；click：用户点击HTML元素时会触发</p>
+<p>选中切换到第2页的节点，查看绑定事件</p>
+<img src="/Users/caodaxun/hexo/source/_posts/Python3网络爬虫开发实战-11JavaScript逆向1/3.png" alt="3" style="zoom:100%;" />
+
+<p>这里有对应事件的代码位置。内容文件名为 chunk-vendors.77daf991.js，后面一个冒号紧跟数字 7，所以对应事件处理函数定义在 chunk-vendors.77daf991.js 文件的第 7 行。点击会跳转到对应的位置。</p>
+<h6 id="代码美化"><a href="#代码美化" class="headerlink" title="代码美化"></a>代码美化</h6><p>通过 Event Listeners 找到绑定事件，跳转到代码所在位置。点击代码面板左下角的格式化按钮 <code>&#123;&#125;</code>，格式化代码</p>
+<p>会出现一个 chunk-vendors.77daf991.js:formatted 选项卡。</p>
+<p><img src="/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/4.png" alt="4"></p>
+<h6 id="断点调试"><a href="#断点调试" class="headerlink" title="断点调试"></a>断点调试</h6><p>添加断点只需点击对应行号，点击第2页的按钮触发断点，看到断点触发，页面中显示 Paused in debugger 提示。</p>
+<p><img src="/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/5.png" alt="5"></p>
+<p>Watch面板</p>
+<p>这里可以自行添加想要查看的变量和方法，点击右上角+，可以添加任意想要监听的对象</p>
+<p>如这里比较关注o.apply 方法，点击添加 o.apply，这里就会把对应的方法定义呈现出来，展开后再点击 FunctionLocation 定位其源码位置。</p>
+<p>Console 面板</p>
+<p>这里可以输入任意JavaScript代码执行输出对应结果</p>
+<h6 id="观察调用栈"><a href="#观察调用栈" class="headerlink" title="观察调用栈"></a>观察调用栈</h6><p>debugger 调试过程中单步执行后，Call Stack 可以查看调用栈</p>
+<h6 id="Ajax-断点"><a href="#Ajax-断点" class="headerlink" title="Ajax 断点"></a>Ajax 断点</h6><p>在 Sources 面板下面，找到 XHR/fetch Breakpoints，这里就可以设置 Ajax 断点</p>
+<p><img src="/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/6.png" alt="6"></p>
+<p>要设置断点，先要观察 Ajax 请求，点击第2页，在Network面板观察 Ajax 请求是怎样的。</p>
+<p>看到请求的URL中包含 <code>/api/movie</code> 这样的内容。所以可以在 XHR/fetch Breakpoints 添加拦截规则，点+号，添加  <code>/api/movie</code></p>
+<p>再点击第3页，触发第3页的 Ajax 请求。</p>
+<p><img src="/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/7.png" alt="7"></p>
+<p>发现它停到了Ajax最后发送的那个时候。再通过 Call Stack 顺着找到前序调用逻辑，最后找到一个 onFetchData 的方法</p>
+<p><img src="/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/8.png" alt="8"></p>
+<p>这里使用 axios 库发起了一个 Ajax 请求，还有 limit、offset、token 这3个参数</p>
+<h6 id="改写-JavaScript-文件"><a href="#改写-JavaScript-文件" class="headerlink" title="改写 JavaScript 文件"></a>改写 JavaScript 文件</h6><p>浏览器的 overrides 功能，在 Sources 面板左侧，可以在 Overrides 面板上选定一个本地的文件夹，用于保存需要更改的 JavaScript 文件</p>
+<p>在定位到 onFetchData 方法，查看格式化后的代码。</p>
+<p>因为格式化后的代码是无法在浏览器中直接修改的，可以将格式化后的代码复制到文本编辑器中，添加一行代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&#125;).then((<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;response&#x27;</span>, a);<span class="comment">//添加一行代码</span></span><br><span class="line">  <span class="keyword">var</span> e = a.data, </span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>接着将修改后的内容替换到原来的JavaScript文件（未格式化的代码）直接替换 JavaScript 的所有内容，保存后 Overrides 选项文件夹里面看到新生成文件。刷新页面看到控制台打印了请求结果</p>
+<p>这里还可以增加一些 JavaScript 逻辑，比如直接将变量 a 的结果通过 API 发送到远程服务器，并通过服务器将数据保存下来，这就完成了拦截 Ajax 请求并保存了。</p>
+<h4 id="JavaScript-Hook-的使用"><a href="#JavaScript-Hook-的使用" class="headerlink" title="JavaScript Hook 的使用"></a>JavaScript Hook 的使用</h4><p>Tampermonkey 插件也叫油猴，利用它我们几乎可以在网页中执行任何 JavaScript 代码，实现想要的功能</p>
+<p><a target="_blank" rel="noopener" href="https://greasyfork.org/zh-CN/scripts">https://greasyfork.org/zh-CN/scripts</a> 可以找到一些实用脚本</p>
+<p>API：<a target="_blank" rel="noopener" href="https://www.tampermonkey.net/documentation.php">https://www.tampermonkey.net/documentation.php</a></p>
+<p>Hook JavaScript 里的base64编码</p>
+<p>btoa 方法，在JavaScript中该方法用于将字符串编码成 base64 字符串。</p>
+<h5 id="Tampermonkey-注入"><a href="#Tampermonkey-注入" class="headerlink" title="Tampermonkey 注入"></a>Tampermonkey 注入</h5><p>新建 Tampermonkey 脚本</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//@name HookBase64</span></span><br><span class="line"><span class="comment">//@namespace https://login1.scrape.center/ </span></span><br><span class="line"><span class="comment">//@match https://login1.scrape.center/ //脚本生效网址</span></span><br><span class="line"><span class="comment">//@grant none</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"><span class="meta">	&#x27;use strict&#x27;</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">hook</span>(<span class="params">object, attr</span>)</span>&#123; <span class="comment">//hook object对象的attr参数</span></span><br><span class="line">    <span class="keyword">var</span> func = object[attr]</span><br><span class="line">    object[attr] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&#x27;hooked&#x27;</span>, object, attr)</span><br><span class="line">      <span class="keyword">var</span> ret = func.apply(object, <span class="built_in">arguments</span>)</span><br><span class="line">      <span class="keyword">debugger</span></span><br><span class="line">      <span class="keyword">return</span> ret</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  hook(<span class="built_in">window</span>, btoa)</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
+
+<p>先把原方法赋值为一个变量 var func = object[attr]，即调用 func 就可以实现和原来相同的功能，接着改写方法的定义，将 object[attr] = function() 改写成一个新的方法，新方法中 func.apply 方法重新调用原来方法，保证前后执行方法不受影响。</p>
+<p>自定义方法之后，我们在方法前后加入了自己的代码</p>
+<h5 id="控制台注入"><a href="#控制台注入" class="headerlink" title="控制台注入"></a>控制台注入</h5><p>可以将代码复制输入到 控制台，执行完后相当于把 window 的 btoa 方法改写了</p>
+<p>控制台测试 btoa(‘germey’)</p>
+<h5 id="重写-JavaScript"><a href="#重写-JavaScript" class="headerlink" title="重写 JavaScript"></a>重写 JavaScript</h5><p>Hook 代码在控制台输入的，一旦页面刷新就不生效了</p>
+<p>借助 Chrome 的 Overrides 功能，Overrides会在本地生成一个 JavaScript 文件副本，以后每次刷新都会使用副本内容</p>
+<p>随便选个 JavaScript 脚本，添加上 Hook 代码，保存</p>
+<h4 id="使用Python模拟执行JavaScript"><a href="#使用Python模拟执行JavaScript" class="headerlink" title="使用Python模拟执行JavaScript"></a>使用Python模拟执行JavaScript</h4><p>使用库 PyExecJS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install pyexecjs</span><br></pre></td></tr></table></figure>
+
+<p>PyExecJS 是用于执行 JavaScript 的，但执行JavaScript的功能还需要依赖JavaScript运行环境，安装好这个库之外，还需要安装一个JavaScript运行环境，Node.js</p>
+<p>案例：<a target="_blank" rel="noopener" href="https://spa7.scrape.center/">https://spa7.scrape.center</a></p>
+<p>一个NBA球星网站，展示一些球星的基本信息，每张卡片都有个加密字符串</p>
+<p>打开开发者工具很容易找到加密字符串的生成逻辑，可以通过断点查看</p>
+<p><img src="/Users/caodaxun/hexo/source/_posts/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%911/9.png" alt="9"></p>
+<p>getToken 方法的输入就是单个球员的信息，整个加密逻辑就是提取球员的名字、生日、身高、体重接着进行base64，然后进行DES加密</p>
+<p>加密算法依赖 crypto-js 库，使用 CryptoJS 对象来实现加密算法。</p>
+<p>执行 crypto-js 库对应的这个 JavaScript 文件（crypto-js.main.js）之后，CryptoJS 就被注入浏览器全局环境下了</p>
+<h5 id="模拟调用"><a href="#模拟调用" class="headerlink" title="模拟调用"></a>模拟调用</h5><p>将 getToken 方法改写下，this.key 固定</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getToken</span>(<span class="params">player</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> key = CryptoJS.enc.Utf8.parse(<span class="string">&#x27;fip...&#x27;</span>)</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为这个方法的模拟执行需要 CryptoJS 这个对象，如果直接调用这个方法，会报 CryptoJS 未定义错误，还需要模拟执行 crypto-js.main.js </p>
+<p>所以模拟执行分两步：</p>
+<p>模拟执行 crypto-js.main.js 里面的JavaScript，用于声明 CryptoJS 对象</p>
+<p>模拟运行 getToken 方法的定义，用于声明 getToken 方法</p>
+<p>使用 PyExecJS 模拟执行：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> execjs</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line">item = &#123;</span><br><span class="line">  <span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;xx&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;image&#x27;</span>: <span class="string">&#x27;xx.png&#x27;</span></span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line">file = <span class="string">&#x27;crypto.js&#x27;</span></span><br><span class="line"><span class="comment">//使用execjs的get方法获取JavaScript执行环境，赋值为node</span></span><br><span class="line">node = execjs.get()</span><br><span class="line">ctx = node.complie(open(file).read)</span><br><span class="line">js = f<span class="string">&quot;getToken(&#123;json.dumps(item,ensure_ascii=False)&#125;)&quot;</span></span><br><span class="line">print(js)</span><br><span class="line">result = ctx.eval(js)</span><br><span class="line">print(result)</span><br></pre></td></tr></table></figure>
+
+<p>调用node的complie方法，传入crypto.js 文件的文本内容，complie 方法会返回一个 JavaScript 的上下文对象，赋值给 ctx。这里可以理解为 ctx 对象里面执行过了 crypto-js.main.js，CryptoJS 就声明好了，然后紧接着 getToken 方法的声明也被执行，所以 getToken 方法也定义好了</p>
+<p>定义 js变量，传入球员信息，执行js，返回最终加密字符串</p>
+<h4 id="使用Node-js模拟执行JavaScript"><a href="#使用Node-js模拟执行JavaScript" class="headerlink" title="使用Node.js模拟执行JavaScript"></a>使用Node.js模拟执行JavaScript</h4><p>想要计算出每位球星所对应的加密字符串，是要加载 Crypto 库并执行 getToken 方法，这里直接用 Node.js 来实现</p>
+<p>把 crypto-js.main.js 文件中的内容复制下来，新建 crypto.js 文件把内容粘贴进去</p>
+<p>新建 main.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> CryptoJS = <span class="built_in">require</span>(<span class="string">&quot;./crypto&quot;</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getToken</span>(<span class="params">player</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> key = CryptoJS.enc.Utf8.parse(<span class="string">&#x27;fip...&#x27;</span>)</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> player = &#123;</span><br><span class="line">  <span class="string">&#x27;xx&#x27;</span>: <span class="string">&#x27;xx&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(getToken(player))</span><br></pre></td></tr></table></figure>
+
+<p>直接使用 Node.js 中的 require 方法导入 crypto.js 这个文件，然后将其赋值为 CryptoJS 对象，这样就完成了 CryptoJS 对象的初始化</p>
+<p>运行 main.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node main.js</span><br></pre></td></tr></table></figure>
+
+<p>如果想用 Python 来编写整个爬虫，怎么和 Node.js 来对接呢</p>
+<p>可以使用 Node.js 把上面算法暴露成一个 HTTP服务就好，这样 Python 直接调用 Node.js 暴露的HTTP 服务，通过 Request Body 传入球员信息，加密字符串通过 HTTP 的 Response 返回</p>
+<p>Node.js 中最流行的 HTTP 服务框架 - express</p>
+<p>安装 express</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i express</span><br></pre></td></tr></table></figure>
+
+<h4 id="浏览器环境下JavaScript的模拟执行"><a href="#浏览器环境下JavaScript的模拟执行" class="headerlink" title="浏览器环境下JavaScript的模拟执行"></a>浏览器环境下JavaScript的模拟执行</h4><p>使用 playwright 来实现浏览器辅助逆向</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip3 install playwright</span><br><span class="line">playwright install</span><br></pre></td></tr></table></figure>
+
+<p>运行两条命令后，会安装 playwright 库，并安装 Chromium、Firefox、WebKit 三个内核的浏览器供 playwright 直接使用</p>
+<p>浏览器中已经把上下文环境和依赖都加载成功了，只需要把局部方法挂在到全局window对象上</p>
+<p>利用 playwright 的 Request Interception 机制将想要替换的任意文件进行替换</p>
+<p>站点 <a target="_blank" rel="noopener" href="https://spa2.scrape.center/">https://spa2.scrape.center</a> 的 Ajax 请求参数带有一个token</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> token = (<span class="built_in">this</span>.page-<span class="number">1</span>)*<span class="built_in">this</span>.limit,e=<span class="built_in">Object</span>(i[<span class="string">&quot;a&quot;</span>])(<span class="built_in">this</span>.$store.state.url.index,a)</span><br></pre></td></tr></table></figure>
+
+<p>实现 Object(i[“a”]) 的全局挂载，只需要将其赋值给 window 对象的一个属性即可，添加</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.encrypt = <span class="built_in">Object</span>(i[<span class="string">&quot;a&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<p>接着将修改后的 JavaScript 代码文件保存到本地，命名为 chunk.js</p>
+<p>接下来利用 playwright 启动一个浏览器，并使用 Request Interception 将 JavaScript 文件替换</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> playwright.sync_api <span class="keyword">import</span> sync_playwright</span><br><span class="line">BASE_URL = <span class="string">&#x27;https://spa2.scrape.center&#x27;</span></span><br><span class="line">context = sync_playwright().start()</span><br><span class="line">browser = context.chromium.launch()</span><br><span class="line">page = browser.new_page()</span><br><span class="line">page.route(</span><br><span class="line">	<span class="string">&quot;/js/chunk-10192a00.243cb8b7.js&quot;</span>,</span><br><span class="line">  <span class="keyword">lambda</span> route: route.fulfill(path=<span class="string">&quot;./chunk.js&quot;</span>)</span><br><span class="line">)</span><br><span class="line">page.goto(BASE_URL)</span><br></pre></td></tr></table></figure>
+
+<p>首先用 playwright 创建无头浏览器，利用 new_page 创建一个新的页面，并定义了一个关键的路由。</p>
+<p>路由第一个参数：原本加载的文件路径。通过请求的Headers 中可以看到 Request URL</p>
+<p> <a target="_blank" rel="noopener" href="https://spa2.scrape.center/js/chunk-10192a00.243cb8b7.js">https://spa2.scrape.center/js/chunk-10192a00.243cb8b7.js</a></p>
+<p>路由第二个参数：利用 route 的 fulfill 方法指定本地的文件</p>
+<p>这样 playwright 加载 /js/chunk-10192a00.243cb8b7.js 文件的时候，其内容就会被替换为我们本地保存的 chunk.js 文件</p>
+<ul>
+<li>模拟调用</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_token</span>(<span class="params">offset</span>):</span></span><br><span class="line">  result = page.evaluate(<span class="string">&#x27;&#x27;&#x27;()=&gt;&#123;</span></span><br><span class="line"><span class="string">  	return window.encrypt(&quot;%s&quot;, &quot;%s&quot;)</span></span><br><span class="line"><span class="string">  &#125;&#x27;&#x27;&#x27;</span> % (<span class="string">&#x27;/api/movie&#x27;</span>, offset))</span><br><span class="line">  <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/20/JavaScript%EF%BC%88%E4%B8%89%EF%BC%89/" rel="prev" title="JavaScript（三）">
+                  <i class="fa fa-chevron-left"></i> JavaScript（三）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/02/Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-11JavaScript%E9%80%86%E5%90%912/" rel="next" title="Python3网络爬虫开发实战-11JavaScript逆向2">
+                  Python3网络爬虫开发实战-11JavaScript逆向2 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
