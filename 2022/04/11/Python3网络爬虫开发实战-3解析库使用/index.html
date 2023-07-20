@@ -32,7 +32,7 @@
 <meta property="og:description" content="3. 解析库使用XPath更多XPath用法 http:&#x2F;&#x2F;www.w3school.com.cn&#x2F;xpath&#x2F;index.asp XML 路径语言 1pip3 install lxml     常用规则     表达式 选取此节点的所有子节点    &#x2F; 从当前节点选取直接子节点   &#x2F;&#x2F; 从当前节点选取子孙节点   . 选取当前节点   .. 选取当前节点的父节点   @ 选取属性   node">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-04-11T08:37:26.000Z">
-<meta property="article:modified_time" content="2022-10-09T00:57:19.844Z">
+<meta property="article:modified_time" content="2023-06-14T08:00:13.519Z">
 <meta property="article:author" content="daxun">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
@@ -227,20 +227,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -312,7 +312,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-10-09 08:57:19" itemprop="dateModified" datetime="2022-10-09T08:57:19+08:00">2022-10-09</time>
+        <time title="修改时间：2023-06-14 16:00:13" itemprop="dateModified" datetime="2023-06-14T16:00:13+08:00">2023-06-14</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -386,7 +386,7 @@
 <p>也可读取文本进行解析</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">html = etree.parse(<span class="string">&#x27;./test.html&#x27;</span>, etree.HTMLParser())</span><br></pre></td></tr></table></figure>
 
-<h5 id="所有结点"><a href="#所有结点" class="headerlink" title="所有结点"></a>所有结点</h5><p>一般用 // 开头的 XPath 规则来选取所有符合要求的节点</p>
+<h5 id="所有结点"><a href="#所有结点" class="headerlink" title="所有结点"></a>所有结点</h5><p>一般会用 // 开头的 XPath 规则来选取所有符合要求的节点</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"><span class="keyword">from</span> lxml.etree <span class="keyword">import</span> _Element</span><br><span class="line">text = <span class="string">&#x27;xxxxx&#x27;</span></span><br><span class="line">html = etree.HTML(text) <span class="comment"># type: _Element</span></span><br><span class="line">result = html.xpath(<span class="string">&#x27;//*&#x27;</span>)</span><br><span class="line">print(result)</span><br></pre></td></tr></table></figure>
 
 <blockquote>
@@ -397,7 +397,7 @@
 <p>返回形式是一个列表，每个元素是 Element 类型，其后跟了节点的名称，</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&lt;Element html at <span class="number">0x7f8f63e97280</span>&gt;, &lt;Element body at <span class="number">0x7f8f63f225c0</span>&gt;, &lt;Element div at <span class="number">0x7f8f63f22b40</span>&gt;, &lt;Element ul at <span class="number">0x7f8f63f22b80</span>&gt;, &lt;Element li at <span class="number">0x7f8f63f22bc0</span>&gt;, &lt;Element a at <span class="number">0x7f8f63f22c40</span>&gt;, &lt;Element li at <span class="number">0x7f8f63f22c80</span>&gt;, &lt;Element a at <span class="number">0x7f8f63f22cc0</span>&gt;, &lt;Element li at <span class="number">0x7f8f63f22d00</span>&gt;, &lt;Element a at <span class="number">0x7f8f63f22c00</span>&gt;, &lt;Element li at <span class="number">0x7f8f63f22d40</span>&gt;, &lt;Element a at <span class="number">0x7f8f63f22d80</span>&gt;, &lt;Element li at <span class="number">0x7f8f63f22dc0</span>&gt;, &lt;Element a at <span class="number">0x7f8f63f22e00</span>&gt;]</span><br></pre></td></tr></table></figure>
 
-<p>也可以指定节点名称，例如像获取所有 li 节点</p>
+<p>也可以指定节点名称，例如想获取所有 li 节点</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = html.xpath(<span class="string">&#x27;//li&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
 <h5 id="子节点"><a href="#子节点" class="headerlink" title="子节点"></a>子节点</h5><p>/ 或 // 查找元素的子节点或子孙节点</p>
@@ -478,9 +478,7 @@
 <h5 id="提取信息"><a href="#提取信息" class="headerlink" title="提取信息"></a>提取信息</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//获取节点名称</span><br><span class="line">print(soup.title.name)  		</span><br><span class="line">title</span><br></pre></td></tr></table></figure>
 
 <p>一个节点可能有多个属性，如 id 和 class 等，调用 attrs 获取所有属性，返回结果是字典形式</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//获取所有属性</span><br><span class="line">print(soup.p.attrs)			 		</span><br><span class="line">&#123;<span class="string">&#x27;class&#x27;</span>: [<span class="string">&#x27;title&#x27;</span>], <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;dromouse&#x27;</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//获取 name 属性</span><br><span class="line">print(soup.p.attrs[<span class="string">&#x27;name&#x27;</span>])	</span><br><span class="line">dromouse</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//获取所有属性</span><br><span class="line">print(soup.p.attrs)			 		</span><br><span class="line">&#123;<span class="string">&#x27;class&#x27;</span>: [<span class="string">&#x27;title&#x27;</span>], <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;dromouse&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">//再获取 name 属性</span><br><span class="line">print(soup.p.attrs[<span class="string">&#x27;name&#x27;</span>])	</span><br><span class="line">dromouse</span><br></pre></td></tr></table></figure>
 
 <p>比较简单方式，注意返回有的是字符串，有的是字符串组成的列表</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(soup.p[<span class="string">&#x27;name&#x27;</span>])</span><br><span class="line">print(soup.p[<span class="string">&#x27;class&#x27;</span>])</span><br><span class="line"><span class="comment">#需要注意有的返回字符串，有的返回字符串组成的列表，要注意判断类型</span></span><br></pre></td></tr></table></figure>
@@ -756,7 +754,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

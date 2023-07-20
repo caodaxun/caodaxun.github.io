@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="MachOMachO 是 iOS&#x2F;macOS 系统上应用程序的文件格式 test.c 原文件 12345#include &lt;stdio.h&gt;int main() &amp;#123;	printf(&quot;test\n&quot;);	return 0&amp;#125;  12345clang -c test.c &#x2F;&#x2F;编译生成 test.o 目标文件clang test.o 	  &#x2F;&#x2F;链接 默认">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向-MachO">
+<meta property="og:url" content="http://example.com/2023/04/27/%E9%80%86%E5%90%91-MachO/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="MachOMachO 是 iOS&#x2F;macOS 系统上应用程序的文件格式 test.c 原文件 12345#include &lt;stdio.h&gt;int main() &amp;#123;	printf(&quot;test\n&quot;);	return 0&amp;#125;  12345clang -c test.c &#x2F;&#x2F;编译生成 test.o 目标文件clang test.o 	  &#x2F;&#x2F;链接 默认">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/Users/midland/Desktop/Hexo/source/_posts/逆向-MachO/图片1.png">
+<meta property="og:image" content="http://example.com/Users/midland/Desktop/Hexo/source/_posts/逆向-MachO/图片2.png">
+<meta property="article:published_time" content="2023-04-27T08:04:37.000Z">
+<meta property="article:modified_time" content="2023-04-28T03:06:05.038Z">
+<meta property="article:author" content="daxun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/Users/midland/Desktop/Hexo/source/_posts/逆向-MachO/图片1.png">
+
+
+<link rel="canonical" href="http://example.com/2023/04/27/%E9%80%86%E5%90%91-MachO/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>逆向-MachO | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">简单记录下</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#MachO"><span class="nav-number">1.</span> <span class="nav-text">MachO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MachO-%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">MachO 文件结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Header"><span class="nav-number">3.</span> <span class="nav-text">Header</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LoadCommands"><span class="nav-number">4.</span> <span class="nav-text">LoadCommands</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#LC-SEGMENT-64"><span class="nav-number">4.1.</span> <span class="nav-text">LC_SEGMENT_64</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#TEXT-%E6%AE%B5"><span class="nav-number">4.1.1.</span> <span class="nav-text">__TEXT 段</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#DATA-%E6%AE%B5"><span class="nav-number">4.1.2.</span> <span class="nav-text">__DATA 段</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#LC-LOAD-DYLIB"><span class="nav-number">4.2.</span> <span class="nav-text">LC_LOAD_DYLIB</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#LC-CODE-SIGNATURE"><span class="nav-number">4.3.</span> <span class="nav-text">LC_CODE_SIGNATURE</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MachOView"><span class="nav-number">5.</span> <span class="nav-text">MachOView</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">daxun</p>
+  <div class="site-description" itemprop="description">简单记录下</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/27/%E9%80%86%E5%90%91-MachO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="daxun">
+      <meta itemprop="description" content="简单记录下">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向-MachO
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-27 16:04:37" itemprop="dateCreated datePublished" datetime="2023-04-27T16:04:37+08:00">2023-04-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-04-28 11:06:05" itemprop="dateModified" datetime="2023-04-28T11:06:05+08:00">2023-04-28</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="MachO"><a href="#MachO" class="headerlink" title="MachO"></a>MachO</h4><p>MachO 是 iOS/macOS 系统上应用程序的文件格式</p>
+<p>test.c 原文件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;test\n&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">clang -c test.c <span class="comment">//编译生成 test.o 目标文件</span></span><br><span class="line">clang test.o 	  <span class="comment">//链接 默认生成 a.out</span></span><br><span class="line">./a.out 			  <span class="comment">//执行输出 test</span></span><br><span class="line">clang -o test2 test.o <span class="comment">//对目标文件 test.o 进行链接生成 test2 可执行文件</span></span><br><span class="line">clang -o test3 test.c <span class="comment">//对源文件test.c进行编译链接生成 test3 可执行文件</span></span><br></pre></td></tr></table></figure>
+
+<p>file 文件路径 查看文件类型</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ file xxx</span><br><span class="line">xxx: Mach-O 64-bit executable arm64</span><br></pre></td></tr></table></figure>
+
+<p>查看 MachO 文件包含架构：lipo -info MachO文件</p>
+<p>拆分某种架构：lipo MachO文件 -thin 架构 -output 输出文件路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lipo MachO -thin armv7 -output macho_armv7</span><br></pre></td></tr></table></figure>
+
+<p>合并多种架构：lipo -create Macho1 Macho2 -output 输出文件路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lipo -create macho_arm64 marcho_armv7 -output MMMachO</span><br></pre></td></tr></table></figure>
+
+<h4 id="MachO-文件结构"><a href="#MachO-文件结构" class="headerlink" title="MachO 文件结构"></a>MachO 文件结构</h4><p>三部分组成：Mach-O头部（Header）、加载命令（Load Commands）、数据块（Data）</p>
+<img src="/Users/midland/Desktop/Hexo/source/_posts/逆向-MachO/图片1.png" alt="图片1" style="zoom:50%;" />
+
+<h4 id="Header"><a href="#Header" class="headerlink" title="Header"></a>Header</h4><p>头部用于校验 Mach-O文件的合法性及确定文件的运行环境</p>
+<p>32位和64位架构的 CPU 分别使用 mach_header 和 mach_header_64 结构体来描述 Mach-O 头部</p>
+<ul>
+<li>64 位下 MachO 头部（Header）</li>
+</ul>
+<p>定义在 <code>mach-o/loader.h</code> 找到</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">magic：魔数（特征字段）用于标识当前设备是大端序还是小端序，iOS是小端序，对64位架构的程序，它被定义为常量 MH_MAGIC_64，取固定值为 0xfeedfacf</span></span><br><span class="line"><span class="comment">cputype：标识CPU架构，如ARM、ARM64、MIPS、X86_64等</span></span><br><span class="line"><span class="comment">cpusubtype：标识具体CPU类型区分不同版本的处理器，比如arm64、armv7</span></span><br><span class="line"><span class="comment">filetype：Mach-O文件的类型，如可执行文件、符号文件、内核扩展文件，iOS你想中接触最多的是 </span></span><br><span class="line"><span class="comment">MH_EXECUTE	0x2 </span></span><br><span class="line"><span class="comment">MH_DYLIB	  0x6</span></span><br><span class="line"><span class="comment">ncmds：Mach-O文件中加载命令的数量</span></span><br><span class="line"><span class="comment">sizeofcmds：Mach-O文件加载命令所占用的总字节大小</span></span><br><span class="line"><span class="comment">flags：标志位，该字段用位表示二进制文件支持的功能，主要是和系统加载，链接相关 </span></span><br><span class="line"><span class="comment">其中MH_PIE 0x200000，只有在 MH_EXECUTE 中使用，意思是启用 ASLR 地址空间布局随机化，增加程序的安全性（程序每次启动，加载地址都会随机变化，这样所有代码引用都是错的，需要重新对代码地址进行计算修正才能正常访问）</span></span><br><span class="line"><span class="comment">reserved：系统保留字段，仅在 mach_header_64 存在</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mach_header_64</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	magic;		<span class="comment">/* mach magic number identifier */</span></span><br><span class="line">	<span class="keyword">int32_t</span>		cputype;	<span class="comment">/* cpu specifier */</span></span><br><span class="line">	<span class="keyword">int32_t</span>		cpusubtype;	<span class="comment">/* machine specifier */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	filetype;	<span class="comment">/* type of file */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	ncmds;		<span class="comment">/* number of load commands */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	sizeofcmds;	<span class="comment">/* the size of all the load commands */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	reserved;	<span class="comment">/* reserved */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="LoadCommands"><a href="#LoadCommands" class="headerlink" title="LoadCommands"></a>LoadCommands</h4><p>加载命令，告诉加载器如何处理二进制数据，有些命令是由内核处理的，有些是由动态链接器（dyld）处理的</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">cmd：当前加载命令类型，根据不同的加载命令类型，内核会使用不同的函数来解析</span></span><br><span class="line"><span class="comment">cmdsize：当前加载命令大小</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">struct</span> load_command &#123;</span><br><span class="line">	uint32_t cmd;		<span class="comment">/* type of load command */</span></span><br><span class="line">	uint32_t cmdsize;	<span class="comment">/* total size of command in bytes */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>cmd 包含以下部分</p>
+<img src="/Users/midland/Desktop/Hexo/source/_posts/逆向-MachO/图片2.png" alt="图片2" style="zoom:100%;" />
+
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">LC_SEGMENT_64 <span class="comment">//定义一个段，加载后被映射到内存中，段中又包含节（section）</span></span><br><span class="line">LC_DYLD_INFO_ONLY <span class="comment">//记录动态链接相关信息，动态链接器需要根据它来进行地址重定向</span></span><br><span class="line">LC_SYMTAB <span class="comment">//文件所使用符号表，找到后分别获取符号表偏移量、符号数、字符串表偏移量、字符串表大小</span></span><br><span class="line">LC_DYSYMTAP <span class="comment">//动态符号表地址，动态链接器所使用的符号，找到后获取间接符号表偏移量</span></span><br><span class="line">LC_LOAD_DYLINKER <span class="comment">//默认的加载器路径 /usr/lib/dyld</span></span><br><span class="line">  </span><br><span class="line">LC_UUID <span class="comment">//MachO文件唯一标识，dsym文件(符号文件)和崩溃堆栈中都存在这个值，用于分析奔溃位置</span></span><br><span class="line">LC_VERSION_MIN_IPHONEOS <span class="comment">//MachO文件要求的最低系统版本，和xcode中配置的target有关</span></span><br><span class="line">LC_SOURCE_VERSION <span class="comment">//构建二进制文件的源代码版本</span></span><br><span class="line">LC_MAIN <span class="comment">//程序入口，动态链接器获取该地址，然后程序跳转到该处执行</span></span><br><span class="line">LC_ENCRYPTION_INFO_64 <span class="comment">//文件加密信息，加密标记、加密数据偏移和大小，脱壳时用到</span></span><br><span class="line">  </span><br><span class="line">LC_LOAD_DYLIB <span class="comment">//依赖的动态库，包括动态库路径，非越狱环境注入动态库需要用到它</span></span><br><span class="line">LC_RPATH <span class="comment">//@rpath的路径，指定动态链接器搜索路径列表，以便定位框架(framework)</span></span><br><span class="line">LC_LOAD_WEAK_DYLIB <span class="comment">//可选的动态库，缺少没影响</span></span><br><span class="line">LC_FUNCTION_STARTS <span class="comment">//函数起始地址表，使调试器或其他程序能够判断一个地址是否在该表范围内</span></span><br><span class="line">LC_DATA_IN_CODE <span class="comment">//定义在代码段的非指令表</span></span><br><span class="line">LC_CODE_SIGNATURE <span class="comment">//代码签名信息，校验签名及修复脱壳后的应用闪退需要用到</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="LC-SEGMENT-64"><a href="#LC-SEGMENT-64" class="headerlink" title="LC_SEGMENT_64"></a>LC_SEGMENT_64</h5><p>段加载命令，每个段都定义了一个虚拟内存区域，动态链接器负责把这个区域映射到进程地址空间</p>
+<p>系统从 fileoff 处加载 filesize 大小的内容到虚拟内存 vmaddr 处，大小为 vmsize，段页面的权限由 initprot 进行初始化，这些权限可以被修改，但是不能超过 maxprot 的值，例如，逆向时关注的代码段（__TEXT）的初始化和最高内存权限都是可读/可执行/不可写，这就是未越狱状态下不能 inline hook 的原因。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">cmd：加载命令类型</span></span><br><span class="line"><span class="comment">cmdsize：当前加载命令大小</span></span><br><span class="line"><span class="comment">segname：段名称，占16个字节</span></span><br><span class="line"><span class="comment">vmaddr：段虚拟内存地址</span></span><br><span class="line"><span class="comment">vmsize：段虚拟内存大小</span></span><br><span class="line"><span class="comment">fileoff：段在文件中的偏移</span></span><br><span class="line"><span class="comment">filesize：段在文件中的大小</span></span><br><span class="line"><span class="comment">maxprot：段页面的最高内存保护（r、w、x）</span></span><br><span class="line"><span class="comment">initprot：段页面的初始内存保护（r、w、x）</span></span><br><span class="line"><span class="comment">nsects：段中包含节的数量，一个段可以包含0个或者多个节</span></span><br><span class="line"><span class="comment">flags：段的标志信息</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">struct</span> segment_command_64 &#123; <span class="comment">/* for 64-bit architectures */</span></span><br><span class="line">	uint32_t	cmd;		<span class="comment">/* LC_SEGMENT_64 */</span></span><br><span class="line">	uint32_t	cmdsize;	<span class="comment">/* includes sizeof section_64 structs */</span></span><br><span class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment name */</span></span><br><span class="line">	uint64_t	vmaddr;		<span class="comment">/* memory address of this segment */</span></span><br><span class="line">	uint64_t	vmsize;		<span class="comment">/* memory size of this segment */</span></span><br><span class="line">	uint64_t	fileoff;	<span class="comment">/* file offset of this segment */</span></span><br><span class="line">	uint64_t	filesize;	<span class="comment">/* amount to map from the file */</span></span><br><span class="line">	int32_t		maxprot;	<span class="comment">/* maximum VM protection */</span></span><br><span class="line">	int32_t		initprot;	<span class="comment">/* initial VM protection */</span></span><br><span class="line">	uint32_t	nsects;		<span class="comment">/* number of sections in segment */</span></span><br><span class="line">	uint32_t	flags;		<span class="comment">/* flags */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>段名称用下划线和大写字母表示</p>
+<ul>
+<li><code>__PAGEZERO</code>：静态链接器创建了 <code>__PAGEZERO</code> 作为可执行文件的第一个段，该段在虚拟内存中的位置和大小都为0，不能写不能执行，用来处理空指针</li>
+<li><code>__TEXT</code>：包含了可执行的代码和其他一些只读数据，静态链接器设置该段的虚拟内存权限为可读、可执行、进程被允许可执行这些代码，但是不能修改</li>
+<li><code>__DATA</code>：包含了将会被更改的数据，静态链接器设置该段的虚拟内存权限为可读写</li>
+<li><code>__LINKEDIT</code>：包含了动态链接库的原始数据，如符号、字符串、重定位表条目等</li>
+</ul>
+<p>一个段可以包含 0 个或者多个节，32位64位分别用 section 和 section_64 结构体表示，定义基本相同</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">sectname：节的名称占16个字节</span></span><br><span class="line"><span class="comment">segname：节所属段的名称</span></span><br><span class="line"><span class="comment">addr：节在内存的起始位置</span></span><br><span class="line"><span class="comment">size：节占用内存大小</span></span><br><span class="line"><span class="comment">offset：节的文件偏移地址</span></span><br><span class="line"><span class="comment">align：节的字节对齐大小</span></span><br><span class="line"><span class="comment">reloff：重定位入口的文件偏移</span></span><br><span class="line"><span class="comment">nreloc：需要重定位的入口数量</span></span><br><span class="line"><span class="comment">flags：节的类型和属性</span></span><br><span class="line"><span class="comment">reserved1/2/3：系统保留字段</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">struct</span> section_64 &#123; <span class="comment">/* for 64-bit architectures */</span></span><br><span class="line">	<span class="keyword">char</span>		sectname[<span class="number">16</span>];	<span class="comment">/* name of this section */</span></span><br><span class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment this section goes in */</span></span><br><span class="line">	uint64_t	addr;		<span class="comment">/* memory address of this section */</span></span><br><span class="line">	uint64_t	size;		<span class="comment">/* size in bytes of this section */</span></span><br><span class="line">	uint32_t	offset;		<span class="comment">/* file offset of this section */</span></span><br><span class="line">	uint32_t	align;		<span class="comment">/* section alignment (power of 2) */</span></span><br><span class="line">	uint32_t	reloff;		<span class="comment">/* file offset of relocation entries */</span></span><br><span class="line">	uint32_t	nreloc;		<span class="comment">/* number of relocation entries */</span></span><br><span class="line">	uint32_t	flags;		<span class="comment">/* flags (section type and attributes)*/</span></span><br><span class="line">	uint32_t	reserved1;	<span class="comment">/* reserved (for offset or index) */</span></span><br><span class="line">	uint32_t	reserved2;	<span class="comment">/* reserved (for count or sizeof) */</span></span><br><span class="line">	uint32_t	reserved3;	<span class="comment">/* reserved */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>段和节的一个命名规则是，大写代表段，小写代表节</p>
+<h6 id="TEXT-段"><a href="#TEXT-段" class="headerlink" title="__TEXT 段"></a><code>__TEXT</code> 段</h6><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__text  <span class="comment">//主程序代码</span></span><br><span class="line">__subs、__sub_helper  <span class="comment">//用于帮助动态链接器绑定符号</span></span><br><span class="line">__<span class="keyword">const</span>  <span class="comment">//const 关键字修饰的常量</span></span><br><span class="line">__objc_methname  <span class="comment">//OC 方法名</span></span><br><span class="line">__cstring  <span class="comment">//只读的 C 语言字符串</span></span><br><span class="line">__objc_classname  <span class="comment">//OC 类名</span></span><br><span class="line">__objc_methtype  <span class="comment">//OC 方法类型（方法签名）</span></span><br><span class="line">__gcc_except_tab、__ustring、__unwind_info  <span class="comment">//GCC 编译自动生成，用于确定异常发生时栈所对应的信息（包括栈指针、返回地址及寄存器等）</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="DATA-段"><a href="#DATA-段" class="headerlink" title="__DATA 段"></a><code>__DATA</code> 段</h6><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">__got  <span class="comment">//全局非懒绑定符号指针表</span></span><br><span class="line">__la_symbol_ptr  <span class="comment">//懒绑定符号指针表</span></span><br><span class="line">__mod_init_func  <span class="comment">//C++类的构造函数</span></span><br><span class="line">__<span class="keyword">const</span>  <span class="comment">//未初始化过的常量</span></span><br><span class="line">__cfstring  <span class="comment">//Core Foundation 字符串</span></span><br><span class="line">__objc_classlist  <span class="comment">//OC 类列表</span></span><br><span class="line">__objc_nlclslist  <span class="comment">//实现了+load方法的Objective-C类列表</span></span><br><span class="line">__objc_catlist  <span class="comment">//OC分类列表</span></span><br><span class="line">__objc_protolist  <span class="comment">//OC协议列表</span></span><br><span class="line">__objc_imageinfo  <span class="comment">//镜像信息，可用它区分Objective-C1.0和2.0</span></span><br><span class="line">__objc_const  <span class="comment">//OC初始化过的常量</span></span><br><span class="line">__objc_selrefs  <span class="comment">//OC选择器（SEL）引用列表</span></span><br><span class="line">__objc_protorefs  <span class="comment">//OC协议引用列表</span></span><br><span class="line">__objc_classrefs  /OC类引用列表</span><br><span class="line">__objc_superrefs  <span class="comment">//OC超类（即父类）引用列表</span></span><br><span class="line">__objc_ivar  <span class="comment">//OC类的实例变量</span></span><br><span class="line">__objc_data  <span class="comment">//OC初始化过的变量</span></span><br><span class="line">__data 	<span class="comment">//实际初始化数据段</span></span><br><span class="line">__common 	<span class="comment">//未初始化过的符号声明</span></span><br><span class="line">__bss	<span class="comment">//未初始化的全局变量</span></span><br></pre></td></tr></table></figure>
+
+<p>为了加快程序启动速度，iOS引入了懒绑定和非懒绑定的概念</p>
+<p>非懒绑定：动态链接器加载程序时就会绑定真实调用地址，之后直接用即可</p>
+<p>懒绑定：只有方法被调用的时候才会去寻找对应的调用地址，然后再执行</p>
+<h5 id="LC-LOAD-DYLIB"><a href="#LC-LOAD-DYLIB" class="headerlink" title="LC_LOAD_DYLIB"></a>LC_LOAD_DYLIB</h5><p>LC_LOAD_DYLIB 指向的都是程序依赖库的加载信息，LC_LOAD_DYLIB 加载命令对应数据结构</p>
+<p>该结构对应的命令还可能是，LC_LOAD_WEAK_DYLIB，都表示加载一个动态库，通过 LC_LOAD_WEAK_DYLIB 声明的依赖库是可选的，缺少这些库也没什么影响</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> dylib_command &#123;</span><br><span class="line">	uint32_t	cmd;		<span class="comment">/* LC_ID_DYLIB, LC_LOAD_&#123;,WEAK_&#125;DYLIB,LC_REEXPORT_DYLIB */</span></span><br><span class="line">	uint32_t	cmdsize;	<span class="comment">/* includes pathname string */</span></span><br><span class="line">	<span class="keyword">struct</span> dylib	dylib;		<span class="comment">/* the library identification */</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">name：依赖库的完整路径，动态链接器在加载动态库时，会通过此路径进行加载</span></span><br><span class="line"><span class="comment">timestamp：依赖库构建时的时间戳</span></span><br><span class="line"><span class="comment">current_version：当前版本号</span></span><br><span class="line"><span class="comment">compatibility_version：兼容版本号</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">struct</span> dylib &#123;</span><br><span class="line">  <span class="keyword">union</span> lc_str  name;			<span class="comment">/* library&#x27;s path name */</span></span><br><span class="line">  uint32_t timestamp;			<span class="comment">/* library&#x27;s build time stamp */</span></span><br><span class="line">  uint32_t current_version;		<span class="comment">/* library&#x27;s current version number */</span></span><br><span class="line">  uint32_t compatibility_version;	<span class="comment">/* library&#x27;s compatibility vers number*/</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>未越狱平台注入动态库的原理就是向 MachO 文件添加一条 LC_LOAD_DYLIB 加载命令，将路径指向自己的动态库，这时常见到类似 @executable_path/xx.dylib 或者 @rpath/xx.dylib</p>
+<h5 id="LC-CODE-SIGNATURE"><a href="#LC-CODE-SIGNATURE" class="headerlink" title="LC_CODE_SIGNATURE"></a>LC_CODE_SIGNATURE</h5><p>代码签名加载命令，通常位于最后一个段中，描述了 Mach-O 文件的代码签名信息</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">dataoff：数据相对于__LINKEDIT 段的文件偏移</span></span><br><span class="line"><span class="comment">datasize：数据大小</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">struct</span> linkedit_data_command &#123;</span><br><span class="line">  uint32_t	cmd;		<span class="comment">/* LC_CODE_SIGNATURE, LC_SEGMENT_SPLIT_INFO,</span></span><br><span class="line"><span class="comment">         LC_FUNCTION_STARTS, LC_DATA_IN_CODE,</span></span><br><span class="line"><span class="comment">         LC_DYLIB_CODE_SIGN_DRS,</span></span><br><span class="line"><span class="comment">         LC_LINKER_OPTIMIZATION_HINT,</span></span><br><span class="line"><span class="comment">         LC_DYLD_EXPORTS_TRIE, or</span></span><br><span class="line"><span class="comment">         LC_DYLD_CHAINED_FIXUPS. */</span></span><br><span class="line">  uint32_t	cmdsize;	<span class="comment">/* sizeof(struct linkedit_data_command) */</span></span><br><span class="line">  uint32_t	dataoff;	<span class="comment">/* file offset of data in __LINKEDIT segment */</span></span><br><span class="line">  uint32_t	datasize;	<span class="comment">/* file size of data in __LINKEDIT segment  */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>MachOView 查看可执行文件</p>
+<p>LC_MAIN 有个 Entry Point 地址 ，通过 IDA 查找地址可以找到 main 入口函数地址</p>
+<h4 id="MachOView"><a href="#MachOView" class="headerlink" title="MachOView"></a>MachOView</h4><p>可视化工具分析 Mach-O 文件</p>
+<p>MachOView 工具： <a target="_blank" rel="noopener" href="https://github.com/gdbinit/MachOView">https://github.com/gdbinit/MachOView</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/24/Preferences/" rel="prev" title="Preferences">
+                  <i class="fa fa-chevron-left"></i> Preferences
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/15/Flask-Web%EF%BC%88%E4%B8%80%EF%BC%89/" rel="next" title="Flask Web（一）">
+                  Flask Web（一） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">daxun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

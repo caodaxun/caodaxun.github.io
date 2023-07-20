@@ -24,15 +24,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="RACSignal1234&#x2F;&#x2F; 使用步骤&#x2F;&#x2F; 1.创建信号 + (RACSignal *)createSignal:(RACDisposable * (^)(id&lt;RACSubscriber&gt; subscriber))didSubscribe&#x2F;&#x2F; 2.订阅信号,才会激活信号. - (RACDisposable *)subscribeNext:(void (^)(id x))nextBl">
+  <meta name="description" content="RAC资源帖 ReactiveCocoa基础篇 ReactiveCocoa进阶篇 RACSignal1234&#x2F;&#x2F; 使用步骤&#x2F;&#x2F; 1.创建信号 + (RACSignal *)createSignal:(RACDisposable * (^)(id&lt;RACSubscriber&gt; subscriber))didSubscribe&#x2F;&#x2F; 2.订阅信号,才会激活信号. - (RACDisposa">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ReactiveObjC">
 <meta property="og:url" content="http://example.com/2022/05/20/ReactiveObjC/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="RACSignal1234&#x2F;&#x2F; 使用步骤&#x2F;&#x2F; 1.创建信号 + (RACSignal *)createSignal:(RACDisposable * (^)(id&lt;RACSubscriber&gt; subscriber))didSubscribe&#x2F;&#x2F; 2.订阅信号,才会激活信号. - (RACDisposable *)subscribeNext:(void (^)(id x))nextBl">
+<meta property="og:description" content="RAC资源帖 ReactiveCocoa基础篇 ReactiveCocoa进阶篇 RACSignal1234&#x2F;&#x2F; 使用步骤&#x2F;&#x2F; 1.创建信号 + (RACSignal *)createSignal:(RACDisposable * (^)(id&lt;RACSubscriber&gt; subscriber))didSubscribe&#x2F;&#x2F; 2.订阅信号,才会激活信号. - (RACDisposa">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-05-20T06:15:08.000Z">
-<meta property="article:modified_time" content="2022-05-30T01:04:58.665Z">
+<meta property="article:modified_time" content="2023-05-11T02:29:59.326Z">
 <meta property="article:author" content="daxun">
 <meta name="twitter:card" content="summary">
 
@@ -226,20 +226,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -311,7 +311,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-05-30 09:04:58" itemprop="dateModified" datetime="2022-05-30T09:04:58+08:00">2022-05-30</time>
+        <time title="修改时间：2023-05-11 10:29:59" itemprop="dateModified" datetime="2023-05-11T10:29:59+08:00">2023-05-11</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -333,7 +333,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h4 id="RACSignal"><a href="#RACSignal" class="headerlink" title="RACSignal"></a>RACSignal</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用步骤</span></span><br><span class="line"><span class="comment">// 1.创建信号 + (RACSignal *)createSignal:(RACDisposable * (^)(id&lt;RACSubscriber&gt; subscriber))didSubscribe</span></span><br><span class="line"><span class="comment">// 2.订阅信号,才会激活信号. - (RACDisposable *)subscribeNext:(void (^)(id x))nextBlock</span></span><br><span class="line"><span class="comment">// 3.发送信号 - (void)sendNext:(id)value</span></span><br></pre></td></tr></table></figure>
+        <p> <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ceebb496c226">RAC资源帖</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/87ef6720a096">ReactiveCocoa基础篇</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e10e5ca413b7">ReactiveCocoa进阶篇</a></p>
+<h4 id="RACSignal"><a href="#RACSignal" class="headerlink" title="RACSignal"></a>RACSignal</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用步骤</span></span><br><span class="line"><span class="comment">// 1.创建信号 + (RACSignal *)createSignal:(RACDisposable * (^)(id&lt;RACSubscriber&gt; subscriber))didSubscribe</span></span><br><span class="line"><span class="comment">// 2.订阅信号,才会激活信号. - (RACDisposable *)subscribeNext:(void (^)(id x))nextBlock</span></span><br><span class="line"><span class="comment">// 3.发送信号 - (void)sendNext:(id)value</span></span><br></pre></td></tr></table></figure>
 
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RACSignal底层实现：</span></span><br><span class="line"><span class="comment">// 1.创建信号，首先把didSubscribe保存到信号中，还不会触发。</span></span><br><span class="line"><span class="comment">// 2.当信号被订阅，也就是调用signal的subscribeNext:nextBlock</span></span><br><span class="line"><span class="comment">// 2.2 subscribeNext内部会创建订阅者subscriber，并且把nextBlock保存到subscriber中。</span></span><br><span class="line"><span class="comment">// 2.1 subscribeNext内部会调用siganl的didSubscribe</span></span><br><span class="line"><span class="comment">// 3.siganl的didSubscribe中调用[subscriber sendNext:@1];</span></span><br><span class="line"><span class="comment">// 3.1 sendNext底层其实就是执行subscriber的nextBlock</span></span><br></pre></td></tr></table></figure>
 
@@ -341,7 +344,7 @@
 
 <h4 id="RacSubscribe"><a href="#RacSubscribe" class="headerlink" title="RacSubscribe"></a>RacSubscribe</h4><p>表示订阅者的意思，用于发送信号，这是一个协议，不是一个类，只要遵守了这个协议，并且实现方法才能成为订阅者。通过 create 创建的信号，都有一个订阅者，帮助发送数据</p>
 <h4 id="RACDisposable"><a href="#RACDisposable" class="headerlink" title="RACDisposable"></a>RACDisposable</h4><p>用于取消订阅或者清理资源，当信号发送完成或者发送错误的时候，就会自动触发它</p>
-<p>不想监听某个信号时，可以通过它主动取消订阅信号</p>
+<p>使用场景：不想监听某个信号时，可以通过它主动取消订阅信号</p>
 <h4 id="RACSubject"><a href="#RACSubject" class="headerlink" title="RACSubject"></a>RACSubject</h4><p>信号提供者，自己可以充当信号，又能发送信号</p>
 <p>通常用来代替代理，有了它，就不必要定义代理了</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用步骤</span></span><br><span class="line"><span class="comment">// 1.创建信号 [RACSubject subject]，跟RACSiganl不一样，创建信号时没有block。</span></span><br><span class="line"><span class="comment">// 2.订阅信号 - (RACDisposable *)subscribeNext:(void (^)(id x))nextBlock</span></span><br><span class="line"><span class="comment">// 3.发送信号 sendNext:(id)value</span></span><br></pre></td></tr></table></figure>
@@ -384,6 +387,12 @@
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 四、如何拿到RACCommand中返回信号发出的数据。</span></span><br><span class="line"><span class="comment">// 1.RACCommand有个执行信号源executionSignals，这个是signal of signals(信号的信号),意思是信号发出的数据是信号，不是普通的类型。</span></span><br><span class="line"><span class="comment">// 2.订阅executionSignals就能拿到RACCommand中返回的信号，然后订阅signalBlock返回的信号，就能获取发出的值。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 五、监听当前命令是否正在执行executing</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 六、使用场景,监听按钮点击，网络请求</span></span><br></pre></td></tr></table></figure>
 
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.创建命令</span></span><br><span class="line">RACCommand *command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * (<span class="keyword">id</span> input) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;执行命令&quot;</span>);</span><br><span class="line">    <span class="comment">// 2.创建信号,用来传递数据</span></span><br><span class="line">    <span class="keyword">return</span> [RACSignal createSignal:^RACDisposable * (<span class="keyword">id</span>&lt;RACSubscriber&gt; subscriber) &#123;</span><br><span class="line">        [subscriber sendNext:<span class="string">@&quot;请求数据&quot;</span>];</span><br><span class="line">        <span class="comment">// 注意：数据传递完，最好调用sendCompleted，这时命令才执行完毕</span></span><br><span class="line">        [subscriber sendCompleted];</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;];</span><br><span class="line"><span class="comment">// 强引用命令，不要被销毁，否则接收不到数据</span></span><br><span class="line">_command = command;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3.订阅RACCommand中的信号</span></span><br><span class="line">[command.executionSignals subscribeNext:^(<span class="keyword">id</span> x) &#123;</span><br><span class="line">    [x subscribeNext:^(<span class="keyword">id</span> x) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>, x);</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line"><span class="comment">// RAC高级用法</span></span><br><span class="line"><span class="comment">// switchToLatest:用于signal of signals，获取signal of signals发出的最新信号,也就是可以直接拿到RACCommand中的信号</span></span><br><span class="line">[command.executionSignals.switchToLatest subscribeNext:^(<span class="keyword">id</span>  _Nullable x) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>,x);</span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line">[[command.executing skip:<span class="number">1</span>] subscribeNext:^(<span class="built_in">NSNumber</span> * x) &#123;</span><br><span class="line">    <span class="keyword">if</span> ([x boolValue] == <span class="literal">YES</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;正在执行&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;执行完成&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 5.执行命令</span></span><br><span class="line">[command execute:@<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
+
+<p>对 RACCommand 进行错误处理，不应该使用subscribeError: 对 RACCommand 的 executionSignals</p>
+<p>进行错误的订阅，因为 executionSignals 这个信号是不会发送error事件的</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[command.errors subscribeNext:^(<span class="built_in">NSError</span> * _Nullable x) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;error %@&quot;</span>, x);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+
 
 <h4 id="RACMulticastConnection"><a href="#RACMulticastConnection" class="headerlink" title="RACMulticastConnection"></a>RACMulticastConnection</h4><p>用于当一个信号，被多次订阅时，为了保证创建信号时，避免多次调用创建信号中的 block，造成副作用，可以使用这个类型处理</p>
 <p>解决重复请求的问题</p>
@@ -563,10 +572,6 @@
 
 
 
-<p> <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ceebb496c226">RAC资源帖</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/87ef6720a096">ReactiveCocoa基础篇</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e10e5ca413b7">ReactiveCocoa进阶篇</a></p>
-
     </div>
 
     
@@ -634,7 +639,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
